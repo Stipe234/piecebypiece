@@ -1,26 +1,278 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQEl5fsA.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3WmX5slCNuHLi8bLeY9MK7whWMhyjYqXtOJ0ek.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYrEO7.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYalli.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQWl9fsA.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQdlhfsA.woff2') format('woff2');
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --color-bg-primary: #FDFCFA;
+  --color-bg-secondary: #F7F5F0;
+  --color-bg-tertiary: #EFEBE4;
+
+  /* Surfaces */
+  --color-surface-cream: #F5F0E8;
+  --color-surface-sand: #E8E0D4;
+  --color-surface-stone: #D8D2C8;
+  --color-surface-grey: #C8C4BE;
+
+  /* Text */
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #5C5750;
+  --color-text-tertiary: #8A857D;
+  --color-text-inverse: #FDFCFA;
+
+  /* Accent / Interactive */
+  --color-accent-dark: #1A1A1A;
+  --color-accent-hover: #333333;
+  --color-border: #E0DBD3;
+  --color-border-dark: #1A1A1A;
+
+  /* Metallic */
+  --color-gold: #C9A96E;
+  --color-silver: #B0AFA8;
+
+  /* Feedback */
+  --color-success: #4A6E50;
+  --color-error: #9E4A4A;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-tertiary: var(--color-bg-tertiary);
+  --color-surface-cream: var(--color-surface-cream);
+  --color-surface-sand: var(--color-surface-sand);
+  --color-surface-stone: var(--color-surface-stone);
+  --color-surface-grey: var(--color-surface-grey);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+  --color-text-inverse: var(--color-text-inverse);
+  --color-accent-dark: var(--color-accent-dark);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-border: var(--color-border);
+  --color-border-dark: var(--color-border-dark);
+  --color-gold: var(--color-gold);
+  --color-silver: var(--color-silver);
+  --color-success: var(--color-success);
+  --color-error: var(--color-error);
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', 'Helvetica Neue', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--color-surface-sand);
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   Scroll Reveal Animations
+   ======================================== */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+              transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Variant: fade only, no movement */
+.scroll-reveal-fade {
+  opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.scroll-reveal-fade.is-visible {
+  opacity: 1;
+}
+
+/* Variant: scale up gently */
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+              transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.scroll-reveal-scale.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ========================================
+   Hero Entrance
+   ======================================== */
+
+@keyframes hero-text-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-text-enter {
+  animation: hero-text-enter 1s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.hero-text-enter-delayed {
+  animation: hero-text-enter 1s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation-delay: 0.7s;
+  opacity: 0;
+}
+
+@keyframes hero-image-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hero-image-enter {
+  animation: hero-image-enter 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  opacity: 0;
+}
+
+/* ========================================
+   Horizontal rule accent
+   ======================================== */
+
+.hr-accent {
+  width: 40px;
+  height: 1px;
+  background: var(--color-border);
+  border: none;
+  margin: 0;
+}
+
+/* ========================================
+   Pull quote styling
+   ======================================== */
+
+.pull-quote {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+/* ========================================
+   Mobile optimizations
+   ======================================== */
+
+/* Prevent tap highlight on iOS */
+.tap-highlight-transparent {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent text size adjustment on orientation change */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Use svh for full-screen sections on mobile (accounts for browser chrome) */
+@supports (height: 100svh) {
+  .h-\[100svh\] {
+    height: 100svh;
+  }
+}
+
+/* Better touch targets */
+@media (max-width: 768px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Exceptions for inline/small elements */
+  .inline-flex, nav a, footer a, .text-xs {
+    min-height: auto;
+    min-width: auto;
+  }
+}
+
+/* Prevent horizontal overflow */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Smooth momentum scrolling on iOS */
+* {
+  -webkit-overflow-scrolling: touch;
 }
