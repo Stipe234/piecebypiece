@@ -52,8 +52,8 @@ export default async function OwnerDashboardPage() {
         <header className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.3em] text-[#a06b5a]">Dashboard for my love</p>
-            <h1 className="mt-3 font-heading text-5xl font-normal tracking-[0.25em] text-[#3a222a] lowercase md:text-7xl">
-              piece by piece
+            <h1 className="mt-3 font-heading text-5xl font-light tracking-[0.12em] text-[#3a222a] md:text-7xl">
+              PIECE BY PIECE
             </h1>
           </div>
 

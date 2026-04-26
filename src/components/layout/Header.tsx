@@ -50,8 +50,8 @@ export default function Header() {
 
         {/* Logo */}
         <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-          <span className="font-heading text-base md:text-xl font-normal tracking-[0.25em] md:tracking-[0.32em] lowercase whitespace-nowrap">
-            piece by piece
+          <span className="font-heading text-base md:text-xl font-light tracking-[0.12em] md:tracking-[0.15em] uppercase whitespace-nowrap">
+            Piece by Piece
           </span>
         </Link>
 

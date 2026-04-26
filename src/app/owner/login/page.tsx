@@ -14,7 +14,7 @@ export default async function OwnerLoginPage() {
       <div className="mx-auto grid min-h-[calc(100vh-6rem)] max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="flex flex-col justify-between rounded-[2rem] border border-white/10 bg-white/5 p-8 backdrop-blur md:p-12">
           <div>
-            <p className="font-heading text-sm tracking-[0.32em] lowercase text-[#d8ba84]">piece by piece</p>
+            <p className="text-[11px] uppercase tracking-[0.32em] text-[#d8ba84]">Piece by Piece</p>
             <h1 className="mt-6 max-w-xl font-heading text-5xl font-light leading-[0.95] md:text-7xl">
               Owner dashboard for the full brand picture.
             </h1>
