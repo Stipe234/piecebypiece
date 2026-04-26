@@ -107,7 +107,7 @@
   --color-silver: var(--color-silver);
   --color-success: var(--color-success);
   --color-error: var(--color-error);
-  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-heading: var(--font-playfair), 'Playfair Display', Georgia, serif;
   --font-body: 'Inter', 'Helvetica Neue', sans-serif;
 }
 

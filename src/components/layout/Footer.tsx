@@ -12,8 +12,8 @@ export default function Footer() {
       <div className="max-w-[1440px] mx-auto px-4 md:px-12 py-20 md:py-28">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
           <div className="md:col-span-4">
-            <span className="font-heading text-lg font-light tracking-[0.15em] uppercase block mb-4">
-              Piece by Piece
+            <span className="font-heading text-lg font-normal tracking-[0.25em] lowercase block mb-4">
+              piece by piece
             </span>
             <p className="text-xs text-[var(--color-text-tertiary)] leading-relaxed max-w-xs">
               {t.footer.tagline}
