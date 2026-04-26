@@ -48,6 +48,10 @@ export const translations = {
       shippingLabel: "Shipping",
       shippingContent:
         "Complimentary shipping on all orders. Delivered in 3\u20135 business days. Each piece arrives in a branded linen pouch.",
+      soldOut: "Sold Out",
+      unavailable: "Currently unavailable",
+      onlyUnitsLeft: "Only {count} left",
+      liveStock: "Live stock updates at checkout.",
     },
 
     // Philosophy section
@@ -203,6 +207,8 @@ export const translations = {
       shippingFree: "Free",
       placeOrder: "Place Order",
       paymentNote: "You will be redirected to complete payment.",
+      stockConflict:
+        "One of the items in your bag sold out while you were checking out. Please review your bag and try again.",
     },
 
     // Footer
@@ -259,6 +265,10 @@ export const translations = {
       shippingLabel: "Dostava",
       shippingContent:
         "Besplatna dostava na sve narud\u017Ebe. Isporuka u 3\u20135 radnih dana. Svaki komad dolazi u brendiranoj lanenoj vre\u0107ici.",
+      soldOut: "Rasprodano",
+      unavailable: "Trenutno nedostupno",
+      onlyUnitsLeft: "Ostalo jo\u0161 {count}",
+      liveStock: "Stanje se provjerava u stvarnom vremenu pri naplati.",
     },
 
     philosophy: {
@@ -403,6 +413,8 @@ export const translations = {
       shippingFree: "Besplatno",
       placeOrder: "Naruci",
       paymentNote: "Bit \u0107e\u0161 preusmjeren/a za dovr\u0161etak pla\u0107anja.",
+      stockConflict:
+        "Jedan od komada u tvojoj ko\u0161arici se rasprodao tijekom naplate. Pregledaj ko\u0161aricu i poku\u0161aj ponovno.",
     },
 
     footer: {

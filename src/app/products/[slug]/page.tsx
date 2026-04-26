@@ -4,23 +4,34 @@ import { useState } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
-import { getProduct } from "@/data/products";
+import { getProduct, getProductContent } from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import ProductGallery from "@/components/product/ProductGallery";
 import VariantSelector from "@/components/product/VariantSelector";
 import AddToCartButton from "@/components/product/AddToCartButton";
 import Accordion from "@/components/ui/Accordion";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { useProductAvailability } from "@/hooks/useProductAvailability";
 
 export default function ProductPage() {
   const params = useParams();
   const product = getProduct(params.slug as string);
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   if (!product) notFound();
+  const productContent = getProductContent(product, locale);
+  const { availability, loading } = useProductAvailability(product.id);
+  const displayPrice = availability?.priceCents != null ? availability.priceCents / 100 : product.price;
+  const isHidden = availability?.isActive === false;
 
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [selectedLength, setSelectedLength] = useState(product.lengths[0]);
+  const isSoldOut = availability?.isSoldOut ?? false;
+  const stockLabel = isSoldOut
+    ? t.product.soldOut
+    : availability && availability.availableUnits <= 3
+      ? t.product.onlyUnitsLeft.replace("{count}", String(availability.availableUnits))
+      : t.product.liveStock;
 
   const materialLabels: Record<string, string> = {
     Gold: t.product.gold,
@@ -28,9 +39,9 @@ export default function ProductPage() {
   };
 
   const accordionItems = [
-    { title: t.product.materialsAndDimensions, content: t.product.materialsAndDimensionsContent },
-    { title: t.product.care, content: t.product.careContent },
-    { title: t.product.shippingLabel, content: t.product.shippingContent },
+    { title: t.product.materialsAndDimensions, content: productContent.details.materialsAndDimensions },
+    { title: t.product.care, content: productContent.details.care },
+    { title: t.product.shippingLabel, content: productContent.details.shipping },
   ];
 
   return (
@@ -42,16 +53,21 @@ export default function ProductPage() {
           <div className="flex flex-col gap-6 md:gap-8 md:py-8 md:sticky md:top-24 md:self-start">
             <div>
               <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-2 md:mb-3">
-                {t.product.label}
+                {productContent.label}
               </p>
               <h1 className="font-heading text-2xl md:text-4xl font-light tracking-wide mb-1 md:mb-2">
-                {t.product.name}
+                {productContent.name}
               </h1>
-              <p className="text-base md:text-lg font-medium">€{product.price}</p>
+              <p className="text-base md:text-lg font-medium">€{displayPrice}</p>
+              {isHidden ? (
+                <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#8a4a52]">
+                  Currently unavailable
+                </p>
+              ) : null}
             </div>
 
             <p className="text-sm text-[var(--color-text-secondary)] leading-[1.8]">
-              {t.product.description}
+              {productContent.description}
             </p>
 
             <hr className="hr-accent" />
@@ -76,7 +92,13 @@ export default function ProductPage() {
               product={product}
               selectedMaterial={selectedMaterial}
               selectedLength={selectedLength}
+              disabled={isSoldOut}
+              label={isSoldOut ? t.product.soldOut : undefined}
             />
+
+            <p className="text-xs text-[var(--color-text-tertiary)]">
+              {loading ? t.product.liveStock : stockLabel}
+            </p>
 
             <Accordion items={accordionItems} />
           </div>

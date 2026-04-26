@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 import type { Product } from "@/data/products";
 
 export interface CartItem {
+  id: string;
   product: Product;
   quantity: number;
   selectedMaterial: string;
@@ -16,13 +17,18 @@ interface CartContextType {
   openCart: () => void;
   closeCart: () => void;
   addItem: (product: Product, material: string, length: string) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeItem: (itemId: string) => void;
+  updateQuantity: (itemId: string, quantity: number) => void;
+  clearCart: () => void;
   itemCount: number;
   subtotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+function getCartItemId(productId: string, material: string, length: string) {
+  return `${productId}:${material}:${length}`;
+}
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -33,33 +39,47 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback((product: Product, material: string, length: string) => {
     setItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
+      const itemId = getCartItemId(product.id, material, length);
+      const existing = prev.find((item) => item.id === itemId);
       if (existing) {
         return prev.map((item) =>
-          item.product.id === product.id
+          item.id === itemId
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prev, { product, quantity: 1, selectedMaterial: material, selectedLength: length }];
+      return [
+        ...prev,
+        {
+          id: itemId,
+          product,
+          quantity: 1,
+          selectedMaterial: material,
+          selectedLength: length,
+        },
+      ];
     });
     setIsOpen(true);
   }, []);
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((item) => item.product.id !== productId));
+  const removeItem = useCallback((itemId: string) => {
+    setItems((prev) => prev.filter((item) => item.id !== itemId));
   }, []);
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((itemId: string, quantity: number) => {
     if (quantity <= 0) {
-      setItems((prev) => prev.filter((item) => item.product.id !== productId));
+      setItems((prev) => prev.filter((item) => item.id !== itemId));
       return;
     }
     setItems((prev) =>
       prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
+        item.id === itemId ? { ...item, quantity } : item
       )
     );
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setItems([]);
   }, []);
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -67,7 +87,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, isOpen, openCart, closeCart, addItem, removeItem, updateQuantity, itemCount, subtotal }}
+      value={{
+        items,
+        isOpen,
+        openCart,
+        closeCart,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearCart,
+        itemCount,
+        subtotal,
+      }}
     >
       {children}
     </CartContext.Provider>

@@ -1,5 +1,25 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment
+
+Create a `.env.local` file with:
+
+```bash
+STRIPE_SECRET_KEY=...
+STRIPE_WEBHOOK_SECRET=...
+DATABASE_URL=...
+ADMIN_DASHBOARD_PASSWORD=...
+```
+
+The checkout now uses the database for live inventory:
+
+- `inventory_items` stores total, reserved, and sold units per product
+- pending Stripe sessions reserve stock for 30 minutes
+- successful payment webhooks convert reserved units into sold units
+- expired or failed sessions automatically release stock back to inventory
+- the `/owner` dashboard is protected by `ADMIN_DASHBOARD_PASSWORD`
+- completed Stripe checkouts are stored as orders with shipping details for the owner dashboard
+
 ## Getting Started
 
 First, run the development server:

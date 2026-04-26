@@ -6,16 +6,16 @@ import { useI18n } from "@/i18n/context";
 import { useEffect, useRef } from "react";
 
 export default function CheckoutSuccessPage() {
-  const { t, locale } = useI18n();
-  const cart = useCart();
+  const { locale } = useI18n();
+  const { items, clearCart } = useCart();
   const cleared = useRef(false);
 
   useEffect(() => {
-    if (!cleared.current && cart.items.length > 0) {
+    if (!cleared.current && items.length > 0) {
       cleared.current = true;
-      cart.items.forEach((item) => cart.removeItem(item.product.id));
+      clearCart();
     }
-  }, [cart]);
+  }, [clearCart, items.length]);
 
   const isHr = locale === "hr";
 

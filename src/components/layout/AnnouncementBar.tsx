@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useI18n } from "@/i18n/context";
 
 export default function AnnouncementBar() {
   const { t } = useI18n();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem("announcement-dismissed");
-    if (!dismissed) setVisible(true);
+    if (sessionStorage.getItem("announcement-dismissed") === "true") {
+      setVisible(false);
+    }
   }, []);
 
   const dismiss = () => {

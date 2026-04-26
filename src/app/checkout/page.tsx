@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { getProductContent } from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import Button from "@/components/ui/Button";
 
@@ -37,12 +38,10 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: items.map((item) => ({
-            name: item.product.name,
-            price: item.product.price,
+            productId: item.product.id,
             quantity: item.quantity,
             material: item.selectedMaterial,
             length: item.selectedLength,
-            image: item.product.images.studio,
           })),
           locale,
         }),
@@ -51,7 +50,9 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Something went wrong");
+        throw new Error(
+          data.error || (res.status === 409 ? t.checkout.stockConflict : "Something went wrong"),
+        );
       }
 
       window.location.href = data.url;
@@ -75,18 +76,18 @@ export default function CheckoutPage() {
 
           <div className="flex flex-col gap-4 mb-4 md:mb-6">
             {items.map((item) => (
-              <div key={item.product.id} className="flex gap-3 md:gap-4">
+              <div key={item.id} className="flex gap-3 md:gap-4">
                 <div className="relative w-14 h-18 md:w-16 md:h-20 flex-shrink-0 bg-[var(--color-bg-primary)]">
                   <Image
                     src={item.product.images.studio}
-                    alt={t.product.name}
+                    alt={getProductContent(item.product, locale).name}
                     fill
                     className="object-cover"
                     sizes="64px"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{t.product.name}</p>
+                  <p className="text-sm font-medium truncate">{getProductContent(item.product, locale).name}</p>
                   <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
                     {item.selectedMaterial} / {item.selectedLength}
                   </p>

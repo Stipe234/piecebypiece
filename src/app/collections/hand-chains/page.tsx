@@ -2,11 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { products, getProductContent } from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { useProductAvailability } from "@/hooks/useProductAvailability";
 
 export default function HandChainsCollection() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const featuredProduct = products[0];
+  const featuredContent = getProductContent(featuredProduct, locale);
+  const { availability } = useProductAvailability(featuredProduct.id);
+  const isSoldOut = availability?.isSoldOut ?? false;
+  const displayPrice = availability?.priceCents != null ? availability.priceCents / 100 : featuredProduct.price;
 
   return (
     <>
@@ -33,11 +40,11 @@ export default function HandChainsCollection() {
       <section className="py-16 md:py-32 px-4 md:px-12">
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20">
           <ScrollReveal>
-            <Link href="/products/the-first-piece" className="block group">
+            <Link href={`/products/${featuredProduct.slug}`} className="block group">
               <div className="relative aspect-[4/5] overflow-hidden bg-[var(--color-bg-secondary)]">
                 <Image
                   src="/images/intimate.jpg"
-                  alt={t.product.name}
+                  alt={featuredContent.name}
                   fill
                   className="object-cover group-hover:scale-[1.02] transition-transform duration-700"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -48,20 +55,20 @@ export default function HandChainsCollection() {
           <ScrollReveal delay={200}>
             <div className="flex flex-col justify-center">
               <p className="text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-4">
-                {t.product.label}
+                {featuredContent.label}
               </p>
               <h2 className="font-heading text-3xl md:text-4xl font-light tracking-wide mb-4">
-                {t.product.name}
+                {featuredContent.name}
               </h2>
               <p className="text-sm md:text-base text-[var(--color-text-secondary)] leading-[1.8] mb-6 max-w-md">
-                {t.product.description}
+                {featuredContent.description}
               </p>
-              <p className="text-lg font-medium mb-8">€59</p>
+              <p className="text-lg font-medium mb-8">€{displayPrice}</p>
               <Link
-                href="/products/the-first-piece"
+                href={`/products/${featuredProduct.slug}`}
                 className="inline-flex items-center justify-center w-fit text-sm font-medium tracking-[0.1em] uppercase py-3.5 px-10 bg-[var(--color-accent-dark)] text-[var(--color-text-inverse)] hover:bg-[var(--color-accent-hover)] transition-colors rounded-sm"
               >
-                {t.product.viewPiece}
+                {isSoldOut ? t.product.soldOut : t.product.viewPiece}
               </Link>
             </div>
           </ScrollReveal>

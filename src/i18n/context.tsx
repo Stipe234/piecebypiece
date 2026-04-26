@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import { translations, type Locale, type Translations } from "./translations";
+import { translations, type Locale } from "./translations";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DeepString<T> = T extends readonly any[] ? { [K in keyof T]: DeepString<T[K]> } : T extends object ? { [K in keyof T]: DeepString<T[K]> } : string;

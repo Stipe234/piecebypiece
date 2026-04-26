@@ -10,22 +10,34 @@ interface AddToCartButtonProps {
   product: Product;
   selectedMaterial: string;
   selectedLength: string;
+  disabled?: boolean;
+  label?: string;
 }
 
-export default function AddToCartButton({ product, selectedMaterial, selectedLength }: AddToCartButtonProps) {
+export default function AddToCartButton({
+  product,
+  selectedMaterial,
+  selectedLength,
+  disabled = false,
+  label,
+}: AddToCartButtonProps) {
   const { addItem } = useCart();
   const { t } = useI18n();
   const [added, setAdded] = useState(false);
 
   const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
     addItem(product, selectedMaterial, selectedLength);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
 
   return (
-    <Button fullWidth onClick={handleClick}>
-      {added ? t.product.added : t.product.addToBag}
+    <Button fullWidth onClick={handleClick} disabled={disabled}>
+      {label ?? (added ? t.product.added : t.product.addToBag)}
     </Button>
   );
 }

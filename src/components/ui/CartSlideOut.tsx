@@ -4,12 +4,13 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { getProductContent } from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import Button from "./Button";
 
 export default function CartSlideOut() {
   const { items, isOpen, closeCart, removeItem, updateQuantity, subtotal } = useCart();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
@@ -46,53 +47,57 @@ export default function CartSlideOut() {
             </div>
           ) : (
             <div className="flex flex-col gap-6">
-              {items.map((item) => (
-                <div key={item.product.id} className="flex gap-4">
-                  <div className="relative w-20 h-24 flex-shrink-0 bg-[var(--color-bg-secondary)]">
-                    <Image
-                      src={item.product.images.studio}
-                      alt={item.product.name}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
-                  </div>
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <p className="text-sm font-medium">{t.product.name}</p>
-                      <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                        {item.selectedMaterial} / {item.selectedLength}
-                      </p>
+              {items.map((item) => {
+                const content = getProductContent(item.product, locale);
+
+                return (
+                  <div key={item.id} className="flex gap-4">
+                    <div className="relative w-20 h-24 flex-shrink-0 bg-[var(--color-bg-secondary)]">
+                      <Image
+                        src={item.product.images.studio}
+                        alt={content.name}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                          className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
-                        >
-                          &minus;
-                        </button>
-                        <span className="text-xs w-4 text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
-                        >
-                          +
-                        </button>
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <p className="text-sm font-medium">{content.name}</p>
+                        <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
+                          {item.selectedMaterial} / {item.selectedLength}
+                        </p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium">€{item.product.price * item.quantity}</span>
-                        <button
-                          onClick={() => removeItem(item.product.id)}
-                          className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] underline"
-                        >
-                          {t.cart.remove}
-                        </button>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
+                          >
+                            &minus;
+                          </button>
+                          <span className="text-xs w-4 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-medium">€{item.product.price * item.quantity}</span>
+                          <button
+                            onClick={() => removeItem(item.id)}
+                            className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] underline"
+                          >
+                            {t.cart.remove}
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

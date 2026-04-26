@@ -2,12 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { products, getProductContent } from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import NewsletterForm from "@/components/ui/NewsletterForm";
+import { useProductAvailability } from "@/hooks/useProductAvailability";
 
 export default function Home() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const featuredProduct = products[0];
+  const featuredContent = getProductContent(featuredProduct, locale);
+  const { availability } = useProductAvailability(featuredProduct.id);
+  const isSoldOut = availability?.isSoldOut ?? false;
+  const displayPrice = availability?.priceCents != null ? availability.priceCents / 100 : featuredProduct.price;
 
   return (
     <>
@@ -82,20 +89,20 @@ export default function Home() {
         <ScrollReveal>
           <div className="max-w-[640px] mx-auto text-center">
             <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-3 md:mb-4">
-              {t.product.label}
+              {featuredContent.label}
             </p>
             <h2 className="font-heading text-2xl md:text-4xl font-light tracking-wide mb-3 md:mb-4">
-              {t.product.name}
+              {featuredContent.name}
             </h2>
             <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed max-w-md mx-auto mb-6 md:mb-8">
-              {t.product.description}
+              {featuredContent.description}
             </p>
-            <p className="text-lg font-medium mb-6 md:mb-8">€59</p>
+            <p className="text-lg font-medium mb-6 md:mb-8">€{displayPrice}</p>
             <Link
-              href="/products/the-first-piece"
+              href={`/products/${featuredProduct.slug}`}
               className="inline-flex items-center justify-center text-sm font-medium tracking-[0.1em] uppercase py-3 px-8 md:py-3.5 md:px-10 bg-[var(--color-accent-dark)] text-[var(--color-text-inverse)] hover:bg-[var(--color-accent-hover)] transition-colors rounded-sm"
             >
-              {t.product.viewPiece}
+              {isSoldOut ? t.product.soldOut : t.product.viewPiece}
             </Link>
           </div>
         </ScrollReveal>

@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { journalEntries } from "@/data/journal";
-import { products } from "@/data/products";
+import { products, getProductContent } from "@/data/products";
 import { useI18n } from "@/i18n/context";
+import { useProductAvailability } from "@/hooks/useProductAvailability";
 
 export default function JournalArticlePage() {
   const params = useParams();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const slug = params.slug as string;
 
   const entryIndex = journalEntries.findIndex((e) => e.slug === slug);
@@ -19,6 +20,9 @@ export default function JournalArticlePage() {
   const entry = journalEntries[entryIndex];
   const tEntry = t.journal.entries[entryIndex];
   const product = products[0];
+  const productContent = getProductContent(product, locale);
+  const { availability } = useProductAvailability(product.id);
+  const displayPrice = availability?.priceCents != null ? availability.priceCents / 100 : product.price;
 
   return (
     <article className="py-20 md:py-32 px-4">
@@ -52,16 +56,16 @@ export default function JournalArticlePage() {
             <div className="relative w-48 aspect-[4/5] overflow-hidden bg-[var(--color-bg-secondary)] mx-auto mb-4">
               <Image
                 src={product.images.studio}
-                alt={t.product.name}
+                alt={productContent.name}
                 fill
                 className="object-cover group-hover:scale-[1.02] transition-transform duration-700"
                 sizes="192px"
               />
             </div>
             <p className="font-heading text-lg font-light tracking-wide group-hover:underline underline-offset-4">
-              {t.product.name}
+              {productContent.name}
             </p>
-            <p className="text-sm text-[var(--color-text-secondary)] mt-1">€{product.price}</p>
+            <p className="text-sm text-[var(--color-text-secondary)] mt-1">€{displayPrice}</p>
           </Link>
         </div>
 

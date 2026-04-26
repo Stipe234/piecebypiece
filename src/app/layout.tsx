@@ -3,10 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { I18nProvider } from "@/i18n/context";
-import AnnouncementBar from "@/components/layout/AnnouncementBar";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import CartSlideOut from "@/components/ui/CartSlideOut";
+import SiteChrome from "@/components/layout/SiteChrome";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,11 +26,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <I18nProvider>
           <CartProvider>
-            <AnnouncementBar />
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <CartSlideOut />
+            <SiteChrome>{children}</SiteChrome>
           </CartProvider>
         </I18nProvider>
       </body>
