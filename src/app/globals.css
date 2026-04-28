@@ -1,53 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQEl5fsA.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: italic;
-  font-weight: 300;
-  font-display: swap;
-  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3WmX5slCNuHLi8bLeY9MK7whWMhyjYqXtOJ0ek.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYrEO7.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYalli.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQWl9fsA.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Cormorant Garamond';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQdlhfsA.woff2') format('woff2');
-}
-
 :root {
   /* Backgrounds */
   --color-bg-primary: #FDFCFA;
@@ -61,13 +13,13 @@
   --color-surface-grey: #C8C4BE;
 
   /* Text */
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #5C5750;
-  --color-text-tertiary: #8A857D;
+  --color-text-primary: #000000;
+  --color-text-secondary: #2A2724;
+  --color-text-tertiary: #6B6660;
   --color-text-inverse: #FDFCFA;
 
   /* Accent / Interactive */
-  --color-accent-dark: #1A1A1A;
+  --color-accent-dark: #000000;
   --color-accent-hover: #333333;
   --color-border: #E0DBD3;
   --color-border-dark: #1A1A1A;
@@ -107,8 +59,8 @@
   --color-silver: var(--color-silver);
   --color-success: var(--color-success);
   --color-error: var(--color-error);
-  --font-heading: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'Inter', 'Helvetica Neue', sans-serif;
+  --font-heading: var(--font-cormorant), Georgia, 'Times New Roman', serif;
+  --font-body: var(--font-inter), 'Helvetica Neue', sans-serif;
 }
 
 html {
@@ -229,6 +181,7 @@ body {
   font-style: italic;
   font-weight: 300;
   line-height: 1.4;
+  color: var(--color-text-primary);
 }
 
 /* ========================================

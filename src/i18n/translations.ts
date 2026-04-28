@@ -18,21 +18,43 @@ export const translations = {
     // Hero
     hero: {
       introducing: "Introducing",
-      title: "The First Piece",
-      subtitle: "A hand chain for everyday. Quiet, intentional, yours.",
+      title: "The Piece You Need",
+      titleLead: "the",
+      titleAccent: "Piece",
+      titleTrail: "you need",
+      subtitle: "A delicate hand chain you return to, day after day.",
+      cta: "Shop the Piece",
     },
 
     // Brand statement
     brandStatement:
-      "Good jewellery is not bought all at once. It is built slowly. Piece by piece.",
+      "Good jewellery is not bought all at once, it is built over time. Piece by piece.",
+
+    // Homepage product highlight
+    productHighlight: {
+      title: "One piece. Endless wear.",
+      text: "Crafted to move with you, from day to night, without effort.",
+      cta: "View Details",
+    },
+
+    // Why it's different
+    whyDifferent: {
+      label: "Why it's different",
+      items: [
+        { title: "Water-resistant", text: "Made to be worn every day." },
+        { title: "Minimal & timeless", text: "Designed beyond trends." },
+        { title: "Lightweight comfort", text: "Feels like nothing, looks like everything." },
+        { title: "Designed to last", text: "Quality you don\u2019t have to think about." },
+      ],
+    },
 
     // Product
     product: {
       label: "Hand Chain 001",
       name: "The First Piece",
       description:
-        "A hand chain designed to feel like it was always there. It traces from wrist to finger in a single, quiet line \u2014 catching light the way skin does. This is where your collection begins.",
-      viewPiece: "View Piece",
+        "A hand chain that feels like part of you.\nOne quiet line, from wrist to finger.\nSubtle. Intentional. Yours.",
+      viewPiece: "View Details",
       addToBag: "Add to Bag",
       added: "Added",
       material: "Material",
@@ -44,7 +66,7 @@ export const translations = {
         "14k gold-filled chain (Gold) or sterling silver (Silver). Total length adjustable between 16\u201318cm. Lobster clasp. Chain width: 1mm. Handmade with care.",
       care: "Care",
       careContent:
-        "This piece is deliberately fine. It is meant to be felt, not seen from across the room. Wear it with awareness \u2014 the way you would anything you value. Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn. This is not fragility. It is lightness, by design.",
+        "This piece is deliberately fine. It is meant to be felt, not seen from across the room. Wear it with awareness, the way you would anything you value. Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn. This is not fragility. It is lightness, by design.",
       shippingLabel: "Shipping",
       shippingContent:
         "Complimentary shipping on all orders. Delivered in 3\u20135 business days. Each piece arrives in a branded linen pouch.",
@@ -57,20 +79,20 @@ export const translations = {
     // Philosophy section
     philosophy: {
       label: "The Philosophy",
-      title: "You don\u2019t need\neverything right now.",
-      p1: "A great collection is not assembled in one afternoon. It is built over time, each piece chosen with intention \u2014 marking a moment, a mood, a version of yourself you are growing into.",
-      p2: "Start with one. Wear it every day. Let it become part of how you carry yourself. The next piece will come when it is time.",
+      title: "The best collections\ntake time.",
+      p1: "Built over time, piece by piece, each one chosen with intention.",
+      p2: "Start with one. The rest will follow.",
     },
 
     // Pull quote
     pullQuote:
-      "\u201CThe most powerful jewellery is the kind that does not ask for attention. It simply belongs.\u201D",
+      "The most powerful jewellery\ndoesn\u2019t ask for attention.\nIt belongs.",
 
     // Coming soon
     comingSoon: {
       label: "What comes next",
-      title: "This is the first piece.\nNot the last.",
-      text: "New pieces are designed to layer with what came before. Nothing replaces. Everything adds. Sign up to know when the next one arrives.",
+      title: "Built over time.",
+      text: "New pieces arrive when they\u2019re ready, never to replace, only to add. Sign up to know when the next one arrives.",
     },
 
     // Newsletter
@@ -85,14 +107,14 @@ export const translations = {
     wearStory: {
       quote:
         "Wear it tomorrow. And the day after.\nLet it become part of how you move through the world.",
-      text: "This piece is designed to stay. Not for a season, not for an occasion \u2014 for your life. The chain will soften with wear. The clasp will become familiar. In time, you will forget you put it on. That is the point.",
+      text: "This piece is designed to stay. Not for a season, not for an occasion, for your life. The chain will soften with wear. The clasp will become familiar. In time, you will forget you put it on. That is the point.",
     },
 
     // PDP delicacy note
     delicacy: {
       label: "Made to be light",
       title: "Delicate by design.",
-      text: "This chain is fine because it is meant to be. Heavier jewellery announces itself. This piece whispers. It sits so close to the skin that it becomes part of your hand, not something sitting on top of it. That lightness is intentional \u2014 it is what makes the piece feel like yours from the first wear. Treat it gently. It will repay you with years of quiet presence.",
+      text: "This chain is fine because it is meant to be. Heavier jewellery announces itself. This piece whispers. It sits so close to the skin that it becomes part of your hand, not something sitting on top of it. That lightness is intentional, it is what makes the piece feel like yours from the first wear. Treat it gently. It will repay you with years of quiet presence.",
     },
 
     // Collection page
@@ -102,7 +124,7 @@ export const translations = {
       storyQuote:
         "We started with hand chains because hands are how you meet the world.",
       storyText:
-        "They hold, they gesture, they rest. A hand chain follows all of it \u2014 tracing the natural lines, accompanying every movement without interrupting it. This felt like the only honest place to begin.",
+        "They hold, they gesture, they rest. A hand chain follows all of it, tracing the natural lines, accompanying every movement without interrupting it. This felt like the only honest place to begin.",
       moreLabel: "This is the beginning",
       moreTitle: "More pieces are coming.",
       moreText:
@@ -112,12 +134,12 @@ export const translations = {
     // About page
     about: {
       opening:
-        "A great jewellery collection is not built all at once. It is built slowly, intentionally, and personally.",
+        "A great jewellery collection is not built all at once. It is built over time, with intention, and a personal hand.",
       beliefLabel: "What We Believe",
       beliefP1:
-        "We make jewellery that feels natural on the body and easy to wear daily. It elevates the wearer without overpowering them. The pieces never scream for attention \u2014 they sit close to the skin, catch light softly, and make you feel comfortable, put-together, and confident.",
+        "We make jewellery that feels natural on the body and easy to wear daily. It elevates the wearer without overpowering them. The pieces never scream for attention, they sit close to the skin, catch light softly, and make you feel comfortable, put-together, and confident.",
       beliefP2:
-        "Each piece marks a moment, a mood, or a phase. When layered together, those pieces tell a story. You build your stack the same way you build confidence and style. Slowly. Thoughtfully. Piece by piece.",
+        "Each piece marks a moment, a mood, or a phase. When layered together, those pieces tell a story. You build your stack the same way you build confidence and style. Over time. Thoughtfully. Piece by piece.",
       values: [
         {
           title: "Everyday Wear",
@@ -125,7 +147,7 @@ export const translations = {
         },
         {
           title: "Intentional Design",
-          text: "Nothing exists by accident. Every chain, link, and clasp is considered \u2014 not to impress, but to feel right. When jewellery feels right, it changes how you carry yourself.",
+          text: "Nothing exists by accident. Every chain, link, and clasp is considered, not to impress, but to feel right. When jewellery feels right, it changes how you carry yourself.",
         },
         {
           title: "Built to Layer",
@@ -168,7 +190,7 @@ export const translations = {
           excerpt:
             "The most powerful jewellery is the kind that does not ask for attention. It simply belongs on the body, as if it was always there.",
           content: [
-            "Confidence is not volume. It is certainty. The same is true of how we wear jewellery. A piece that sits close to the skin, that moves with the body, that catches light without demanding it \u2014 that is confidence made tangible.",
+            "Confidence is not volume. It is certainty. The same is true of how we wear jewellery. A piece that sits close to the skin, that moves with the body, that catches light without demanding it, that is confidence made tangible.",
             "Every chain, every link, every clasp is considered. Not to impress anyone. To feel right. When jewellery feels right on the body, it changes posture, gesture, presence. You stand a little differently. Your hand moves a little more deliberately.",
             "You do not need to explain it. You do not need anyone to notice. You know it is there, and that is enough.",
           ],
@@ -214,7 +236,7 @@ export const translations = {
     // Footer
     footer: {
       tagline:
-        "Minimalist, everyday jewellery designed to be worn and layered over time.",
+        "Minimalist, everyday jewellery designed to be worn and built over time.",
       stayInTouch: "Be the first to know.",
       copyright: "\u00A9 2026 Piece by Piece",
       privacy: "Privacy",
@@ -236,20 +258,40 @@ export const translations = {
 
     hero: {
       introducing: "Predstavljamo",
-      title: "Prvi komad",
+      title: "Komad koji ti treba",
+      titleLead: "",
+      titleAccent: "Komad",
+      titleTrail: "koji ti treba",
       subtitle:
-        "Lan\u010Di\u0107 za ruku za svaki dan. Tih, namjeran, tvoj.",
+        "Nje\u017Ean lan\u010Di\u0107 za ruku kojem se vra\u0107a\u0161 dan za danom.",
+      cta: "Kupi komad",
+    },
+
+    productHighlight: {
+      title: "Jedan komad. Beskrajno no\u0161enje.",
+      text: "Stvoren da se kre\u0107e s tobom, od jutra do ve\u010Deri, bez napora.",
+      cta: "Pogledaj detalje",
+    },
+
+    whyDifferent: {
+      label: "Za\u0161to je druga\u010Dije",
+      items: [
+        { title: "Otporno na vodu", text: "Stvoreno za svakodnevno no\u0161enje." },
+        { title: "Minimalno i bezvremensko", text: "Dizajnirano izvan trendova." },
+        { title: "Lagana udobnost", text: "Osjeti se kao ni\u0161ta, izgleda kao sve." },
+        { title: "Stvoreno da traje", text: "Kvaliteta na koju ne mora\u0161 misliti." },
+      ],
     },
 
     brandStatement:
-      "Dobar nakit se ne kupuje odjednom. Gradi se polako. Komad po komad.",
+      "Dobar nakit se ne kupuje odjednom, gradi se s vremenom. Komad po komad.",
 
     product: {
       label: "Lan\u010Di\u0107 za ruku 001",
       name: "Prvi komad",
       description:
-        "Lan\u010Di\u0107 za ruku dizajniran da se osjeti kao da je oduvijek bio tu. Prati liniju od zape\u0161\u0107a do prsta u jednom tihom potezu \u2014 hvata svjetlo kao ko\u017Ea. Ovdje po\u010Dinje tvoja kolekcija.",
-      viewPiece: "Pogledaj",
+        "Lan\u010Di\u0107 za ruku koji se osje\u0107a kao dio tebe.\nJedna tiha linija, od zape\u0161\u0107a do prsta.\nSuptilno. Namjerno. Tvoje.",
+      viewPiece: "Pogledaj detalje",
       addToBag: "Dodaj u ko\u0161aricu",
       added: "Dodano",
       material: "Materijal",
@@ -261,7 +303,7 @@ export const translations = {
         "14k pozla\u0107eni lanac (Zlato) ili sterling srebro (Srebro). Ukupna duljina podesiva izme\u0111u 16\u201318cm. Kopca jastog. \u0160irina lanca: 1mm. Ru\u010Dno izra\u0111eno s pa\u017Enjom.",
       care: "Njega",
       careContent:
-        "Ovaj komad je namjerno fin. Napravljen je da se osjeti, ne da se vidi s drugog kraja prostorije. Nosi ga svjesno \u2014 kao \u0161to bi nosila bilo \u0161to \u0161to cijeni\u0161. Izbjegavaj da se zakvaci za tkanine, patentne zatvara\u010De ili grube povr\u0161ine. Skini prije spavanja ili vje\u017Ebanja. Izbjegavaj dulji kontakt s vodom, parfemom i losionima. Spremi ravno kad ga ne nosi\u0161. Ovo nije krhkost. Ovo je lako\u0107a, prema dizajnu.",
+        "Ovaj komad je namjerno fin. Napravljen je da se osjeti, ne da se vidi s drugog kraja prostorije. Nosi ga svjesno, kao \u0161to bi nosila bilo \u0161to \u0161to cijeni\u0161. Izbjegavaj da se zakvaci za tkanine, patentne zatvara\u010De ili grube povr\u0161ine. Skini prije spavanja ili vje\u017Ebanja. Izbjegavaj dulji kontakt s vodom, parfemom i losionima. Spremi ravno kad ga ne nosi\u0161. Ovo nije krhkost. Ovo je lako\u0107a, prema dizajnu.",
       shippingLabel: "Dostava",
       shippingContent:
         "Besplatna dostava na sve narud\u017Ebe. Isporuka u 3\u20135 radnih dana. Svaki komad dolazi u brendiranoj lanenoj vre\u0107ici.",
@@ -273,18 +315,18 @@ export const translations = {
 
     philosophy: {
       label: "Filozofija",
-      title: "Ne treba\u0161 sve\nodmah.",
-      p1: "Velika kolekcija se ne sastavlja u jednom popodnevu. Gradi se s vremenom, svaki komad odabran s namjerom \u2014 ozna\u010Davaju\u0107i trenutak, raspolo\u017Eenje, verziju sebe u koju raste\u0161.",
-      p2: "Po\u010Dni s jednim. Nosi ga svaki dan. Neka postane dio na\u010Dina na koji se dr\u017Ei\u0161. Sljede\u0107i komad do\u0107i \u0107e kad do\u0111e vrijeme.",
+      title: "Najbolje kolekcije\nzahtijevaju vrijeme.",
+      p1: "Gra\u0111eno s vremenom, komad po komad, svaki odabran s namjerom.",
+      p2: "Po\u010Dni s jednim. Ostalo \u0107e do\u0107i samo.",
     },
 
     pullQuote:
-      "\u201ENajmo\u0107niji nakit je onaj koji ne tra\u017Ei pa\u017Enju. Jednostavno pripada.\u201C",
+      "Najmo\u0107niji nakit\nne tra\u017Ei pa\u017Enju.\nPripada.",
 
     comingSoon: {
       label: "\u0160to dolazi dalje",
-      title: "Ovo je prvi komad.\nNe i posljednji.",
-      text: "Novi komadi su dizajnirani da se sla\u017Eu s prethodnim. Ni\u0161ta ne zamjenjuje. Sve nadogra\u0111uje. Prijavi se da sazna\u0161 kad sljede\u0107i stigne.",
+      title: "Gra\u0111eno s vremenom.",
+      text: "Novi komadi dolaze kad su spremni, nikad da zamijene, samo da nadograde. Prijavi se da sazna\u0161 kad sljede\u0107i stigne.",
     },
 
     newsletter: {
@@ -297,13 +339,13 @@ export const translations = {
     wearStory: {
       quote:
         "Nosi ga sutra. I prekosutra.\nNeka postane dio na\u010Dina na koji se kre\u0107e\u0161 kroz svijet.",
-      text: "Ovaj komad je napravljen da ostane. Ne za sezonu, ne za priliku \u2014 za tvoj \u017Eivot. Lanac \u0107e omek\u0161ati no\u0161enjem. Kopca \u0107e postati poznata. S vremenom \u0107e\u0161 zaboraviti da si ga stavila. To je poanta.",
+      text: "Ovaj komad je napravljen da ostane. Ne za sezonu, ne za priliku, za tvoj \u017Eivot. Lanac \u0107e omek\u0161ati no\u0161enjem. Kopca \u0107e postati poznata. S vremenom \u0107e\u0161 zaboraviti da si ga stavila. To je poanta.",
     },
 
     delicacy: {
       label: "Stvoreno da bude lagano",
       title: "Nježno prema dizajnu.",
-      text: "Ovaj lanac je fin jer tako treba biti. Te\u017Ei nakit najavljuje sebe. Ovaj komad \u0161ap\u0107e. Sjedi toliko blizu ko\u017Ee da postaje dio tvoje ruke, a ne ne\u0161to \u0161to sjedi na njoj. Ta lako\u0107a je namjerna \u2014 to je ono \u0161to \u010Dini da se komad osjeti kao tvoj od prvog no\u0161enja. Postupaj s njim ne\u017Eno. Uzvratit \u0107e ti godinama tihe prisutnosti.",
+      text: "Ovaj lanac je fin jer tako treba biti. Te\u017Ei nakit najavljuje sebe. Ovaj komad \u0161ap\u0107e. Sjedi toliko blizu ko\u017Ee da postaje dio tvoje ruke, a ne ne\u0161to \u0161to sjedi na njoj. Ta lako\u0107a je namjerna, to je ono \u0161to \u010Dini da se komad osjeti kao tvoj od prvog no\u0161enja. Postupaj s njim ne\u017Eno. Uzvratit \u0107e ti godinama tihe prisutnosti.",
     },
 
     collection: {
@@ -312,7 +354,7 @@ export const translations = {
       storyQuote:
         "Po\u010Deli smo s lan\u010Di\u0107ima za ruku jer su ruke na\u010Din na koji upoznaje\u0161 svijet.",
       storyText:
-        "Dr\u017Ee, gestikuliraju, miruju. Lan\u010Di\u0107 za ruku prati sve to \u2014 prateci prirodne linije, prate\u0107i svaki pokret bez prekidanja. Ovo se \u010Dinilo kao jedino iskreno mjesto za po\u010Detak.",
+        "Dr\u017Ee, gestikuliraju, miruju. Lan\u010Di\u0107 za ruku prati sve to, prateci prirodne linije, prate\u0107i svaki pokret bez prekidanja. Ovo se \u010Dinilo kao jedino iskreno mjesto za po\u010Detak.",
       moreLabel: "Ovo je po\u010Detak",
       moreTitle: "Dolaze novi komadi.",
       moreText:
@@ -321,10 +363,10 @@ export const translations = {
 
     about: {
       opening:
-        "Velika kolekcija nakita ne nastaje odjednom. Gradi se polako, namjerno i osobno.",
+        "Velika kolekcija nakita ne nastaje odjednom. Gradi se s vremenom, s namjerom i osobno.",
       beliefLabel: "U \u0161to vjerujemo",
       beliefP1:
-        "Pravimo nakit koji se osje\u0107a prirodno na tijelu i lako se nosi svaki dan. Uzdi\u017Ee osobu koja ga nosi bez da je zasjeni. Komadi nikada ne vi\u010Du za pa\u017Enjom \u2014 sjede blizu ko\u017Ee, ne\u017Eno hvataju svjetlo i daju osje\u0107aj ugode, urednosti i samopouzdanja.",
+        "Pravimo nakit koji se osje\u0107a prirodno na tijelu i lako se nosi svaki dan. Uzdi\u017Ee osobu koja ga nosi bez da je zasjeni. Komadi nikada ne vi\u010Du za pa\u017Enjom, sjede blizu ko\u017Ee, ne\u017Eno hvataju svjetlo i daju osje\u0107aj ugode, urednosti i samopouzdanja.",
       beliefP2:
         "Svaki komad obilje\u017Eava trenutak, raspolo\u017Eenje ili fazu. Kad se sla\u017Eu zajedno, ti komadi pri\u010Daju pri\u010Du. Gradi\u0161 svoj stack na isti na\u010Din na koji gradi\u0161 samopouzdanje i stil. Polako. Promi\u0161ljeno. Komad po komad.",
       values: [
@@ -334,7 +376,7 @@ export const translations = {
         },
         {
           title: "Namjeran dizajn",
-          text: "Ni\u0161ta ne postoji slu\u010Dajno. Svaki lanac, karika i kopca su promi\u0161ljeni \u2014 ne da impresioniraju, nego da se osjete ispravno. Kad se nakit osjeti ispravno, mijenja na\u010Din na koji se dr\u017Ei\u0161.",
+          text: "Ni\u0161ta ne postoji slu\u010Dajno. Svaki lanac, karika i kopca su promi\u0161ljeni, ne da impresioniraju, nego da se osjete ispravno. Kad se nakit osjeti ispravno, mijenja na\u010Din na koji se dr\u017Ei\u0161.",
         },
         {
           title: "Stvoreno za slaganje",
@@ -376,7 +418,7 @@ export const translations = {
           excerpt:
             "Najmo\u0107niji nakit je onaj koji ne tra\u017Ei pa\u017Enju. Jednostavno pripada tijelu, kao da je oduvijek bio tu.",
           content: [
-            "Samopouzdanje nije glasno\u0107a. To je sigurnost. Isto vrijedi i za na\u010Din na koji nosimo nakit. Komad koji sjedi blizu ko\u017Ee, koji se kre\u0107e s tijelom, koji hvata svjetlo bez da ga zahtijeva \u2014 to je samopouzdanje u\u010Dinjeno opipljivim.",
+            "Samopouzdanje nije glasno\u0107a. To je sigurnost. Isto vrijedi i za na\u010Din na koji nosimo nakit. Komad koji sjedi blizu ko\u017Ee, koji se kre\u0107e s tijelom, koji hvata svjetlo bez da ga zahtijeva, to je samopouzdanje u\u010Dinjeno opipljivim.",
             "Svaki lanac, svaka karika, svaka kopca je promi\u0161ljena. Ne da impresionira nekoga. Da se osjeti ispravno. Kad se nakit osjeti ispravno na tijelu, mijenja dr\u017Eanje, gestu, prisutnost. Stoji\u0161 malo druga\u010Dije. Tvoja ruka se kre\u0107e malo namjernije.",
             "Ne treba\u0161 to obja\u0161njavati. Ne treba\u0161 da itko primijeti. Zna\u0161 da je tu, i to je dovoljno.",
           ],
@@ -419,7 +461,7 @@ export const translations = {
 
     footer: {
       tagline:
-        "Minimalan, svakodnevni nakit dizajniran da se nosi i sla\u017Ee s vremenom.",
+        "Minimalan, svakodnevni nakit dizajniran da se nosi i gradi s vremenom.",
       stayInTouch: "Budi prva koja \u0107e saznati.",
       copyright: "\u00A9 2026 Piece by Piece",
       privacy: "Privatnost",

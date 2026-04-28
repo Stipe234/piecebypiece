@@ -60,7 +60,7 @@ export default function HandChainsCollection() {
               <h2 className="font-heading text-3xl md:text-4xl font-light tracking-wide mb-4">
                 {featuredContent.name}
               </h2>
-              <p className="text-sm md:text-base text-[var(--color-text-secondary)] leading-[1.8] mb-6 max-w-md">
+              <p className="text-sm md:text-base text-[var(--color-text-secondary)] leading-[1.8] mb-6 max-w-md whitespace-pre-line">
                 {featuredContent.description}
               </p>
               <p className="text-lg font-medium mb-8">€{displayPrice}</p>

@@ -61,13 +61,13 @@ export const products: Product[] = [
         label: "Hand Chain 001",
         name: "The First Piece",
         description:
-          "A hand chain designed to feel like it was always there. It traces from wrist to finger in a single, quiet line \u2014 catching light the way skin does. This is where your collection begins.",
-        shortDescription: "Where your collection begins.",
+          "A hand chain that feels like part of you.\nOne quiet line, from wrist to finger.\nSubtle. Intentional. Yours.",
+        shortDescription: "A hand chain that feels like part of you.",
         details: {
           materialsAndDimensions:
             "14k gold-filled chain (Gold) or sterling silver (Silver). Total length adjustable between 16\u201318cm. Lobster clasp. Chain width: 1mm. Handmade with care.",
           care:
-            "This piece is deliberately fine. It is meant to be felt, not seen from across the room. Wear it with awareness \u2014 the way you would anything you value. Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn. This is not fragility. It is lightness, by design.",
+            "This piece is deliberately fine. It is meant to be felt, not seen from across the room. Wear it with awareness, the way you would anything you value. Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn. This is not fragility. It is lightness, by design.",
           shipping:
             "Complimentary shipping on all orders. Delivered in 3\u20135 business days. Each piece arrives in a branded linen pouch.",
         },
@@ -76,13 +76,13 @@ export const products: Product[] = [
         label: "Lan\u010Di\u0107 za ruku 001",
         name: "Prvi komad",
         description:
-          "Lan\u010Di\u0107 za ruku dizajniran da se osjeti kao da je oduvijek bio tu. Prati liniju od zape\u0161\u0107a do prsta u jednom tihom potezu \u2014 hvata svjetlo kao ko\u017Ea. Ovdje po\u010Dinje tvoja kolekcija.",
-        shortDescription: "Mjesto gdje tvoja kolekcija po\u010Dinje.",
+          "Lan\u010Di\u0107 za ruku koji se osje\u0107a kao dio tebe.\nJedna tiha linija, od zape\u0161\u0107a do prsta.\nSuptilno. Namjerno. Tvoje.",
+        shortDescription: "Lan\u010Di\u0107 za ruku koji se osje\u0107a kao dio tebe.",
         details: {
           materialsAndDimensions:
             "14k pozla\u0107eni lanac (Zlato) ili sterling srebro (Srebro). Ukupna duljina podesiva izme\u0111u 16\u201318cm. Kopca jastog. \u0160irina lanca: 1mm. Ru\u010Dno izra\u0111eno s pa\u017Enjom.",
           care:
-            "Ovaj komad je namjerno fin. Napravljen je da se osjeti, ne da se vidi s drugog kraja prostorije. Nosi ga svjesno \u2014 kao \u0161to bi nosila bilo \u0161to \u0161to cijeni\u0161. Izbjegavaj da se zakvaci za tkanine, patentne zatvara\u010De ili grube povr\u0161ine. Skini prije spavanja ili vje\u017Ebanja. Izbjegavaj dulji kontakt s vodom, parfemom i losionima. Spremi ravno kad ga ne nosi\u0161. Ovo nije krhkost. Ovo je lako\u0107a, prema dizajnu.",
+            "Ovaj komad je namjerno fin. Napravljen je da se osjeti, ne da se vidi s drugog kraja prostorije. Nosi ga svjesno, kao \u0161to bi nosila bilo \u0161to \u0161to cijeni\u0161. Izbjegavaj da se zakvaci za tkanine, patentne zatvara\u010De ili grube povr\u0161ine. Skini prije spavanja ili vje\u017Ebanja. Izbjegavaj dulji kontakt s vodom, parfemom i losionima. Spremi ravno kad ga ne nosi\u0161. Ovo nije krhkost. Ovo je lako\u0107a, prema dizajnu.",
           shipping:
             "Besplatna dostava na sve narud\u017Ebe. Isporuka u 3\u20135 radnih dana. Svaki komad dolazi u brendiranoj lanenoj vre\u0107ici.",
         },

@@ -49,7 +49,7 @@ export const journalEntries: JournalEntry[] = [
     date: "2026-02-15",
     image: "/images/detail.jpg",
     content: [
-      "Confidence is not volume. It is certainty. The same is true of how we wear jewellery. A piece that sits close to the skin, that moves with the body, that catches light without demanding it \u2014 that is confidence made tangible.",
+      "Confidence is not volume. It is certainty. The same is true of how we wear jewellery. A piece that sits close to the skin, that moves with the body, that catches light without demanding it, that is confidence made tangible.",
       "Every chain, every link, every clasp is considered. Not to impress anyone. To feel right. When jewellery feels right on the body, it changes posture, gesture, presence. You stand a little differently. Your hand moves a little more deliberately.",
       "You do not need to explain it. You do not need anyone to notice. You know it is there, and that is enough.",
     ],

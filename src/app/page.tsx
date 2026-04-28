@@ -49,7 +49,7 @@ export default function Home() {
         <ScrollReveal>
           <div className="max-w-[640px] mx-auto text-center">
             <hr className="hr-accent mx-auto mb-8 md:mb-10" />
-            <p className="pull-quote text-xl md:text-[2rem] leading-[1.5] text-[var(--color-text-primary)]">
+            <p className="pull-quote text-xl md:text-[2rem] leading-[1.5]">
               {t.brandStatement}
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function Home() {
             <h2 className="font-heading text-2xl md:text-4xl font-light tracking-wide mb-3 md:mb-4">
               {featuredContent.name}
             </h2>
-            <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed max-w-md mx-auto mb-6 md:mb-8">
+            <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed max-w-md mx-auto mb-6 md:mb-8 whitespace-pre-line">
               {featuredContent.description}
             </p>
             <p className="text-lg font-medium mb-6 md:mb-8">€{displayPrice}</p>
@@ -143,7 +143,7 @@ export default function Home() {
       <section className="py-20 md:py-44 px-6">
         <ScrollReveal>
           <div className="max-w-[720px] mx-auto text-center">
-            <blockquote className="pull-quote text-xl md:text-4xl text-[var(--color-text-primary)] leading-[1.4]">
+            <blockquote className="pull-quote text-xl md:text-4xl text-[var(--color-text-primary)] leading-[1.4] whitespace-pre-line">
               {t.pullQuote}
             </blockquote>
           </div>
@@ -187,7 +187,7 @@ export default function Home() {
       <section className="bg-[var(--color-bg-secondary)] py-16 md:py-32 px-6">
         <ScrollReveal>
           <div className="max-w-sm mx-auto text-center">
-            <p className="pull-quote text-lg md:text-2xl mb-6 md:mb-8 text-[var(--color-text-primary)] whitespace-pre-line">
+            <p className="pull-quote text-lg md:text-2xl mb-6 md:mb-8 whitespace-pre-line">
               {t.newsletter.title}
             </p>
             <NewsletterForm />

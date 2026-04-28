@@ -66,7 +66,7 @@ export default function ProductPage() {
               ) : null}
             </div>
 
-            <p className="text-sm text-[var(--color-text-secondary)] leading-[1.8]">
+            <p className="text-sm text-[var(--color-text-secondary)] leading-[1.8] whitespace-pre-line">
               {productContent.description}
             </p>
 
