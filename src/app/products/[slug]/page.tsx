@@ -4,14 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
-import { getProduct, getProductContent } from "@/data/products";
+import { getProduct, getProductContent, getLayersWithProducts } from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import ProductGallery from "@/components/product/ProductGallery";
 import VariantSelector from "@/components/product/VariantSelector";
-import AddToCartButton from "@/components/product/AddToCartButton";
+import LayersWithRow from "@/components/product/LayersWithRow";
 import Accordion from "@/components/ui/Accordion";
 import ScrollReveal from "@/components/ui/ScrollReveal";
-import { useProductAvailability } from "@/hooks/useProductAvailability";
+import WaitlistForm from "@/components/ui/WaitlistForm";
 
 export default function ProductPage() {
   const params = useParams();
@@ -20,18 +20,10 @@ export default function ProductPage() {
 
   if (!product) notFound();
   const productContent = getProductContent(product, locale);
-  const { availability, loading } = useProductAvailability(product.id);
-  const displayPrice = availability?.priceCents != null ? availability.priceCents / 100 : product.price;
-  const isHidden = availability?.isActive === false;
+  const layersWith = getLayersWithProducts(product);
 
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [selectedLength, setSelectedLength] = useState(product.lengths[0]);
-  const isSoldOut = availability?.isSoldOut ?? false;
-  const stockLabel = isSoldOut
-    ? t.product.soldOut
-    : availability && availability.availableUnits <= 3
-      ? t.product.onlyUnitsLeft.replace("{count}", String(availability.availableUnits))
-      : t.product.liveStock;
 
   const materialLabels: Record<string, string> = {
     Gold: t.product.gold,
@@ -55,15 +47,9 @@ export default function ProductPage() {
               <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-2 md:mb-3">
                 {productContent.label}
               </p>
-              <h1 className="font-heading text-2xl md:text-4xl font-light tracking-wide mb-1 md:mb-2">
+              <h1 className="font-heading text-2xl md:text-4xl font-light tracking-wide">
                 {productContent.name}
               </h1>
-              <p className="text-base md:text-lg font-medium">€{displayPrice}</p>
-              {isHidden ? (
-                <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#8a4a52]">
-                  Currently unavailable
-                </p>
-              ) : null}
             </div>
 
             <p className="text-sm text-[var(--color-text-secondary)] leading-[1.8] whitespace-pre-line">
@@ -88,17 +74,12 @@ export default function ProductPage() {
               />
             </div>
 
-            <AddToCartButton
-              product={product}
-              selectedMaterial={selectedMaterial}
-              selectedLength={selectedLength}
-              disabled={isSoldOut}
-              label={isSoldOut ? t.product.soldOut : undefined}
-            />
-
-            <p className="text-xs text-[var(--color-text-tertiary)]">
-              {loading ? t.product.liveStock : stockLabel}
-            </p>
+            <div>
+              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">
+                {t.waitlist.text}
+              </p>
+              <WaitlistForm editionName={productContent.name} />
+            </div>
 
             <Accordion items={accordionItems} />
           </div>
@@ -107,7 +88,7 @@ export default function ProductPage() {
 
       <section className="mt-4 md:mt-16">
         <ScrollReveal>
-          <div className="relative aspect-[4/3] md:aspect-[21/9] overflow-hidden">
+          <div className="img-tactile relative aspect-[4/3] md:aspect-[21/9] overflow-hidden">
             <Image
               src="/images/lifestyle.jpg"
               alt="Hand chain worn in everyday life"
@@ -133,37 +114,15 @@ export default function ProductPage() {
         </ScrollReveal>
       </section>
 
-      {/* ── Delicacy Note ── */}
-      <section className="bg-[var(--color-bg-secondary)] py-16 md:py-28 px-6">
-        <ScrollReveal>
-          <div className="max-w-[640px] mx-auto text-center">
-            <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-4 md:mb-6">
-              {t.delicacy.label}
-            </p>
-            <h3 className="font-heading text-xl md:text-3xl font-light tracking-wide mb-4 md:mb-6">
-              {t.delicacy.title}
-            </h3>
-            <p className="text-sm text-[var(--color-text-secondary)] leading-[1.8] max-w-md mx-auto">
-              {t.delicacy.text}
-            </p>
-          </div>
-        </ScrollReveal>
-      </section>
-
-      <section className="px-4 md:px-0 pb-16 md:pb-32 pt-8 md:pt-16">
-        <div className="max-w-[1440px] mx-auto grid grid-cols-2 gap-1 md:gap-2">
+      {layersWith.length > 0 && (
+        <section className="px-4 md:px-12 pt-8 md:pt-16 pb-20 md:pb-32">
           <ScrollReveal>
-            <div className="relative aspect-square overflow-hidden">
-              <Image src="/images/detail.jpg" alt="Detail" fill className="object-cover" sizes="50vw" />
+            <div className="max-w-[1100px] mx-auto">
+              <LayersWithRow products={layersWith} title={t.product.layersWith} />
             </div>
           </ScrollReveal>
-          <ScrollReveal delay={150}>
-            <div className="relative aspect-square overflow-hidden">
-              <Image src="/images/intimate.jpg" alt="Detail" fill className="object-cover" sizes="50vw" />
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

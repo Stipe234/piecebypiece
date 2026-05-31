@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  /* Backgrounds */
-  --color-bg-primary: #FDFCFA;
-  --color-bg-secondary: #F7F5F0;
-  --color-bg-tertiary: #EFEBE4;
+  /* Backgrounds — warm daylight cream */
+  --color-bg-primary: #FCFAF5;
+  --color-bg-secondary: #F4F0E8;
+  --color-bg-tertiary: #EBE6DC;
 
   /* Surfaces */
   --color-surface-cream: #F5F0E8;
@@ -228,4 +228,114 @@ html, body {
 /* Smooth momentum scrolling on iOS */
 * {
   -webkit-overflow-scrolling: touch;
+}
+
+/* ========================================
+   Cinematic hero — slow Ken Burns drift
+   ======================================== */
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+
+/* Applied to the inner image wrapper so it composes with the
+   1.5s entrance fade on the parent. A very slow, barely-perceptible
+   push-in that makes the still feel alive without distracting. */
+.hero-drift {
+  animation: hero-drift 18s ease-out forwards;
+  will-change: transform;
+}
+
+/* ========================================
+   Scroll cue — a quiet invitation to keep going
+   ======================================== */
+
+@keyframes scroll-cue {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(8px);
+  }
+}
+
+.scroll-cue {
+  animation: scroll-cue 2.6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  animation-delay: 1.6s;
+}
+
+/* ========================================
+   Tactile imagery — slow gallery hover
+   ======================================== */
+
+.img-tactile {
+  overflow: hidden;
+}
+
+.img-tactile img {
+  transition: transform 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .img-tactile:hover img {
+    transform: scale(1.035);
+  }
+}
+
+/* ========================================
+   Link underline — draws in from the left
+   ======================================== */
+
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  padding-bottom: 2px;
+}
+
+@media (hover: hover) {
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+}
+
+/* ========================================
+   Restraint — honour reduced-motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .scroll-reveal,
+  .scroll-reveal-fade,
+  .scroll-reveal-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hero-text-enter,
+  .hero-text-enter-delayed,
+  .hero-image-enter,
+  .hero-drift,
+  .scroll-cue,
+  .img-tactile img {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }

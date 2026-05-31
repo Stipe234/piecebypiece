@@ -13,17 +13,30 @@ export const translations = {
     },
 
     // Announcement
-    announcement: "Complimentary shipping on all orders",
+    announcement: "A limited release — join the waitlist",
 
     // Hero
     hero: {
       introducing: "Introducing",
+      slogan: "Built Over Time",
+      shopAll: "Shop All",
       title: "The Piece You Need",
       titleLead: "the",
       titleAccent: "Piece",
       titleTrail: "you need",
       subtitle: "A delicate hand chain you return to, day after day.",
       cta: "Shop the Piece",
+    },
+
+    // Waitlist
+    waitlist: {
+      cta: "Join the Waitlist",
+      title: "Join the waitlist",
+      text: "Each edition is released in limited numbers. Add your name to be the first when it opens.",
+      placeholder: "Email address",
+      submit: "Join",
+      thanks: "You're on the list.",
+      note: "No payment now. We'll write to you before it opens.",
     },
 
     // Brand statement
@@ -74,6 +87,7 @@ export const translations = {
       unavailable: "Currently unavailable",
       onlyUnitsLeft: "Only {count} left",
       liveStock: "Live stock updates at checkout.",
+      layersWith: "Layers With",
     },
 
     // Philosophy section
@@ -235,6 +249,7 @@ export const translations = {
 
     // Footer
     footer: {
+      closing: "Worn daily. Built slowly. Piece by piece.",
       tagline:
         "Minimalist, everyday jewellery designed to be worn and built over time.",
       stayInTouch: "Be the first to know.",
@@ -254,10 +269,12 @@ export const translations = {
       contact: "Kontakt",
     },
 
-    announcement: "Besplatna dostava na sve narud\u017Ebe",
+    announcement: "Ograni\u010Deno izdanje \u2014 pridru\u017Ei se listi \u010Dekanja",
 
     hero: {
       introducing: "Predstavljamo",
+      slogan: "Gra\u0111eno s vremenom",
+      shopAll: "Pogledaj sve",
       title: "Komad koji ti treba",
       titleLead: "",
       titleAccent: "Komad",
@@ -265,6 +282,16 @@ export const translations = {
       subtitle:
         "Nje\u017Ean lan\u010Di\u0107 za ruku kojem se vra\u0107a\u0161 dan za danom.",
       cta: "Kupi komad",
+    },
+
+    waitlist: {
+      cta: "Pridru\u017Ei se listi \u010Dekanja",
+      title: "Pridru\u017Ei se listi \u010Dekanja",
+      text: "Svaka edicija izlazi u ograni\u010Denom broju. Ostavi svoje ime da bude\u0161 prva kad se otvori.",
+      placeholder: "Email adresa",
+      submit: "Prijavi se",
+      thanks: "Na listi si.",
+      note: "Bez pla\u0107anja sada. Javit \u0107emo ti se prije otvaranja.",
     },
 
     productHighlight: {
@@ -311,6 +338,7 @@ export const translations = {
       unavailable: "Trenutno nedostupno",
       onlyUnitsLeft: "Ostalo jo\u0161 {count}",
       liveStock: "Stanje se provjerava u stvarnom vremenu pri naplati.",
+      layersWith: "Sla\u017ee se s",
     },
 
     philosophy: {
@@ -460,6 +488,7 @@ export const translations = {
     },
 
     footer: {
+      closing: "No\u0161en svaki dan. Gra\u0111en polako. Komad po komad.",
       tagline:
         "Minimalan, svakodnevni nakit dizajniran da se nosi i gradi s vremenom.",
       stayInTouch: "Budi prva koja \u0107e saznati.",
