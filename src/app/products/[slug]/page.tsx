@@ -23,11 +23,16 @@ export default function ProductPage() {
   const layersWith = getLayersWithProducts(product);
 
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
-  const [selectedLength, setSelectedLength] = useState(product.lengths[0]);
+  const [selectedStyle, setSelectedStyle] = useState(product.styles[0]);
 
   const materialLabels: Record<string, string> = {
     Gold: t.product.gold,
     Silver: t.product.silver,
+  };
+
+  const styleLabels: Record<string, string> = {
+    Static: t.product.static,
+    Dangling: t.product.dangling,
   };
 
   const accordionItems = [
@@ -52,12 +57,6 @@ export default function ProductPage() {
               </h1>
             </div>
 
-            <p className="text-sm text-[var(--color-text-secondary)] leading-[1.8] whitespace-pre-line">
-              {productContent.description}
-            </p>
-
-            <hr className="hr-accent" />
-
             <div className="flex flex-col gap-4 md:gap-5">
               <VariantSelector
                 label={t.product.material}
@@ -67,10 +66,11 @@ export default function ProductPage() {
                 displayLabels={materialLabels}
               />
               <VariantSelector
-                label={t.product.length}
-                options={product.lengths}
-                selected={selectedLength}
-                onSelect={setSelectedLength}
+                label={t.product.style}
+                options={product.styles}
+                selected={selectedStyle}
+                onSelect={setSelectedStyle}
+                displayLabels={styleLabels}
               />
             </div>
 

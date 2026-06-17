@@ -6,10 +6,15 @@ export const translations = {
     nav: {
       shop: "Shop",
       about: "About",
+      ourStory: "Our Story",
       journal: "Journal",
       care: "Care",
       shipping: "Shipping",
+      returns: "Returns",
       contact: "Contact",
+      instagram: "Instagram",
+      search: "Search",
+      cart: "Cart",
     },
 
     // Announcement
@@ -37,6 +42,56 @@ export const translations = {
       submit: "Join",
       thanks: "You're on the list.",
       note: "No payment now. We'll write to you before it opens.",
+    },
+
+    // Homepage
+    home: {
+      hero: {
+        headline: "Built Over Time",
+        body: "Jewelry designed to be collected slowly, worn daily, and layered intentionally.",
+        cta: "Shop Hand Chains",
+      },
+      trust: ["Waterproof", "Tarnish Resistant", "Designed For Everyday Wear", "Made To Layer"],
+      philosophy: {
+        headline: "Good jewelry takes time.",
+        body: [
+          "The best collections aren't built overnight.",
+          "Each piece is designed to live alongside the next, creating a stack that becomes uniquely yours.",
+          "You don't need everything today.",
+          "Start with one piece.",
+          "Build your collection slowly.",
+          "Piece by Piece.",
+        ],
+      },
+      collectionTitle: "The Collection",
+      story: {
+        headline: "Jewelry with meaning.\nMade for every day.",
+        body: [
+          "The best pieces aren't saved for special occasions.",
+          "They become part of your life.",
+          "Worn daily.",
+          "Collected slowly.",
+          "Built over time.",
+        ],
+        cta: "Our Story",
+      },
+      why: {
+        title: "Why Hand Chains",
+        body: [
+          "A hand chain moves differently.",
+          "It catches the light when you reach for your coffee.",
+          "When you gesture.",
+          "When you touch.",
+          "When you create.",
+          "Subtle enough to forget you're wearing.",
+          "Distinct enough to never go unnoticed.",
+        ],
+      },
+      closing: {
+        headline: "Start your stack.",
+        sub: "One piece at a time.",
+        cta: "Shop Hand Chains",
+      },
     },
 
     // Brand statement
@@ -72,8 +127,11 @@ export const translations = {
       added: "Added",
       material: "Material",
       length: "Length",
-      gold: "Gold",
-      silver: "Silver",
+      style: "Style",
+      static: "Static",
+      dangling: "Dangling",
+      gold: "Gold Plated",
+      silver: "Silver Plated",
       materialsAndDimensions: "Materials & Dimensions",
       materialsAndDimensionsContent:
         "14k gold-filled chain (Gold) or sterling silver (Silver). Total length adjustable between 16\u201318cm. Lobster clasp. Chain width: 1mm. Handmade with care.",
@@ -251,7 +309,7 @@ export const translations = {
     footer: {
       closing: "Worn daily. Built slowly. Piece by piece.",
       tagline:
-        "Minimalist, everyday jewellery designed to be worn and built over time.",
+        "Jewelry designed to be collected slowly and worn every day.",
       stayInTouch: "Be the first to know.",
       copyright: "\u00A9 2026 Piece by Piece",
       privacy: "Privacy",
@@ -263,10 +321,15 @@ export const translations = {
     nav: {
       shop: "Trgovina",
       about: "O nama",
+      ourStory: "Naša priča",
       journal: "Journal",
       care: "Njega",
       shipping: "Dostava",
+      returns: "Povrati",
       contact: "Kontakt",
+      instagram: "Instagram",
+      search: "Pretraži",
+      cart: "Košarica",
     },
 
     announcement: "Ograni\u010Deno izdanje \u2014 pridru\u017Ei se listi \u010Dekanja",
@@ -292,6 +355,55 @@ export const translations = {
       submit: "Prijavi se",
       thanks: "Na listi si.",
       note: "Bez pla\u0107anja sada. Javit \u0107emo ti se prije otvaranja.",
+    },
+
+    home: {
+      hero: {
+        headline: "Gra\u0111eno s vremenom",
+        body: "Nakit stvoren da se skuplja polako, nosi svaki dan i sloji s namjerom.",
+        cta: "Kupi lan\u010di\u0107e za ruku",
+      },
+      trust: ["Vodootporno", "Otporno na tamnjenje", "Za svakodnevno no\u0161enje", "Stvoreno za slaganje"],
+      philosophy: {
+        headline: "Dobar nakit zahtijeva vrijeme.",
+        body: [
+          "Najbolje kolekcije ne grade se preko no\u0107i.",
+          "Svaki komad dizajniran je da \u017eivi uz sljede\u0107i, stvaraju\u0107i stack koji postaje jedinstveno tvoj.",
+          "Ne treba\u0161 sve danas.",
+          "Po\u010dni s jednim komadom.",
+          "Gradi svoju kolekciju polako.",
+          "Komad po komad.",
+        ],
+      },
+      collectionTitle: "Kolekcija",
+      story: {
+        headline: "Nakit sa zna\u010denjem.\nStvoren za svaki dan.",
+        body: [
+          "Najbolji komadi ne \u010duvaju se za posebne prilike.",
+          "Postaju dio tvog \u017eivota.",
+          "No\u0161eni svaki dan.",
+          "Skupljani polako.",
+          "Gra\u0111eni s vremenom.",
+        ],
+        cta: "Na\u0161a pri\u010da",
+      },
+      why: {
+        title: "Za\u0161to lan\u010di\u0107i za ruku",
+        body: [
+          "Lan\u010di\u0107 za ruku kre\u0107e se druga\u010dije.",
+          "Hvata svjetlo kad posegne\u0161 za kavom.",
+          "Kad gestikulira\u0161.",
+          "Kad dodiruje\u0161.",
+          "Kad stvara\u0161.",
+          "Dovoljno suptilan da zaboravi\u0161 da ga nosi\u0161.",
+          "Dovoljno poseban da nikad ne pro\u0111e nezapa\u017eeno.",
+        ],
+      },
+      closing: {
+        headline: "Zapo\u010dni svoj stack.",
+        sub: "Jedan komad po jedan.",
+        cta: "Kupi lan\u010di\u0107e za ruku",
+      },
     },
 
     productHighlight: {
@@ -323,8 +435,11 @@ export const translations = {
       added: "Dodano",
       material: "Materijal",
       length: "Duljina",
-      gold: "Zlato",
-      silver: "Srebro",
+      style: "Stil",
+      static: "Stati\u010dan",
+      dangling: "Vise\u0107i",
+      gold: "Pozla\u0107eno",
+      silver: "Posrebreno",
       materialsAndDimensions: "Materijali i dimenzije",
       materialsAndDimensionsContent:
         "14k pozla\u0107eni lanac (Zlato) ili sterling srebro (Srebro). Ukupna duljina podesiva izme\u0111u 16\u201318cm. Kopca jastog. \u0160irina lanca: 1mm. Ru\u010Dno izra\u0111eno s pa\u017Enjom.",
@@ -490,7 +605,7 @@ export const translations = {
     footer: {
       closing: "No\u0161en svaki dan. Gra\u0111en polako. Komad po komad.",
       tagline:
-        "Minimalan, svakodnevni nakit dizajniran da se nosi i gradi s vremenom.",
+        "Nakit stvoren da se skuplja polako i nosi svaki dan.",
       stayInTouch: "Budi prva koja \u0107e saznati.",
       copyright: "\u00A9 2026 Piece by Piece",
       privacy: "Privatnost",

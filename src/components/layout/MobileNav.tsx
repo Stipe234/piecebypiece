@@ -38,8 +38,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
         <nav className="flex flex-col px-8 gap-8">
           {[
             { href: "/collections/hand-chains", label: t.nav.shop },
-            { href: "/about", label: t.nav.about },
-            { href: "/journal", label: t.nav.journal },
+            { href: "/about", label: t.nav.ourStory },
           ].map((link) => (
             <Link
               key={link.href}
@@ -54,9 +53,10 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
         <div className="absolute bottom-12 left-8 right-8">
           <hr className="hr-accent mb-6" />
           <nav className="flex flex-col gap-3 mb-6">
-            <Link href="/pages/care" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.care}</Link>
-            <Link href="/pages/shipping-returns" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.shipping}</Link>
-            <Link href="/pages/contact" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.contact}</Link>
+            <Link href="/shipping" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.shipping}</Link>
+            <Link href="/returns" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.returns}</Link>
+            <Link href="/contact" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.contact}</Link>
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.instagram}</a>
           </nav>
           <button
             onClick={() => { setLocale(locale === "en" ? "hr" : "en"); onClose(); }}
