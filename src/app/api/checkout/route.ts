@@ -27,16 +27,16 @@ interface LineItem {
 
 export async function POST(request: Request) {
   try {
-    const { items, locale } = (await request.json()) as {
+    const { items } = (await request.json()) as {
       items: LineItem[];
-      locale: string;
+      locale?: string;
     };
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "No items provided" }, { status: 400 });
     }
 
-    const localeKey: Locale = locale === "hr" ? "hr" : "en";
+    const localeKey: Locale = "en";
     const origin = request.headers.get("origin") || new URL(request.url).origin;
     const overrides = await getCatalogOverrides();
     const validatedItems = items.map((item) => {
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         payment_method_types: ["card"],
-        locale: localeKey === "hr" ? "hr" : "auto",
+        locale: "auto",
         expires_at: Math.floor(sessionExpiresAt.getTime() / 1000),
         metadata: {
           reservationId,
@@ -119,8 +119,7 @@ export async function POST(request: Request) {
             shipping_rate_data: {
               type: "fixed_amount",
               fixed_amount: { amount: 0, currency: "eur" },
-              display_name:
-                locale === "hr" ? "Besplatna dostava" : "Free shipping",
+              display_name: "Free shipping",
               delivery_estimate: {
                 minimum: { unit: "business_day", value: 3 },
                 maximum: { unit: "business_day", value: 5 },

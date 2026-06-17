@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useCallback, type ReactNode } from "react";
 import { translations, type Locale } from "./translations";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,20 +17,10 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("pbp-locale") as Locale;
-      if (saved === "en" || saved === "hr") return saved;
-    }
-    return "en";
-  });
+  const locale: Locale = "en";
 
-  const setLocale = useCallback((l: Locale) => {
-    setLocaleState(l);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("pbp-locale", l);
-    }
-  }, []);
+  // English only for now — kept so existing callers don't break.
+  const setLocale = useCallback(() => {}, []);
 
   const t = translations[locale];
 

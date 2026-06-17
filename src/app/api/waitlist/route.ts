@@ -15,18 +15,17 @@ export async function POST(request: Request) {
 
   const email = typeof body.email === "string" ? body.email.trim() : "";
   const source = typeof body.source === "string" ? body.source.slice(0, 40) : null;
-  const locale = body.locale === "hr" ? "hr" : "en";
 
   if (!isValidEmail(email)) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   }
 
   try {
-    const { created, signup } = await addWaitlistSignup(email, source, locale);
+    const { created, signup } = await addWaitlistSignup(email, source, "en");
 
     // Only email a fresh signup; never block the response on email delivery.
     if (created) {
-      void sendWaitlistEmails({ email: signup.email, locale, source });
+      void sendWaitlistEmails({ email: signup.email, source });
     }
 
     return NextResponse.json({ ok: true, alreadyJoined: !created });

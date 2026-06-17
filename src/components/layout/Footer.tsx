@@ -5,7 +5,7 @@ import NewsletterForm from "@/components/ui/NewsletterForm";
 import { useI18n } from "@/i18n/context";
 
 export default function Footer() {
-  const { t, locale, setLocale } = useI18n();
+  const { t } = useI18n();
 
   const linkClass =
     "text-[11px] tracking-[0.15em] uppercase text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors";
@@ -39,13 +39,7 @@ export default function Footer() {
           </a>
         </nav>
 
-        <div className="flex items-center gap-5 pt-2">
-          <button
-            onClick={() => setLocale(locale === "en" ? "hr" : "en")}
-            className="text-[10px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors"
-          >
-            {locale === "en" ? "Hrvatski" : "English"}
-          </button>
+        <div className="pt-2">
           <span className="text-[10px] text-[var(--color-text-tertiary)] tracking-wider">{t.footer.copyright}</span>
         </div>
       </div>

@@ -75,21 +75,6 @@ export const products: Product[] = [
             "Complimentary shipping on all orders. Delivered in 3–5 business days.",
         },
       },
-      hr: {
-        label: "Lančić za ruku",
-        name: "Edition 001",
-        description:
-          "Lančić za ruku koji se osjeća kao dio tebe.\nJedna tiha linija, od zapešća do prsta.\nSuptilno. Namjerno. Tvoje.",
-        shortDescription: "Lančić za ruku kojim počinje tvoja kolekcija.",
-        details: {
-          materialsAndDimensions:
-            "Pozlaćeni ili posrebreni lanac. Kopca jastog. Širina lanca: 1mm. Ručno izrađeno s pažnjom.",
-          care:
-            "Izbjegavaj da se zakvaci za tkanine, patentne zatvarače ili grube površine. Skini prije spavanja ili vježbanja. Izbjegavaj dulji kontakt s vodom, parfemom i losionima. Spremi ravno kad ga ne nosiš.",
-          shipping:
-            "Besplatna dostava na sve narudžbe. Isporuka u 3–5 radnih dana.",
-        },
-      },
     },
   },
 ];

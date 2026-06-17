@@ -56,14 +56,12 @@ async function sendEmail(payload: { to: string; subject: string; html: string; r
 }
 
 /** Fire welcome + owner-notification emails. Best effort — never throws. */
-export async function sendWaitlistEmails(opts: { email: string; locale: string | null; source: string | null }) {
-  const locale = opts.locale === "hr" ? "hr" : "en";
-
+export async function sendWaitlistEmails(opts: { email: string; source: string | null }) {
   await Promise.allSettled([
     sendEmail({
       to: opts.email,
-      subject: locale === "hr" ? "Dobrodošla — Piece by Piece" : "Welcome — Piece by Piece",
-      html: welcomeHtml(locale),
+      subject: "Welcome — Piece by Piece",
+      html: welcomeHtml(),
     }),
     sendEmail({
       to: getOwnerEmail(),
@@ -75,32 +73,20 @@ export async function sendWaitlistEmails(opts: { email: string; locale: string |
 }
 
 const COPY = {
-  en: {
-    eyebrow: "Built Over Time",
-    title: "You're on the list.",
-    p1: "Thank you for joining. You're now among the first to know when Edition 001 opens.",
-    p2: "Piece by Piece is built on a simple idea: the best jewelry collections aren't bought all at once. They're collected slowly, intentionally, and personally — one piece at a time.",
-    p3: "We'll write to you before anyone else, the moment the first edition is ready. No noise in between.",
-    signoff: "With warmth,",
-    team: "Piece by Piece",
-    footer: "You're receiving this because you joined the waitlist at piecebypiecewear.com.",
-  },
-  hr: {
-    eyebrow: "Građeno s vremenom",
-    title: "Na listi si.",
-    p1: "Hvala što si se pridružila. Sada si među prvima koji će saznati kada se Edition 001 otvori.",
-    p2: "Piece by Piece počiva na jednostavnoj ideji: najbolje kolekcije nakita ne kupuju se odjednom. Skupljaju se polako, s namjerom i osobno — komad po komad.",
-    p3: "Javit ćemo ti se prije svih, čim prva edicija bude spremna. Bez buke između.",
-    signoff: "S toplinom,",
-    team: "Piece by Piece",
-    footer: "Ovu poruku primaš jer si se prijavila na listu čekanja na piecebypiecewear.com.",
-  },
+  eyebrow: "Built Over Time",
+  title: "You're on the list.",
+  p1: "Thank you for joining. You're now among the first to know when Edition 001 opens.",
+  p2: "Piece by Piece is built on a simple idea: the best jewelry collections aren't bought all at once. They're collected slowly, intentionally, and personally — one piece at a time.",
+  p3: "We'll write to you before anyone else, the moment the first edition is ready. No noise in between.",
+  signoff: "With warmth,",
+  team: "Piece by Piece",
+  footer: "You're receiving this because you joined the waitlist at piecebypiecewear.com.",
 };
 
-function welcomeHtml(locale: "en" | "hr") {
-  const c = COPY[locale];
+function welcomeHtml() {
+  const c = COPY;
   return `<!doctype html>
-<html lang="${locale}">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />

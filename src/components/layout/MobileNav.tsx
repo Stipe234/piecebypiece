@@ -10,7 +10,7 @@ interface MobileNavProps {
 }
 
 export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
-  const { locale, setLocale, t } = useI18n();
+  const { t } = useI18n();
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
@@ -58,12 +58,6 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
             <Link href="/contact" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.contact}</Link>
             <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.instagram}</a>
           </nav>
-          <button
-            onClick={() => { setLocale(locale === "en" ? "hr" : "en"); onClose(); }}
-            className="text-xs font-medium tracking-[0.15em] uppercase text-[var(--color-text-tertiary)]"
-          >
-            {locale === "en" ? "Hrvatski" : "English"}
-          </button>
         </div>
       </div>
     </>

@@ -5,11 +5,8 @@ import { useI18n } from "@/i18n/context";
 const EMAIL = "hello@piecebypiecewear.com";
 
 export default function ContactPage() {
-  const { t, locale } = useI18n();
-  const body =
-    locale === "hr"
-      ? "Rado ćemo te čuti. Piši nam bilo kada i osobno ćemo odgovoriti."
-      : "We'd love to hear from you. Write to us anytime and we'll reply personally.";
+  const { t } = useI18n();
+  const body = "We'd love to hear from you. Write to us anytime and we'll reply personally.";
 
   return (
     <section className="py-28 md:py-44 px-6">

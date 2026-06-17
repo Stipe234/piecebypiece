@@ -53,7 +53,6 @@ export const metadata: Metadata = {
     canonical: "/",
     languages: {
       en: "/",
-      hr: "/",
       "x-default": "/",
     },
   },
@@ -64,7 +63,6 @@ export const metadata: Metadata = {
     description: DEFAULT_DESCRIPTION,
     url: SITE_URL,
     locale: "en_US",
-    alternateLocale: ["hr_HR"],
   },
   twitter: {
     card: "summary_large_image",
@@ -118,7 +116,7 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: SITE_NAME,
   url: SITE_URL,
-  inLanguage: ["en", "hr"],
+  inLanguage: ["en"],
   publisher: {
     "@type": "Organization",
     name: SITE_NAME,

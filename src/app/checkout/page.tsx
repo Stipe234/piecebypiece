@@ -122,9 +122,7 @@ export default function CheckoutPage() {
           )}
 
           <Button onClick={handleCheckout} fullWidth disabled={loading}>
-            {loading
-              ? (locale === "hr" ? "Preusmjeravanje..." : "Redirecting...")
-              : t.checkout.placeOrder}
+            {loading ? "Redirecting..." : t.checkout.placeOrder}
           </Button>
           <p className="text-xs text-[var(--color-text-tertiary)] text-center mt-3">
             {t.checkout.paymentNote}

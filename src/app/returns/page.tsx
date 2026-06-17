@@ -3,11 +3,9 @@
 import { useI18n } from "@/i18n/context";
 
 export default function ReturnsPage() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const body =
-    locale === "hr"
-      ? "Ako nešto nije u redu, nenošene komade možeš vratiti unutar 14 dana od isporuke. Javi nam se i provest ćemo te kroz postupak."
-      : "If something isn't right, unworn pieces may be returned within 14 days of delivery. Reach out and we'll guide you through it.";
+    "If something isn't right, unworn pieces may be returned within 14 days of delivery. Reach out and we'll guide you through it.";
 
   return (
     <section className="py-28 md:py-44 px-6">

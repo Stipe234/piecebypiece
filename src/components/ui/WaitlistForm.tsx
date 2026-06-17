@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useI18n } from "@/i18n/context";
 
 export default function WaitlistForm({ editionName }: { editionName?: string }) {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
@@ -16,7 +16,7 @@ export default function WaitlistForm({ editionName }: { editionName?: string }) 
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "waitlist", locale }),
+        body: JSON.stringify({ email, source: "waitlist" }),
       });
       if (!res.ok) throw new Error("failed");
       setStatus("done");

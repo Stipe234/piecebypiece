@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { useI18n } from "@/i18n/context";
 import { useEffect, useRef } from "react";
 
 export default function CheckoutSuccessPage() {
-  const { locale } = useI18n();
   const { items, clearCart } = useCart();
   const cleared = useRef(false);
 
@@ -16,8 +14,6 @@ export default function CheckoutSuccessPage() {
       clearCart();
     }
   }, [clearCart, items.length]);
-
-  const isHr = locale === "hr";
 
   return (
     <section className="py-32 px-6 text-center">
@@ -37,24 +33,20 @@ export default function CheckoutSuccessPage() {
         </div>
 
         <h1 className="font-heading text-2xl md:text-3xl font-light tracking-wide mb-4">
-          {isHr ? "Hvala na narudžbi" : "Thank you for your order"}
+          Thank you for your order
         </h1>
         <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-2">
-          {isHr
-            ? "Tvoja narudžba je potvrđena. Poslali smo ti email s potvrdom."
-            : "Your order has been confirmed. We've sent you a confirmation email."}
+          Your order has been confirmed. We&apos;ve sent you a confirmation email.
         </p>
         <p className="text-sm text-[var(--color-text-tertiary)] leading-relaxed mb-8">
-          {isHr
-            ? "Svaki komad dolazi u brendiranoj lanenoj vrećici, isporučen u 3–5 radnih dana."
-            : "Each piece arrives in a branded linen pouch, delivered in 3–5 business days."}
+          Delivered in 3–5 business days.
         </p>
 
         <Link
           href="/"
           className="text-sm text-[var(--color-text-secondary)] underline underline-offset-4 hover:text-[var(--color-text-primary)] transition-colors"
         >
-          {isHr ? "Natrag na početnu" : "Back to home"}
+          Back to home
         </Link>
       </div>
     </section>

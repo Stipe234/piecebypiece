@@ -3,11 +3,9 @@
 import { useI18n } from "@/i18n/context";
 
 export default function ShippingPage() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const body =
-    locale === "hr"
-      ? "Besplatna dostava na sve narudžbe, isporuka unutar 3–5 radnih dana. Čim tvoj komad krene, dobit ćeš broj za praćenje na email."
-      : "Complimentary shipping on all orders, delivered within 3–5 business days. You'll receive tracking by email once your piece is on its way.";
+    "Complimentary shipping on all orders, delivered within 3–5 business days. You'll receive tracking by email once your piece is on its way.";
 
   return (
     <section className="py-28 md:py-44 px-6">
