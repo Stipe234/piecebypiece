@@ -41,34 +41,30 @@ export default function RevenueSparkline({ series }: Props) {
   }).format(totalCents / 100);
 
   return (
-    <div className="relative overflow-hidden rounded-[1.75rem] bg-[linear-gradient(165deg,rgba(255,255,255,0.7)_0%,rgba(247,228,212,0.55)_100%)] p-6 shadow-[0_25px_60px_-35px_rgba(120,60,70,0.4)] backdrop-blur-sm">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#c48a78]/20 blur-3xl"
-      />
-      <div className="relative flex flex-wrap items-end justify-between gap-3">
+    <div className="border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-6 md:p-8">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.28em] text-[#a06b5a]">Last 30 days</p>
-          <p className="mt-2 font-heading text-2xl font-light text-[#3a222a]">
-            {totalLabel} <span className="text-[#a06b5a]">·</span> {totalOrders} order{totalOrders === 1 ? "" : "s"}
+          <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--color-text-tertiary)]">Last 30 days</p>
+          <p className="mt-3 font-heading text-2xl font-light text-[var(--color-text-primary)]">
+            {totalLabel} <span className="text-[var(--color-text-tertiary)]">·</span> {totalOrders} order{totalOrders === 1 ? "" : "s"}
           </p>
         </div>
       </div>
 
       <svg
         viewBox={`0 0 ${width} ${height}`}
-        className="relative mt-4 h-28 w-full"
+        className="mt-5 h-28 w-full"
         preserveAspectRatio="none"
         aria-hidden
       >
         <defs>
           <linearGradient id="pbp-spark" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#c48a78" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#c48a78" stopOpacity="0" />
+            <stop offset="0%" stopColor="#000000" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path d={areaPath} fill="url(#pbp-spark)" />
-        <path d={path} fill="none" stroke="#8a4a52" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        <path d={path} fill="none" stroke="#000000" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
       </svg>
     </div>
   );

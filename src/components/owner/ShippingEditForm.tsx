@@ -19,11 +19,11 @@ export default function ShippingEditForm({ orderId, currentStatus, currentTracki
     <form action={action} className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_auto]">
       <input type="hidden" name="orderId" value={orderId} />
       <label className="text-sm">
-        <span className="mb-2 block text-[11px] uppercase tracking-[0.22em] text-[#a06b5a]">Shipping status</span>
+        <span className="mb-2 block text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">Shipping status</span>
         <select
           name="shippingStatus"
           defaultValue={currentStatus}
-          className="w-full rounded-full border border-[#efd9cf] bg-white px-4 py-2.5 text-sm text-[#3a222a] outline-none transition focus:border-[#c48a78]"
+          className="w-full border border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-2.5 text-sm text-[var(--color-text-primary)] outline-none transition focus:border-[var(--color-border-dark)]"
         >
           <option value="pending">pending</option>
           <option value="packed">packed</option>
@@ -33,26 +33,26 @@ export default function ShippingEditForm({ orderId, currentStatus, currentTracki
       </label>
 
       <label className="text-sm">
-        <span className="mb-2 block text-[11px] uppercase tracking-[0.22em] text-[#a06b5a]">Tracking</span>
+        <span className="mb-2 block text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">Tracking</span>
         <input
           name="trackingNumber"
           defaultValue={currentTracking ?? ""}
           placeholder="Optional tracking code"
-          className="w-full rounded-full border border-[#efd9cf] bg-white px-4 py-2.5 text-sm text-[#3a222a] outline-none transition focus:border-[#c48a78]"
+          className="w-full border border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-2.5 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none transition focus:border-[var(--color-border-dark)]"
         />
       </label>
 
       <button
         type="submit"
         disabled={pending}
-        className="self-end rounded-full bg-[#3a222a] px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.2em] text-white transition hover:bg-[#4a2e35] disabled:opacity-60"
+        className="self-end border border-[var(--color-border-dark)] bg-[var(--color-accent-dark)] px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-inverse)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-60"
       >
         {pending ? "Saving..." : "Update"}
       </button>
       {state.error ? (
-        <p className="md:col-span-3 text-xs text-[#b03a2e]">{state.error}</p>
+        <p className="md:col-span-3 text-xs text-[var(--color-error)]">{state.error}</p>
       ) : state.success ? (
-        <p className="md:col-span-3 text-xs text-[#4a7c59]">Shipping updated.</p>
+        <p className="md:col-span-3 text-xs text-[var(--color-success)]">Shipping updated.</p>
       ) : null}
     </form>
   );

@@ -74,7 +74,7 @@ export default function OrdersPanel({ orders }: Props) {
       <div className="flex flex-wrap items-center gap-3">
         <a
           href="/api/owner/orders.csv"
-          className="rounded-full border border-[#c48a78]/40 px-4 py-2 text-xs uppercase tracking-[0.18em] text-[#7a4a53] transition hover:border-[#8a4a52] hover:text-[#3a222a]"
+          className="border border-[var(--color-border-dark)] px-5 py-2 text-xs uppercase tracking-[0.18em] text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-accent-dark)] hover:text-[var(--color-text-inverse)]"
         >
           Export CSV
         </a>
@@ -84,7 +84,7 @@ export default function OrdersPanel({ orders }: Props) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search name, email, tracking..."
-          className="flex-1 min-w-[200px] rounded-full border border-[#efd9cf] bg-white px-4 py-2 text-sm text-[#3a222a] placeholder:text-[#b69791] outline-none focus:border-[#c48a78]"
+          className="flex-1 min-w-[200px] border border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-2 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] outline-none focus:border-[var(--color-border-dark)]"
         />
       </div>
 
@@ -96,10 +96,10 @@ export default function OrdersPanel({ orders }: Props) {
               key={f.value}
               type="button"
               onClick={() => setFilter(f.value)}
-              className={`rounded-full px-3 py-1.5 text-xs uppercase tracking-[0.16em] transition ${
+              className={`px-4 py-1.5 text-xs uppercase tracking-[0.16em] transition-colors ${
                 active
-                  ? "bg-[#3a222a] text-white"
-                  : "border border-[#c48a78]/40 text-[#7a4a53] hover:border-[#8a4a52]"
+                  ? "bg-[var(--color-accent-dark)] text-[var(--color-text-inverse)]"
+                  : "border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-dark)]"
               }`}
             >
               {f.label}
@@ -110,70 +110,70 @@ export default function OrdersPanel({ orders }: Props) {
 
       <div className="mt-6 space-y-4">
         {visible.length === 0 ? (
-          <div className="rounded-[1.25rem] border border-dashed border-[#e9c8be] bg-[#fcf3ee] px-5 py-10 text-center text-sm text-[#8a5a5e]">
+          <div className="border border-dashed border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-5 py-10 text-center text-sm text-[var(--color-text-tertiary)]">
             No orders match the current view.
           </div>
         ) : (
           visible.map((order) => (
-            <div key={order.id} className="rounded-[1.25rem] border border-[#eed5cf] bg-[#fcf3ee] p-4 md:p-5">
+            <div key={order.id} className="border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4 md:p-6">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
-                    <p className="font-medium text-[#3a222a]">
+                    <p className="font-medium text-[var(--color-text-primary)]">
                       {order.customerName || order.customerEmail || "Unknown customer"}
                     </p>
-                    <span className="rounded-full bg-white px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[#8a5a5e]">
+                    <span className="border border-[var(--color-border)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                       {order.shippingStatus}
                     </span>
                     {order.refundedAt ? (
-                      <span className="rounded-full bg-[#f0dfe0] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[#8a4a52]">
+                      <span className="bg-[var(--color-bg-tertiary)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--color-error)]">
                         Refunded {formatMoney(order.refundAmountCents, order.currency)}
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-sm text-[#6b4852]">
+                  <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
                     {order.customerEmail || "No email"}{order.customerPhone ? ` • ${order.customerPhone}` : ""}
                   </p>
-                  <p className="mt-1 text-sm text-[#6b4852]">{formatAddress(order.shippingAddress)}</p>
+                  <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{formatAddress(order.shippingAddress)}</p>
 
                   <dl className="mt-3 grid grid-cols-1 gap-x-5 gap-y-1 text-xs sm:grid-cols-3">
                     <div>
-                      <dt className="uppercase tracking-[0.18em] text-[#a06b5a]">Paid</dt>
-                      <dd className="mt-0.5 text-[#3a222a]">{formatDate(order.paidAt ?? order.createdAt)}</dd>
+                      <dt className="uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">Paid</dt>
+                      <dd className="mt-0.5 text-[var(--color-text-primary)]">{formatDate(order.paidAt ?? order.createdAt)}</dd>
                     </div>
                     <div>
-                      <dt className="uppercase tracking-[0.18em] text-[#a06b5a]">Fulfilled</dt>
-                      <dd className="mt-0.5 text-[#3a222a]">{formatDate(order.fulfilledAt)}</dd>
+                      <dt className="uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">Fulfilled</dt>
+                      <dd className="mt-0.5 text-[var(--color-text-primary)]">{formatDate(order.fulfilledAt)}</dd>
                     </div>
                     <div>
-                      <dt className="uppercase tracking-[0.18em] text-[#a06b5a]">Items</dt>
-                      <dd className="mt-0.5 text-[#3a222a]">{order.itemCount}</dd>
+                      <dt className="uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">Items</dt>
+                      <dd className="mt-0.5 text-[var(--color-text-primary)]">{order.itemCount}</dd>
                     </div>
                   </dl>
                 </div>
 
                 <div className="text-left xl:text-right">
-                  <p className="text-2xl font-medium text-[#3a222a]">
+                  <p className="font-heading text-2xl font-light text-[var(--color-text-primary)]">
                     {formatMoney(order.amountTotalCents, order.currency)}
                   </p>
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#a06b5a]">
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">
                     Session {order.stripeSessionId}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-4 rounded-[1.1rem] bg-white p-4">
-                <p className="text-[11px] uppercase tracking-[0.22em] text-[#a06b5a]">Pieces</p>
+              <div className="mt-4 border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4">
+                <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">Pieces</p>
                 <div className="mt-3 space-y-2">
                   {order.items.map((item) => (
                     <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 text-sm">
                       <div>
-                        <p className="font-medium text-[#3a222a]">{item.productName}</p>
-                        <p className="text-[#6b4852]">
+                        <p className="font-medium text-[var(--color-text-primary)]">{item.productName}</p>
+                        <p className="text-[var(--color-text-secondary)]">
                           {item.material} / {item.length} • Qty {item.quantity}
                         </p>
                       </div>
-                      <p className="font-medium text-[#3a222a]">{formatMoney(item.lineTotalCents, order.currency)}</p>
+                      <p className="font-medium text-[var(--color-text-primary)]">{formatMoney(item.lineTotalCents, order.currency)}</p>
                     </div>
                   ))}
                 </div>

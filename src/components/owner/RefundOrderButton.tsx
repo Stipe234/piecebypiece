@@ -17,7 +17,7 @@ export default function RefundOrderButton({ orderId, alreadyRefunded, amountLabe
 
   if (alreadyRefunded) {
     return (
-      <span className="inline-flex items-center rounded-full bg-[#f0dfe0] px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-[#8a4a52]">
+      <span className="inline-flex items-center bg-[var(--color-bg-tertiary)] px-3 py-1 text-xs uppercase tracking-[0.16em] text-[var(--color-error)]">
         Refunded
       </span>
     );
@@ -28,11 +28,11 @@ export default function RefundOrderButton({ orderId, alreadyRefunded, amountLabe
       <input type="hidden" name="orderId" value={orderId} />
       {confirming ? (
         <>
-          <span className="text-xs text-[#6b4852]">Refund {amountLabel}?</span>
+          <span className="text-xs text-[var(--color-text-secondary)]">Refund {amountLabel}?</span>
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full bg-[#8a4a52] px-4 py-2 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-[#6f3a41] disabled:opacity-60"
+            className="border border-[var(--color-error)] bg-[var(--color-error)] px-5 py-2 text-xs uppercase tracking-[0.18em] text-[var(--color-text-inverse)] transition-colors hover:opacity-90 disabled:opacity-60"
           >
             {pending ? "Refunding..." : "Confirm refund"}
           </button>
@@ -40,7 +40,7 @@ export default function RefundOrderButton({ orderId, alreadyRefunded, amountLabe
             type="button"
             onClick={() => setConfirming(false)}
             disabled={pending}
-            className="rounded-full border border-[#c48a78]/40 px-4 py-2 text-xs uppercase tracking-[0.18em] text-[#7a4a53]"
+            className="border border-[var(--color-border)] px-5 py-2 text-xs uppercase tracking-[0.18em] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-dark)]"
           >
             Cancel
           </button>
@@ -49,13 +49,13 @@ export default function RefundOrderButton({ orderId, alreadyRefunded, amountLabe
         <button
           type="button"
           onClick={() => setConfirming(true)}
-          className="rounded-full border border-[#c48a78]/50 px-4 py-2 text-xs uppercase tracking-[0.18em] text-[#7a4a53] transition hover:border-[#8a4a52] hover:text-[#3a222a]"
+          className="border border-[var(--color-border)] px-5 py-2 text-xs uppercase tracking-[0.18em] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-dark)] hover:text-[var(--color-text-primary)]"
         >
           Refund order
         </button>
       )}
       {state.error ? (
-        <p className="basis-full text-xs text-[#b03a2e]">{state.error}</p>
+        <p className="basis-full text-xs text-[var(--color-error)]">{state.error}</p>
       ) : null}
     </form>
   );
