@@ -24,7 +24,7 @@ export default function InventoryEditForm({ productId, defaultValue }: Props) {
           inputMode="numeric"
           pattern="[0-9]*"
           defaultValue={defaultValue}
-          className="font-numeric w-32 rounded-lg border border-[var(--color-border)] bg-white px-5 py-2.5 text-center text-base font-medium text-[var(--color-text-primary)] shadow-[inset_0_1px_2px_rgba(58,44,32,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
+          className="font-numeric w-32 rounded-lg border border-[var(--color-border)] bg-white px-5 py-2.5 text-center text-base font-medium text-[var(--color-text-primary)] shadow-[inset_0_1px_2px_rgba(26,26,26,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
         />
       </label>
       <button

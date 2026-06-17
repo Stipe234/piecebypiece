@@ -162,7 +162,7 @@ export default function OrdersPanel({ orders }: Props) {
                 </div>
               </div>
 
-              <div className="mt-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4 shadow-[0_1px_2px_rgba(58,44,32,0.04)]">
+              <div className="mt-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4 shadow-[0_1px_2px_rgba(26,26,26,0.04)]">
                 <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">Pieces</p>
                 <div className="mt-3 space-y-2">
                   {order.items.map((item) => (

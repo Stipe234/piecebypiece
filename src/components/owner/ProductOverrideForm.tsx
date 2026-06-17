@@ -29,7 +29,7 @@ export default function ProductOverrideForm({ productId, priceEuros, isActive }:
             inputMode="decimal"
             pattern="[0-9]*[.,]?[0-9]*"
             defaultValue={priceEuros.toFixed(2)}
-            className="font-numeric w-36 rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-5 text-center text-base font-medium text-[var(--color-text-primary)] shadow-[inset_0_1px_2px_rgba(58,44,32,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
+            className="font-numeric w-36 rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-5 text-center text-base font-medium text-[var(--color-text-primary)] shadow-[inset_0_1px_2px_rgba(26,26,26,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
           />
         </div>
       </label>

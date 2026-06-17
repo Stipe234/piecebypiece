@@ -31,7 +31,7 @@ function SectionHeading({ eyebrow, title, action }: { eyebrow: string; title: st
       <div>
         <div className="flex items-center gap-3">
           <span className="dash-accent" aria-hidden />
-          <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-gold)]">{eyebrow}</p>
+          <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">{eyebrow}</p>
         </div>
         <h2 className="mt-3 font-heading text-3xl font-light tracking-wide text-[var(--color-text-primary)] md:text-4xl">
           {title}
@@ -64,7 +64,7 @@ export default async function OwnerDashboardPage() {
           <div>
             <div className="flex items-center gap-3">
               <span className="dash-accent" aria-hidden />
-              <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-gold)]">Dashboard for my love</p>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Dashboard for my love</p>
             </div>
             <h1 className="mt-4 font-heading text-5xl font-light tracking-wide text-[var(--color-text-primary)] md:text-7xl">
               PIECE BY PIECE
@@ -84,17 +84,15 @@ export default async function OwnerDashboardPage() {
         {/* ── Overview stats ── */}
         <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
           {headlineStats.map(({ label, value, accent }) => {
-            const isDark = accent === "primary";
+            const isPrimary = accent === "primary";
             const isWarn = accent === "warn";
-            const cardClass = isDark ? "dash-card-dark" : "dash-card";
-            const labelColor = isDark
-              ? "text-[var(--color-gold)]"
-              : isWarn
+            const cardClass = isPrimary ? "dash-card-stone" : "dash-card";
+            const labelColor = isWarn
               ? "text-[var(--color-error)]"
+              : isPrimary
+              ? "text-[var(--color-text-secondary)]"
               : "text-[var(--color-text-tertiary)]";
-            const valueColor = isDark
-              ? "text-[var(--color-text-inverse)]"
-              : isWarn
+            const valueColor = isWarn
               ? "text-[var(--color-error)]"
               : "text-[var(--color-text-primary)]";
             return (
@@ -126,15 +124,15 @@ export default async function OwnerDashboardPage() {
           />
 
           <div className="dash-card mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-xl">
-            <div className="bg-[#f3eee3]/60 p-5">
+            <div className="bg-[var(--color-bg-secondary)] p-5">
               <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Available</p>
               <p className="font-numeric mt-2 text-2xl font-medium">{data.overview.unitsAvailable}</p>
             </div>
-            <div className="bg-[#f3eee3]/60 p-5">
+            <div className="bg-[var(--color-bg-secondary)] p-5">
               <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Reserved</p>
               <p className="font-numeric mt-2 text-2xl font-medium">{data.overview.reservedUnits}</p>
             </div>
-            <div className="bg-[#f3eee3]/60 p-5">
+            <div className="bg-[var(--color-bg-secondary)] p-5">
               <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Running low</p>
               <p className={`font-numeric mt-2 text-2xl font-medium ${lowStockCount > 0 ? "text-[var(--color-error)]" : ""}`}>
                 {lowStockCount}
@@ -144,20 +142,18 @@ export default async function OwnerDashboardPage() {
 
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             {data.products.map((product) => {
-              const leftColor = product.availableUnits === 0 || product.isLowStock
-                ? "text-[var(--color-error)]"
-                : "text-[var(--color-text-primary)]";
-              const leftLabel = product.availableUnits === 0
-                ? "Sold out"
-                : product.isLowStock
-                  ? "Low stock"
-                  : "Available";
               const stockFill = product.totalUnits > 0
                 ? Math.max(Math.min((product.availableUnits / product.totalUnits) * 100, 100), 0)
                 : 0;
-              const barColor = product.availableUnits === 0 || product.isLowStock
-                ? "var(--color-error)"
-                : "var(--color-gold)";
+              // Green while healthy; flips to red once 10% or less remains (or sold out).
+              const isCritical = product.availableUnits === 0 || stockFill <= 10;
+              const leftColor = isCritical ? "text-[var(--color-error)]" : "text-[var(--color-success)]";
+              const leftLabel = product.availableUnits === 0
+                ? "Sold out"
+                : isCritical
+                  ? "Low stock"
+                  : "Available";
+              const barColor = isCritical ? "var(--color-error)" : "var(--color-success)";
 
               return (
                 <article key={product.productId} className="dash-card rounded-2xl p-6 md:p-8">
@@ -178,7 +174,7 @@ export default async function OwnerDashboardPage() {
                           <span>{leftLabel}</span>
                           <span className="font-numeric tracking-normal">{product.availableUnits} / {product.totalUnits}</span>
                         </div>
-                        <div className="relative mt-2 h-2 overflow-hidden rounded-full bg-[#e3dccd] shadow-[inset_0_1px_2px_rgba(58,44,32,0.12)]">
+                        <div className="relative mt-2 h-2 overflow-hidden rounded-full bg-[var(--color-bg-tertiary)] shadow-[inset_0_1px_2px_rgba(26,26,26,0.1)]">
                           <div className="h-full rounded-full" style={{ width: `${stockFill}%`, background: barColor }} />
                         </div>
                       </div>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Cormorant_Garamond, Space_Grotesk } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
@@ -16,12 +16,6 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500"],
   style: ["normal", "italic"],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-grotesk",
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
 });
 
 const SITE_URL = "https://www.piecebypiecewear.com";
@@ -139,7 +133,7 @@ export default function RootLayout({
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable} ${spaceGrotesk.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} ${cormorant.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"

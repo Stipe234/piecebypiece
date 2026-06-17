@@ -46,7 +46,7 @@ export default function RevenueSparkline({ series }: Props) {
         <div>
           <div className="flex items-center gap-3">
             <span className="dash-accent" aria-hidden />
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--color-gold)]">Last 30 days</p>
+            <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--color-text-tertiary)]">Last 30 days</p>
           </div>
           <p className="mt-3 font-numeric text-2xl font-medium text-[var(--color-text-primary)]">
             {totalLabel} <span className="text-[var(--color-text-tertiary)]">·</span> {totalOrders} order{totalOrders === 1 ? "" : "s"}
@@ -62,12 +62,12 @@ export default function RevenueSparkline({ series }: Props) {
       >
         <defs>
           <linearGradient id="pbp-spark" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#C9A96E" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#C9A96E" stopOpacity="0" />
+            <stop offset="0%" stopColor="#1A1A1A" stopOpacity="0.14" />
+            <stop offset="100%" stopColor="#1A1A1A" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path d={areaPath} fill="url(#pbp-spark)" />
-        <path d={path} fill="none" stroke="#B5904F" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        <path d={path} fill="none" stroke="#1A1A1A" strokeWidth="1.75" strokeLinejoin="round" strokeLinecap="round" />
       </svg>
     </div>
   );

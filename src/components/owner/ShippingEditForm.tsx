@@ -23,7 +23,7 @@ export default function ShippingEditForm({ orderId, currentStatus, currentTracki
         <select
           name="shippingStatus"
           defaultValue={currentStatus}
-          className="w-full rounded-lg border border-[var(--color-border)] bg-white px-4 py-2.5 text-sm text-[var(--color-text-primary)] shadow-[inset_0_1px_2px_rgba(58,44,32,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
+          className="w-full rounded-lg border border-[var(--color-border)] bg-white px-4 py-2.5 text-sm text-[var(--color-text-primary)] shadow-[inset_0_1px_2px_rgba(26,26,26,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
         >
           <option value="pending">pending</option>
           <option value="packed">packed</option>
@@ -38,7 +38,7 @@ export default function ShippingEditForm({ orderId, currentStatus, currentTracki
           name="trackingNumber"
           defaultValue={currentTracking ?? ""}
           placeholder="Optional tracking code"
-          className="w-full rounded-lg border border-[var(--color-border)] bg-white px-4 py-2.5 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] shadow-[inset_0_1px_2px_rgba(58,44,32,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
+          className="w-full rounded-lg border border-[var(--color-border)] bg-white px-4 py-2.5 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] shadow-[inset_0_1px_2px_rgba(26,26,26,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
         />
       </label>
 

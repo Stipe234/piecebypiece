@@ -61,7 +61,7 @@
   --color-error: var(--color-error);
   --font-heading: var(--font-cormorant), Georgia, 'Times New Roman', serif;
   --font-body: var(--font-inter), 'Helvetica Neue', sans-serif;
-  --font-numeric: var(--font-grotesk), var(--font-inter), 'Helvetica Neue', sans-serif;
+  --font-numeric: var(--font-inter), 'Helvetica Neue', Arial, sans-serif;
 }
 
 html {
@@ -316,46 +316,44 @@ html, body {
    Owner dashboard — depth & numerics
    ======================================== */
 
-/* Tabular, geometric figures so numbers are easy to scan */
+/* Tabular figures so numbers are easy to scan */
 .font-numeric {
   font-family: var(--font-numeric);
   font-feature-settings: "tnum" 1, "lnum" 1;
   font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
 }
 
-/* Warm paper card with a soft lift off the page */
+/* Soft paper card lifted off the page — neutral, matches the site */
 .dash-card {
-  background:
-    linear-gradient(165deg, #ffffff 0%, #f6f1e7 100%);
-  border: 1px solid #e3ddd0;
+  background: linear-gradient(165deg, #ffffff 0%, var(--color-bg-secondary) 100%);
+  border: 1px solid var(--color-border);
   box-shadow:
-    0 1px 1px rgba(58, 44, 32, 0.04),
-    0 12px 30px -18px rgba(58, 44, 32, 0.22);
+    0 1px 1px rgba(26, 26, 26, 0.03),
+    0 12px 30px -20px rgba(26, 26, 26, 0.18);
 }
 
 /* Nested surface — a touch darker than the card it sits in */
 .dash-inset {
-  background: linear-gradient(165deg, #f3eee3 0%, #ebe4d6 100%);
-  border: 1px solid #e0d8c8;
-  box-shadow: inset 0 1px 2px rgba(58, 44, 32, 0.05);
+  background: linear-gradient(165deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 2px rgba(26, 26, 26, 0.04);
 }
 
-/* Espresso feature card — the dark anchor that adds contrast */
-.dash-card-dark {
-  background:
-    radial-gradient(circle at 80% -10%, rgba(201, 169, 110, 0.28), transparent 55%),
-    linear-gradient(160deg, #2b211b 0%, #1c1512 100%);
-  border: 1px solid #3a2e25;
+/* Stone feature card — a light grey anchor for contrast (no brown) */
+.dash-card-stone {
+  background: linear-gradient(160deg, var(--color-surface-sand) 0%, var(--color-surface-stone) 100%);
+  border: 1px solid var(--color-surface-grey);
   box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.2),
-    0 20px 45px -22px rgba(28, 21, 18, 0.7);
+    0 1px 1px rgba(26, 26, 26, 0.04),
+    0 14px 32px -20px rgba(26, 26, 26, 0.25);
 }
 
-/* Thin metallic accent rule */
+/* Thin neutral accent rule */
 .dash-accent {
   height: 2px;
-  width: 32px;
-  background: linear-gradient(90deg, var(--color-gold), rgba(201, 169, 110, 0.1));
+  width: 28px;
+  background: linear-gradient(90deg, var(--color-text-tertiary), rgba(107, 102, 96, 0.1));
 }
 
 /* ========================================
