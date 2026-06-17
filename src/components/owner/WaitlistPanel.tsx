@@ -24,7 +24,7 @@ export default function WaitlistPanel({ signups }: { signups: WaitlistSignup[] }
     <div>
       <div className="flex items-end justify-between gap-4">
         <div className="flex items-baseline gap-4">
-          <span className="font-heading text-6xl font-light leading-none text-[var(--color-text-primary)] md:text-7xl">
+          <span className="font-numeric text-6xl font-semibold leading-none text-[var(--color-text-primary)] md:text-7xl">
             {signups.length}
           </span>
           <span className="pb-1 text-[11px] uppercase tracking-[0.26em] text-[var(--color-text-tertiary)]">

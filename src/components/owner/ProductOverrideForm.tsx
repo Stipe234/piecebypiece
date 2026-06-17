@@ -29,7 +29,7 @@ export default function ProductOverrideForm({ productId, priceEuros, isActive }:
             inputMode="decimal"
             pattern="[0-9]*[.,]?[0-9]*"
             defaultValue={priceEuros.toFixed(2)}
-            className="w-36 border border-[var(--color-border)] bg-[var(--color-bg-primary)] py-2.5 pl-10 pr-5 text-center text-base font-light text-[var(--color-text-primary)] outline-none transition focus:border-[var(--color-border-dark)]"
+            className="font-numeric w-36 rounded-lg border border-[var(--color-border)] bg-white py-2.5 pl-10 pr-5 text-center text-base font-medium text-[var(--color-text-primary)] shadow-[inset_0_1px_2px_rgba(58,44,32,0.06)] outline-none transition focus:border-[var(--color-border-dark)]"
           />
         </div>
       </label>
@@ -41,7 +41,7 @@ export default function ProductOverrideForm({ productId, priceEuros, isActive }:
       <button
         type="submit"
         disabled={pending}
-        className="ml-auto border border-[var(--color-border-dark)] bg-[var(--color-accent-dark)] px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-inverse)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-60"
+        className="ml-auto rounded-lg border border-[var(--color-border-dark)] bg-[var(--color-accent-dark)] px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-inverse)] shadow-[0_8px_18px_-10px_rgba(0,0,0,0.5)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-60"
       >
         {pending ? "Saving..." : "Save product"}
       </button>

@@ -25,6 +25,23 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function SectionHeading({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) {
+  return (
+    <div className="flex items-end justify-between gap-4">
+      <div>
+        <div className="flex items-center gap-3">
+          <span className="dash-accent" aria-hidden />
+          <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-gold)]">{eyebrow}</p>
+        </div>
+        <h2 className="mt-3 font-heading text-3xl font-light tracking-wide text-[var(--color-text-primary)] md:text-4xl">
+          {title}
+        </h2>
+      </div>
+      {action}
+    </div>
+  );
+}
+
 export default async function OwnerDashboardPage() {
   await requireOwnerAuth();
   const data = await getOwnerDashboardData();
@@ -41,11 +58,14 @@ export default async function OwnerDashboardPage() {
   ];
 
   return (
-    <section className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]">
+    <section className="min-h-screen bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]">
       <div className="mx-auto max-w-[1280px] px-6 py-12 md:px-12 md:py-16">
         <header className="flex flex-col gap-6 border-b border-[var(--color-border)] pb-10 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Dashboard for my love</p>
+            <div className="flex items-center gap-3">
+              <span className="dash-accent" aria-hidden />
+              <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-gold)]">Dashboard for my love</p>
+            </div>
             <h1 className="mt-4 font-heading text-5xl font-light tracking-wide text-[var(--color-text-primary)] md:text-7xl">
               PIECE BY PIECE
             </h1>
@@ -62,75 +82,71 @@ export default async function OwnerDashboardPage() {
         </header>
 
         {/* ── Overview stats ── */}
-        <div className="mt-12 grid grid-cols-2 border-l border-t border-[var(--color-border)] sm:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
           {headlineStats.map(({ label, value, accent }) => {
-            const surface =
-              accent === "primary"
-                ? "bg-[var(--color-accent-dark)] text-[var(--color-text-inverse)]"
-                : accent === "warn"
-                ? "bg-[var(--color-bg-secondary)]"
-                : "bg-[var(--color-bg-primary)]";
-            const labelColor =
-              accent === "primary"
-                ? "text-white/60"
-                : accent === "warn"
-                ? "text-[var(--color-error)]"
-                : "text-[var(--color-text-tertiary)]";
-            const valueColor = accent === "warn" ? "text-[var(--color-error)]" : "";
+            const isDark = accent === "primary";
+            const isWarn = accent === "warn";
+            const cardClass = isDark ? "dash-card-dark" : "dash-card";
+            const labelColor = isDark
+              ? "text-[var(--color-gold)]"
+              : isWarn
+              ? "text-[var(--color-error)]"
+              : "text-[var(--color-text-tertiary)]";
+            const valueColor = isDark
+              ? "text-[var(--color-text-inverse)]"
+              : isWarn
+              ? "text-[var(--color-error)]"
+              : "text-[var(--color-text-primary)]";
             return (
-              <div key={label} className={`border-b border-r border-[var(--color-border)] p-6 ${surface}`}>
+              <div key={label} className={`${cardClass} rounded-xl p-5`}>
                 <p className={`text-[10px] uppercase tracking-[0.28em] ${labelColor}`}>{label}</p>
-                <p className={`mt-5 font-heading text-3xl font-light ${valueColor}`}>{value}</p>
+                <p className={`font-numeric mt-5 text-3xl font-medium tracking-tight ${valueColor}`}>{value}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="mt-10">
+        <div className="mt-8">
           <RevenueSparkline series={data.overview.revenueSeries} />
         </div>
 
         {/* ── Inventory ── */}
-        <div className="mt-12 border-t border-[var(--color-border)] pt-12">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Inventory</p>
-              <h2 className="mt-3 font-heading text-3xl font-light tracking-wide text-[var(--color-text-primary)] md:text-4xl">
-                Live stock
-              </h2>
+        <div className="mt-14 border-t border-[var(--color-border)] pt-12">
+          <SectionHeading
+            eyebrow="Inventory"
+            title="Live stock"
+            action={
+              <Link
+                href="/collections/hand-chains"
+                className="border-b border-[var(--color-border-dark)] pb-1 text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-primary)] transition-colors hover:border-transparent"
+              >
+                View storefront
+              </Link>
+            }
+          />
+
+          <div className="dash-card mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-xl">
+            <div className="bg-[#f3eee3]/60 p-5">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Available</p>
+              <p className="font-numeric mt-2 text-2xl font-medium">{data.overview.unitsAvailable}</p>
             </div>
-            <Link
-              href="/collections/hand-chains"
-              className="border-b border-[var(--color-border-dark)] pb-1 text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-primary)] transition-colors hover:border-transparent"
-            >
-              View storefront
-            </Link>
+            <div className="bg-[#f3eee3]/60 p-5">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Reserved</p>
+              <p className="font-numeric mt-2 text-2xl font-medium">{data.overview.reservedUnits}</p>
+            </div>
+            <div className="bg-[#f3eee3]/60 p-5">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Running low</p>
+              <p className={`font-numeric mt-2 text-2xl font-medium ${lowStockCount > 0 ? "text-[var(--color-error)]" : ""}`}>
+                {lowStockCount}
+              </p>
+            </div>
           </div>
 
-          <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-3 border-t border-[var(--color-border)] pt-6 text-sm">
-            <div>
-              <dt className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Available</dt>
-              <dd className="mt-2 font-heading text-2xl font-light">{data.overview.unitsAvailable}</dd>
-            </div>
-            <div>
-              <dt className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Reserved</dt>
-              <dd className="mt-2 font-heading text-2xl font-light">{data.overview.reservedUnits}</dd>
-            </div>
-            <div>
-              <dt className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Running low</dt>
-              <dd className={`mt-2 font-heading text-2xl font-light ${lowStockCount > 0 ? "text-[var(--color-error)]" : ""}`}>
-                {lowStockCount}
-              </dd>
-            </div>
-          </dl>
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div className="mt-8 grid gap-6 lg:grid-cols-2">
             {data.products.map((product) => {
-              const leftColor = product.availableUnits === 0
+              const leftColor = product.availableUnits === 0 || product.isLowStock
                 ? "text-[var(--color-error)]"
-                : product.isLowStock
-                  ? "text-[var(--color-error)]"
-                  : "text-[var(--color-text-primary)]";
+                : "text-[var(--color-text-primary)]";
               const leftLabel = product.availableUnits === 0
                 ? "Sold out"
                 : product.isLowStock
@@ -141,19 +157,16 @@ export default async function OwnerDashboardPage() {
                 : 0;
               const barColor = product.availableUnits === 0 || product.isLowStock
                 ? "var(--color-error)"
-                : "var(--color-accent-dark)";
+                : "var(--color-gold)";
 
               return (
-                <article
-                  key={product.productId}
-                  className="border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-6 md:p-8"
-                >
+                <article key={product.productId} className="dash-card rounded-2xl p-6 md:p-8">
                   <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="font-heading text-2xl font-light text-[var(--color-text-primary)] md:text-3xl">{product.name}</p>
                         {!product.isActive ? (
-                          <span className="bg-[var(--color-accent-dark)] px-2.5 py-0.5 text-[10px] uppercase tracking-[0.22em] text-[var(--color-text-inverse)]">
+                          <span className="rounded-full bg-[var(--color-accent-dark)] px-2.5 py-0.5 text-[10px] uppercase tracking-[0.22em] text-[var(--color-text-inverse)]">
                             Hidden
                           </span>
                         ) : null}
@@ -163,16 +176,16 @@ export default async function OwnerDashboardPage() {
                       <div className="mt-6">
                         <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">
                           <span>{leftLabel}</span>
-                          <span>{product.availableUnits} / {product.totalUnits}</span>
+                          <span className="font-numeric tracking-normal">{product.availableUnits} / {product.totalUnits}</span>
                         </div>
-                        <div className="relative mt-2 h-1.5 overflow-hidden bg-[var(--color-bg-tertiary)]">
-                          <div className="h-full" style={{ width: `${stockFill}%`, background: barColor }} />
+                        <div className="relative mt-2 h-2 overflow-hidden rounded-full bg-[#e3dccd] shadow-[inset_0_1px_2px_rgba(58,44,32,0.12)]">
+                          <div className="h-full rounded-full" style={{ width: `${stockFill}%`, background: barColor }} />
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-end gap-3 self-end sm:self-auto">
-                      <span className={`font-heading text-6xl font-light leading-none md:text-7xl ${leftColor}`}>
+                      <span className={`font-numeric text-6xl font-semibold leading-none md:text-7xl ${leftColor}`}>
                         {product.availableUnits}
                       </span>
                       <span className="pb-1 text-[11px] uppercase tracking-[0.26em] text-[var(--color-text-tertiary)]">
@@ -181,18 +194,18 @@ export default async function OwnerDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 flex flex-wrap items-center gap-x-10 gap-y-2 border-t border-[var(--color-border)] pt-5 text-sm">
+                  <div className="dash-inset mt-6 flex flex-wrap items-center gap-x-10 gap-y-2 rounded-xl px-5 py-4 text-sm">
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Sold</p>
-                      <p className="mt-1 text-lg font-light">{product.soldUnits}</p>
+                      <p className="font-numeric mt-1 text-lg font-medium">{product.soldUnits}</p>
                     </div>
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Reserved</p>
-                      <p className="mt-1 text-lg font-light">{product.reservedUnits}</p>
+                      <p className="font-numeric mt-1 text-lg font-medium">{product.reservedUnits}</p>
                     </div>
                     <div className="ml-auto text-right">
                       <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Updated</p>
-                      <p className="mt-1 text-xs font-light">{formatDate(product.updatedAt)}</p>
+                      <p className="font-numeric mt-1 text-xs">{formatDate(product.updatedAt)}</p>
                     </div>
                   </div>
 
@@ -221,23 +234,17 @@ export default async function OwnerDashboardPage() {
         </div>
 
         {/* ── Recent sales & shipping ── */}
-        <div className="mt-12 border-t border-[var(--color-border)] pt-12">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Orders</p>
-          <h2 className="mt-3 font-heading text-3xl font-light tracking-wide text-[var(--color-text-primary)] md:text-4xl">
-            Recent sales &amp; shipping
-          </h2>
-          <div className="mt-8">
+        <div className="mt-14 border-t border-[var(--color-border)] pt-12">
+          <SectionHeading eyebrow="Orders" title="Recent sales & shipping" />
+          <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
             <OrdersPanel orders={data.orders} />
           </div>
         </div>
 
         {/* ── Waitlist ── */}
-        <div className="mt-12 border-t border-[var(--color-border)] pt-12">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Waitlist</p>
-          <h2 className="mt-3 font-heading text-3xl font-light tracking-wide text-[var(--color-text-primary)] md:text-4xl">
-            Joined the list
-          </h2>
-          <div className="mt-8">
+        <div className="mt-14 border-t border-[var(--color-border)] pt-12">
+          <SectionHeading eyebrow="Waitlist" title="Joined the list" />
+          <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
             <WaitlistPanel signups={waitlist} />
           </div>
         </div>

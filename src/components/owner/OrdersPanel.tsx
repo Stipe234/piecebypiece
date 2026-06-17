@@ -115,7 +115,7 @@ export default function OrdersPanel({ orders }: Props) {
           </div>
         ) : (
           visible.map((order) => (
-            <div key={order.id} className="border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4 md:p-6">
+            <div key={order.id} className="dash-inset rounded-2xl p-4 md:p-6">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
@@ -153,7 +153,7 @@ export default function OrdersPanel({ orders }: Props) {
                 </div>
 
                 <div className="text-left xl:text-right">
-                  <p className="font-heading text-2xl font-light text-[var(--color-text-primary)]">
+                  <p className="font-numeric text-2xl font-semibold text-[var(--color-text-primary)]">
                     {formatMoney(order.amountTotalCents, order.currency)}
                   </p>
                   <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">
@@ -162,7 +162,7 @@ export default function OrdersPanel({ orders }: Props) {
                 </div>
               </div>
 
-              <div className="mt-4 border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4">
+              <div className="mt-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4 shadow-[0_1px_2px_rgba(58,44,32,0.04)]">
                 <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">Pieces</p>
                 <div className="mt-3 space-y-2">
                   {order.items.map((item) => (
@@ -173,7 +173,7 @@ export default function OrdersPanel({ orders }: Props) {
                           {item.material} / {item.length} • Qty {item.quantity}
                         </p>
                       </div>
-                      <p className="font-medium text-[var(--color-text-primary)]">{formatMoney(item.lineTotalCents, order.currency)}</p>
+                      <p className="font-numeric font-medium text-[var(--color-text-primary)]">{formatMoney(item.lineTotalCents, order.currency)}</p>
                     </div>
                   ))}
                 </div>
