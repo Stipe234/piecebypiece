@@ -4,7 +4,9 @@ import InventoryEditForm from "@/components/owner/InventoryEditForm";
 import OrdersPanel from "@/components/owner/OrdersPanel";
 import ProductOverrideForm from "@/components/owner/ProductOverrideForm";
 import RevenueSparkline from "@/components/owner/RevenueSparkline";
+import WaitlistPanel from "@/components/owner/WaitlistPanel";
 import { getOwnerDashboardData } from "@/lib/inventory";
+import { getWaitlistSignups } from "@/lib/waitlist";
 import { requireOwnerAuth } from "@/lib/owner-auth";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +28,7 @@ function formatDate(value: string) {
 export default async function OwnerDashboardPage() {
   await requireOwnerAuth();
   const data = await getOwnerDashboardData();
+  const waitlist = await getWaitlistSignups();
   const lowStockCount = data.products.filter((product) => product.isLowStock && product.availableUnits > 0).length;
 
   const headlineStats: Array<{ label: string; value: string; accent?: "primary" | "warn" }> = [
@@ -252,6 +255,22 @@ export default async function OwnerDashboardPage() {
             <div className="relative mt-6">
               <OrdersPanel orders={data.orders} />
             </div>
+          </div>
+        </div>
+
+        <div className="mt-6 relative overflow-hidden rounded-[2rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.78)_0%,rgba(252,243,238,0.6)_100%)] p-6 shadow-[0_30px_80px_-40px_rgba(120,60,70,0.35)] backdrop-blur-sm md:p-8">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-[#c9a96e]/25 blur-3xl"
+          />
+          <div className="relative flex items-center justify-between gap-4">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.28em] text-[#a06b5a]">Waitlist</p>
+              <h2 className="mt-2 font-heading text-3xl font-light text-[#3a222a] md:text-4xl">Joined the list</h2>
+            </div>
+          </div>
+          <div className="relative mt-6">
+            <WaitlistPanel signups={waitlist} />
           </div>
         </div>
       </div>

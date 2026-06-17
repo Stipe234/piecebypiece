@@ -39,7 +39,7 @@ export default function Header() {
 
         {/* Logo */}
         <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-          <span className="font-heading text-base md:text-xl font-light tracking-[0.12em] md:tracking-[0.18em] uppercase whitespace-nowrap">
+          <span className="font-heading text-base md:text-xl font-medium tracking-[0.12em] md:tracking-[0.18em] uppercase whitespace-nowrap">
             Piece by Piece
           </span>
         </Link>

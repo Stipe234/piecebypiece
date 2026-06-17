@@ -42,6 +42,7 @@ export const translations = {
       submit: "Join",
       thanks: "You're on the list.",
       note: "No payment now. We'll write to you before it opens.",
+      error: "Something went wrong. Please try again.",
     },
 
     // Homepage
@@ -355,6 +356,7 @@ export const translations = {
       submit: "Prijavi se",
       thanks: "Na listi si.",
       note: "Bez pla\u0107anja sada. Javit \u0107emo ti se prije otvaranja.",
+      error: "Ne\u0161to je po\u0161lo po zlu. Poku\u0161aj ponovno.",
     },
 
     home: {
