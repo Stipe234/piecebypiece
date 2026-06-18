@@ -78,7 +78,11 @@ export default function ProductPage() {
               <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">
                 {t.waitlist.text}
               </p>
-              <WaitlistForm editionName={productContent.name} />
+              <WaitlistForm
+                editionName={productContent.name}
+                material={selectedMaterial}
+                style={selectedStyle}
+              />
             </div>
 
             <Accordion items={accordionItems} />
@@ -93,6 +97,7 @@ export default function ProductPage() {
               src="/images/lifestyle.jpg"
               alt="Hand chain worn in everyday life"
               fill
+              quality={90}
               className="object-cover"
               sizes="100vw"
             />

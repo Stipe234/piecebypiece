@@ -56,8 +56,10 @@ export default function WaitlistPanel({ signups }: { signups: WaitlistSignup[] }
                   >
                     {s.email}
                   </a>
-                  {s.source ? (
-                    <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">{s.source}</span>
+                  {(s.material || s.source) ? (
+                    <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">
+                      {s.material ? [s.material, s.style].filter(Boolean).join(" · ") : s.source}
+                    </span>
                   ) : null}
                 </div>
                 <span className="font-numeric flex-shrink-0 text-[11px] text-[var(--color-text-tertiary)]">{formatDate(s.createdAt)}</span>

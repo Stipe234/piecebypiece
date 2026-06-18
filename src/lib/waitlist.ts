@@ -6,6 +6,8 @@ export interface WaitlistSignup {
   email: string;
   source: string | null;
   locale: string | null;
+  material: string | null;
+  style: string | null;
   createdAt: string;
 }
 
@@ -23,6 +25,14 @@ export async function ensureWaitlistReady() {
           locale text,
           created_at timestamptz not null default now()
         )
+      `;
+
+      // The product page captures the material × style the shopper wanted.
+      // Nullable: footer/homepage signups carry no variant.
+      await sql`
+        alter table waitlist_signups
+        add column if not exists material text,
+        add column if not exists style text
       `;
     })();
   }
@@ -42,38 +52,37 @@ export async function addWaitlistSignup(
   email: string,
   source: string | null,
   locale: string | null,
+  material: string | null = null,
+  style: string | null = null,
 ): Promise<AddWaitlistResult> {
   await ensureWaitlistReady();
   const sql = getSql();
   const normalized = email.trim().toLowerCase();
   const id = randomUUID();
 
-  const inserted = await sql<WaitlistRow[]>`
-    insert into waitlist_signups (id, email, source, locale)
-    values (${id}, ${normalized}, ${source}, ${locale})
-    on conflict (email) do nothing
-    returning id, email, source, locale, created_at::text
+  // Upsert so a repeat email still records the variant the shopper picked.
+  // coalesce keeps an existing variant if a later signup (e.g. the footer
+  // newsletter form) arrives with no variant — never overwrite a real choice
+  // with NULL, and leave `source` as first set. `(xmax = 0)` distinguishes a
+  // fresh insert from an update so we only send the welcome email once.
+  const rows = await sql<(WaitlistRow & { created: boolean })[]>`
+    insert into waitlist_signups (id, email, source, locale, material, style)
+    values (${id}, ${normalized}, ${source}, ${locale}, ${material}, ${style})
+    on conflict (email) do update set
+      material = coalesce(excluded.material, waitlist_signups.material),
+      style = coalesce(excluded.style, waitlist_signups.style)
+    returning id, email, source, locale, material, style, created_at::text, (xmax = 0) as created
   `;
 
-  if (inserted.length > 0) {
-    return { created: true, signup: mapRow(inserted[0]) };
-  }
-
-  const existing = await sql<WaitlistRow[]>`
-    select id, email, source, locale, created_at::text
-    from waitlist_signups
-    where email = ${normalized}
-    limit 1
-  `;
-
-  return { created: false, signup: mapRow(existing[0]) };
+  const row = rows[0];
+  return { created: row.created, signup: mapRow(row) };
 }
 
 export async function getWaitlistSignups(): Promise<WaitlistSignup[]> {
   await ensureWaitlistReady();
   const sql = getSql();
   const rows = await sql<WaitlistRow[]>`
-    select id, email, source, locale, created_at::text
+    select id, email, source, locale, material, style, created_at::text
     from waitlist_signups
     order by created_at desc
   `;
@@ -85,6 +94,8 @@ interface WaitlistRow {
   email: string;
   source: string | null;
   locale: string | null;
+  material: string | null;
+  style: string | null;
   created_at: string;
 }
 
@@ -94,6 +105,8 @@ function mapRow(row: WaitlistRow): WaitlistSignup {
     email: row.email,
     source: row.source,
     locale: row.locale,
+    material: row.material,
+    style: row.style,
     createdAt: row.created_at,
   };
 }

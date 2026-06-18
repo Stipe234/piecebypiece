@@ -23,6 +23,7 @@ export default function ProductCard({ product }: { product: Product }) {
           src={product.images.studio}
           alt={content.name}
           fill
+          quality={90}
           className={`object-cover transition-opacity duration-[var(--duration-base)] ${hovered ? "opacity-0" : "opacity-100"}`}
           sizes="(max-width: 768px) 50vw, 33vw"
         />
@@ -30,6 +31,7 @@ export default function ProductCard({ product }: { product: Product }) {
           src={product.images.onBody}
           alt={`${content.name} on body`}
           fill
+          quality={90}
           className={`object-cover transition-opacity duration-[var(--duration-base)] ${hovered ? "opacity-100" : "opacity-0"}`}
           sizes="(max-width: 768px) 50vw, 33vw"
         />

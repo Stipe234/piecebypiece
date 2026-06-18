@@ -10,7 +10,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="relative h-[50vh] md:h-[60vh] min-h-[350px] md:min-h-[500px] overflow-hidden">
-        <Image src="/images/lifestyle.jpg" alt="Piece by Piece" fill className="object-cover" priority sizes="100vw" />
+        <Image src="/images/lifestyle.jpg" alt="Piece by Piece" fill quality={90} className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-black/20" />
       </section>
 
@@ -28,7 +28,7 @@ export default function AboutPage() {
       <section className="bg-[var(--color-bg-secondary)] md:min-h-[80vh]">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2">
           <ScrollReveal className="relative aspect-[3/4] md:aspect-auto">
-            <Image src="/images/intimate.jpg" alt="Hand chain on skin" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+            <Image src="/images/intimate.jpg" alt="Hand chain on skin" fill quality={90} className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
           </ScrollReveal>
           <div className="flex flex-col justify-center px-6 md:px-20 py-16 md:py-32">
             <ScrollReveal>
@@ -63,7 +63,7 @@ export default function AboutPage() {
       <section>
         <ScrollReveal>
           <div className="relative aspect-[4/3] md:aspect-[21/9] overflow-hidden">
-            <Image src="/images/detail.jpg" alt="Hand chain close-up" fill className="object-cover" sizes="100vw" />
+            <Image src="/images/detail.jpg" alt="Hand chain close-up" fill quality={90} className="object-cover" sizes="100vw" />
           </div>
         </ScrollReveal>
       </section>

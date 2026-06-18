@@ -38,6 +38,7 @@ export default function HandChainsCollection() {
                     src={look.img}
                     alt={look.label}
                     fill
+                    quality={90}
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />

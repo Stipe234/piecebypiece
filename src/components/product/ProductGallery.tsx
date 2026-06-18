@@ -52,6 +52,7 @@ export default function ProductGallery({ images }: { images: string[] }) {
           src={images[activeIndex]}
           alt=""
           fill
+          quality={90}
           className="object-cover transition-opacity duration-[var(--duration-base)]"
           sizes="(max-width: 768px) 100vw, 60vw"
           priority

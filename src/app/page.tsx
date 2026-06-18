@@ -57,10 +57,11 @@ export default function Home() {
         <div className="hero-image-enter absolute inset-0">
           <div className="hero-drift absolute inset-0">
             <Image
-              src="/images/naslovna.webp"
-              alt="Gold hand chain resting on soft white fabric"
+              src="/images/na_taknini.webp"
+              alt="Gold hand chain resting on warm sand-toned fabric"
               fill
               priority
+              quality={90}
               sizes="100vw"
               className="object-cover object-center"
             />
@@ -134,6 +135,7 @@ export default function Home() {
                     src={look.img}
                     alt={look.label}
                     fill
+                    quality={90}
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
@@ -173,6 +175,7 @@ export default function Home() {
               src="/images/lifestyle.jpg"
               alt="Hand chain worn with a cream blazer"
               fill
+              quality={90}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
@@ -197,9 +200,10 @@ export default function Home() {
           </div>
           <ScrollReveal className="relative aspect-[4/5] md:aspect-auto">
             <Image
-              src="/images/na_taknini.webp"
-              alt="Gold hand chain resting on warm sand-toned fabric"
+              src="/images/naslovna.webp"
+              alt="Gold hand chain resting on soft white fabric"
               fill
+              quality={90}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
@@ -213,6 +217,7 @@ export default function Home() {
           src="/images/editorial.jpg"
           alt="Hand chain resting against skin"
           fill
+          quality={90}
           className="object-cover object-center"
           sizes="100vw"
         />
