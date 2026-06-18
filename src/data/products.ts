@@ -96,3 +96,33 @@ export function getLayersWithProducts(product: Product): Product[] {
 export function getProductContent(product: Product, locale: Locale): ProductContent {
   return product.content[locale] ?? product.content.en;
 }
+
+export interface ProductVariant {
+  /** Stable identity for a material × style combination, e.g. "Gold|Static". */
+  key: string;
+  material: string;
+  style: string;
+  /** Display label, e.g. "Gold · Static". */
+  label: string;
+}
+
+/** Build the canonical variant key from a material + style pair. */
+export function variantKey(material: string, style: string): string {
+  return `${material}|${style}`;
+}
+
+/** The full set of purchasable variants for a product (materials × styles). */
+export function getProductVariants(product: Product): ProductVariant[] {
+  const variants: ProductVariant[] = [];
+  for (const material of product.materials) {
+    for (const style of product.styles) {
+      variants.push({
+        key: variantKey(material, style),
+        material,
+        style,
+        label: `${material} · ${style}`,
+      });
+    }
+  }
+  return variants;
+}

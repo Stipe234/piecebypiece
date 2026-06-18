@@ -57,7 +57,7 @@ export default function Home() {
         <div className="hero-image-enter absolute inset-0">
           <div className="hero-drift absolute inset-0">
             <Image
-              src="/images/intimate.jpg"
+              src="/images/naslovna.png"
               alt="Gold hand chain resting on soft white fabric"
               fill
               priority
@@ -210,8 +210,8 @@ export default function Home() {
       {/* ── 7. Closing ── */}
       <section className="relative h-[80vh] min-h-[480px] overflow-hidden">
         <Image
-          src="/images/editorial.jpg"
-          alt="Hand chain resting against skin"
+          src="/images/na_taknini.png"
+          alt="Gold hand chain resting on warm sand-toned fabric"
           fill
           className="object-cover object-center"
           sizes="100vw"

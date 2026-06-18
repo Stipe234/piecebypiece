@@ -60,7 +60,7 @@ export default function WaitlistPanel({ signups }: { signups: WaitlistSignup[] }
                     <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--color-text-tertiary)]">{s.source}</span>
                   ) : null}
                 </div>
-                <span className="flex-shrink-0 text-[11px] text-[var(--color-text-tertiary)]">{formatDate(s.createdAt)}</span>
+                <span className="font-numeric flex-shrink-0 text-[11px] text-[var(--color-text-tertiary)]">{formatDate(s.createdAt)}</span>
               </li>
             ))}
           </ul>

@@ -139,15 +139,15 @@ export default function OrdersPanel({ orders }: Props) {
                   <dl className="mt-3 grid grid-cols-1 gap-x-5 gap-y-1 text-xs sm:grid-cols-3">
                     <div>
                       <dt className="uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">Paid</dt>
-                      <dd className="mt-0.5 text-[var(--color-text-primary)]">{formatDate(order.paidAt ?? order.createdAt)}</dd>
+                      <dd className="font-numeric mt-0.5 text-[var(--color-text-primary)]">{formatDate(order.paidAt ?? order.createdAt)}</dd>
                     </div>
                     <div>
                       <dt className="uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">Fulfilled</dt>
-                      <dd className="mt-0.5 text-[var(--color-text-primary)]">{formatDate(order.fulfilledAt)}</dd>
+                      <dd className="font-numeric mt-0.5 text-[var(--color-text-primary)]">{formatDate(order.fulfilledAt)}</dd>
                     </div>
                     <div>
                       <dt className="uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">Items</dt>
-                      <dd className="mt-0.5 text-[var(--color-text-primary)]">{order.itemCount}</dd>
+                      <dd className="font-numeric mt-0.5 text-[var(--color-text-primary)]">{order.itemCount}</dd>
                     </div>
                   </dl>
                 </div>
@@ -156,7 +156,7 @@ export default function OrdersPanel({ orders }: Props) {
                   <p className="font-numeric text-2xl font-semibold text-[var(--color-text-primary)]">
                     {formatMoney(order.amountTotalCents, order.currency)}
                   </p>
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">
+                  <p className="font-numeric mt-2 text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-tertiary)]">
                     Session {order.stripeSessionId}
                   </p>
                 </div>

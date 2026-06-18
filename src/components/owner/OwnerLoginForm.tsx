@@ -14,7 +14,7 @@ export default function OwnerLoginForm() {
       <div>
         <label
           htmlFor="username"
-          className="mb-2 block text-[11px] font-medium uppercase tracking-[0.24em] text-white/60"
+          className="mb-2 block text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]"
         >
           Username
         </label>
@@ -24,14 +24,14 @@ export default function OwnerLoginForm() {
           type="text"
           autoComplete="username"
           required
-          className="w-full rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-white outline-none transition focus:border-[#d8ba84] focus:bg-white/10"
+          className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-3 text-sm text-[var(--color-text-primary)] outline-none transition focus:border-[var(--color-border-dark)]"
         />
       </div>
 
       <div>
         <label
           htmlFor="password"
-          className="mb-2 block text-[11px] font-medium uppercase tracking-[0.24em] text-white/60"
+          className="mb-2 block text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]"
         >
           Password
         </label>
@@ -41,20 +41,15 @@ export default function OwnerLoginForm() {
           type="password"
           autoComplete="current-password"
           required
-          className="w-full rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-white outline-none transition focus:border-[#d8ba84] focus:bg-white/10"
+          className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-3 text-sm text-[var(--color-text-primary)] outline-none transition focus:border-[var(--color-border-dark)]"
         />
       </div>
 
       {state?.error ? (
-        <p className="text-sm text-[#f4b5b5]">{state.error}</p>
+        <p className="text-sm text-[var(--color-error)]">{state.error}</p>
       ) : null}
 
-      <Button
-        type="submit"
-        fullWidth
-        disabled={pending}
-        className="rounded-2xl bg-[#d8ba84] text-[#171411] hover:bg-[#e5c792]"
-      >
+      <Button type="submit" fullWidth disabled={pending} className="rounded-lg">
         {pending ? "Opening..." : "Open dashboard"}
       </Button>
     </form>

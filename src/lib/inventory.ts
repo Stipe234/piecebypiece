@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Stripe } from "stripe";
-import { getProductById, products } from "@/data/products";
+import { getProductById, getProductVariants, products, variantKey } from "@/data/products";
 import { getSql } from "@/lib/db";
 
 type ReservationStatus = "pending" | "completed" | "released" | "expired";
@@ -10,6 +10,7 @@ export interface ReservationLineItem {
   productId: string;
   quantity: number;
   material: string;
+  style: string;
   length: string;
   unitPriceCents: number;
   productName: string;
@@ -27,11 +28,33 @@ export interface ProductAvailability {
   isActive: boolean;
 }
 
+export interface VariantAvailability {
+  productId: string;
+  variantKey: string;
+  material: string;
+  style: string;
+  totalUnits: number;
+  reservedUnits: number;
+  soldUnits: number;
+  availableUnits: number;
+  isSoldOut: boolean;
+}
+
 interface InventoryRow {
   product_id: string;
   total_units: number;
   reserved_units: number;
   sold_units: number;
+}
+
+interface VariantInventoryRow {
+  product_id: string;
+  material: string;
+  style: string;
+  total_units: number;
+  reserved_units: number;
+  sold_units: number;
+  updated_at: string;
 }
 
 interface ReservationRow {
@@ -80,6 +103,7 @@ interface OrderItemRow {
   product_slug: string;
   product_name: string;
   material: string;
+  style: string | null;
   length: string;
   quantity: number;
   unit_price_cents: number;
@@ -99,6 +123,19 @@ export interface DashboardOverview {
   revenueSeries: Array<{ date: string; revenueCents: number; orderCount: number }>;
 }
 
+export interface DashboardVariant {
+  variantKey: string;
+  material: string;
+  style: string;
+  label: string;
+  totalUnits: number;
+  soldUnits: number;
+  reservedUnits: number;
+  availableUnits: number;
+  isLowStock: boolean;
+  updatedAt: string;
+}
+
 export interface DashboardProduct {
   productId: string;
   slug: string;
@@ -111,6 +148,7 @@ export interface DashboardProduct {
   updatedAt: string;
   priceCents: number;
   isActive: boolean;
+  variants: DashboardVariant[];
 }
 
 export interface DashboardOrder {
@@ -201,6 +239,39 @@ export async function ensureInventoryReady() {
         )
       `;
 
+      // Per-variant stock is the source of truth (material × style). Product-level
+      // inventory_items rows remain only as the FK target / override anchor.
+      await sql`
+        create table if not exists variant_inventory (
+          product_id text not null references inventory_items(product_id) on delete cascade,
+          material text not null,
+          style text not null,
+          total_units integer not null check (total_units >= 0),
+          reserved_units integer not null default 0 check (reserved_units >= 0),
+          sold_units integer not null default 0 check (sold_units >= 0),
+          updated_at timestamptz not null default now(),
+          primary key (product_id, material, style)
+        )
+      `;
+
+      // Reservation items become variant-scoped. Add the columns, then widen the PK
+      // to include them (safe + idempotent for existing rows, which get '' defaults).
+      await sql`
+        alter table stock_reservation_items
+        add column if not exists material text not null default '',
+        add column if not exists style text not null default ''
+      `;
+
+      await sql`
+        alter table stock_reservation_items
+        drop constraint if exists stock_reservation_items_pkey
+      `;
+
+      await sql`
+        alter table stock_reservation_items
+        add primary key (reservation_id, product_id, material, style)
+      `;
+
       await sql`
         alter table stock_reservations
         add column if not exists line_items_json jsonb not null default '[]'::jsonb
@@ -248,6 +319,11 @@ export async function ensureInventoryReady() {
       `;
 
       await sql`
+        alter table order_items
+        add column if not exists style text
+      `;
+
+      await sql`
         alter table orders
         add column if not exists refunded_at timestamptz,
         add column if not exists refund_amount_cents integer not null default 0,
@@ -276,6 +352,16 @@ export async function ensureInventoryReady() {
           values (${product.id}, ${Math.round(product.price * 100)}, true)
           on conflict (product_id) do nothing
         `;
+
+        // Seed one stock row per variant. Each variant starts at the product's
+        // configured units; the owner sets real per-variant counts in the dashboard.
+        for (const variant of getProductVariants(product)) {
+          await sql`
+            insert into variant_inventory (product_id, material, style, total_units)
+            values (${product.id}, ${variant.material}, ${variant.style}, ${product.inventory.totalUnits})
+            on conflict (product_id, material, style) do nothing
+          `;
+        }
       }
     })();
   }

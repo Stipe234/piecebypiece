@@ -46,7 +46,12 @@ export default async function OwnerDashboardPage() {
   await requireOwnerAuth();
   const data = await getOwnerDashboardData();
   const waitlist = await getWaitlistSignups();
-  const lowStockCount = data.products.filter((product) => product.isLowStock && product.availableUnits > 0).length;
+  // "Running low" uses the same 10%-remaining rule as the per-variant bars below.
+  const isVariantLow = (availableUnits: number, totalUnits: number) =>
+    availableUnits > 0 && (totalUnits <= 0 || (availableUnits / totalUnits) * 100 <= 10);
+  const lowStockCount = data.products
+    .flatMap((product) => product.variants)
+    .filter((variant) => isVariantLow(variant.availableUnits, variant.totalUnits)).length;
 
   const headlineStats: Array<{ label: string; value: string; accent?: "primary" | "warn" }> = [
     { label: "Revenue", value: formatMoney(data.overview.revenueCents, "EUR"), accent: "primary" },
