@@ -60,23 +60,27 @@ export default function ProductGallery({ variants, selectedKey, onSelect }: Prod
         ))}
       </div>
 
-      {/* Main image - swipeable on mobile */}
+      {/* Main image - swipeable on mobile. All variants are rendered stacked
+          (only the active one is visible) so switching is an instant opacity
+          swap instead of a fresh network fetch. */}
       <div
         className="flex-1 relative aspect-[3/4] bg-[var(--color-bg-secondary)] overflow-hidden touch-pan-y"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <Image
-          key={active.key}
-          src={active.src}
-          alt={active.label}
-          fill
-          quality={90}
-          className="object-cover transition-opacity duration-[var(--duration-base)]"
-          sizes="(max-width: 768px) 100vw, 60vw"
-          priority
-        />
+        {variants.map((v) => (
+          <Image
+            key={v.key}
+            src={v.src}
+            alt={v.label}
+            fill
+            quality={90}
+            priority={v.key === selectedKey}
+            className={`object-cover transition-opacity duration-[var(--duration-base)] ${v.key === selectedKey ? "opacity-100" : "opacity-0"}`}
+            sizes="(max-width: 768px) 100vw, 60vw"
+          />
+        ))}
       </div>
 
       {/* Mobile dots */}
