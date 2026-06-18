@@ -1,12 +1,27 @@
 "use client";
 
-import { useState, useRef, type TouchEvent } from "react";
+import { useRef, type TouchEvent } from "react";
 import Image from "next/image";
 
-export default function ProductGallery({ images }: { images: string[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+export interface GalleryVariant {
+  key: string;
+  label: string;
+  src: string;
+}
+
+interface ProductGalleryProps {
+  variants: GalleryVariant[];
+  selectedKey: string;
+  onSelect: (key: string) => void;
+}
+
+export default function ProductGallery({ variants, selectedKey, onSelect }: ProductGalleryProps) {
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+
+  const foundIndex = variants.findIndex((v) => v.key === selectedKey);
+  const activeIndex = foundIndex === -1 ? 0 : foundIndex;
+  const active = variants[activeIndex];
 
   const handleTouchStart = (e: TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -19,24 +34,28 @@ export default function ProductGallery({ images }: { images: string[] }) {
   const handleTouchEnd = () => {
     const diff = touchStartX.current - touchEndX.current;
     const threshold = 50;
-    if (diff > threshold && activeIndex < images.length - 1) {
-      setActiveIndex(activeIndex + 1);
+    if (diff > threshold && activeIndex < variants.length - 1) {
+      onSelect(variants[activeIndex + 1].key);
     } else if (diff < -threshold && activeIndex > 0) {
-      setActiveIndex(activeIndex - 1);
+      onSelect(variants[activeIndex - 1].key);
     }
   };
+
+  if (!active) return null;
 
   return (
     <div className="flex flex-col md:flex-row gap-3">
       {/* Thumbnails - desktop */}
       <div className="hidden md:flex flex-col gap-2 w-20">
-        {images.map((img, i) => (
+        {variants.map((v) => (
           <button
-            key={i}
-            onClick={() => setActiveIndex(i)}
-            className={`relative aspect-[4/5] overflow-hidden border transition-colors ${activeIndex === i ? "border-[var(--color-border-dark)]" : "border-[var(--color-border)] hover:border-[var(--color-text-tertiary)]"}`}
+            key={v.key}
+            onClick={() => onSelect(v.key)}
+            aria-label={v.label}
+            aria-pressed={v.key === selectedKey}
+            className={`relative aspect-[4/5] overflow-hidden border transition-colors ${v.key === selectedKey ? "border-[var(--color-border-dark)]" : "border-[var(--color-border)] hover:border-[var(--color-text-tertiary)]"}`}
           >
-            <Image src={img} alt="" fill className="object-cover" sizes="80px" />
+            <Image src={v.src} alt={v.label} fill className="object-cover" sizes="80px" />
           </button>
         ))}
       </div>
@@ -49,8 +68,9 @@ export default function ProductGallery({ images }: { images: string[] }) {
         onTouchEnd={handleTouchEnd}
       >
         <Image
-          src={images[activeIndex]}
-          alt=""
+          key={active.key}
+          src={active.src}
+          alt={active.label}
           fill
           quality={90}
           className="object-cover transition-opacity duration-[var(--duration-base)]"
@@ -61,12 +81,12 @@ export default function ProductGallery({ images }: { images: string[] }) {
 
       {/* Mobile dots */}
       <div className="flex md:hidden items-center justify-center gap-2.5 pt-3 pb-1">
-        {images.map((_, i) => (
+        {variants.map((v) => (
           <button
-            key={i}
-            onClick={() => setActiveIndex(i)}
-            className={`rounded-full transition-all ${activeIndex === i ? "w-2 h-2 bg-[var(--color-text-primary)]" : "w-1.5 h-1.5 bg-[var(--color-border)]"}`}
-            aria-label={`View image ${i + 1}`}
+            key={v.key}
+            onClick={() => onSelect(v.key)}
+            className={`rounded-full transition-all ${v.key === selectedKey ? "w-2 h-2 bg-[var(--color-text-primary)]" : "w-1.5 h-1.5 bg-[var(--color-border)]"}`}
+            aria-label={v.label}
           />
         ))}
       </div>

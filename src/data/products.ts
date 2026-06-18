@@ -24,6 +24,8 @@ export interface Product {
     studio: string;
     onBody: string;
     gallery: string[];
+    /** Studio image per variant, keyed by variantKey(material, style). */
+    byVariant: Record<string, string>;
   };
   collection: string;
   layersWith: string[];
@@ -52,6 +54,12 @@ export const products: Product[] = [
         "/images/silver-static.jpg",
         "/images/silver-dangling.jpg",
       ],
+      byVariant: {
+        "Gold|Static": "/images/gold-static.jpg",
+        "Gold|Dangling": "/images/gold-dangling.jpg",
+        "Silver|Static": "/images/silver-static.jpg",
+        "Silver|Dangling": "/images/silver-dangling.jpg",
+      },
     },
     collection: "hand-chains",
     layersWith: [],
@@ -109,6 +117,11 @@ export interface ProductVariant {
 /** Build the canonical variant key from a material + style pair. */
 export function variantKey(material: string, style: string): string {
   return `${material}|${style}`;
+}
+
+/** Resolve the studio image for a specific material × style variant. */
+export function getVariantImage(product: Product, material: string, style: string): string {
+  return product.images.byVariant[variantKey(material, style)] ?? product.images.studio;
 }
 
 /** The full set of purchasable variants for a product (materials × styles). */

@@ -63,7 +63,7 @@ export default function Home() {
               priority
               quality={90}
               sizes="100vw"
-              className="object-cover object-center"
+              className="object-cover object-left"
             />
           </div>
         </div>

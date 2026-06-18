@@ -4,7 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
-import { getProduct, getProductContent, getLayersWithProducts } from "@/data/products";
+import {
+  getProduct,
+  getProductContent,
+  getLayersWithProducts,
+  getProductVariants,
+  getVariantImage,
+  variantKey,
+} from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import ProductGallery from "@/components/product/ProductGallery";
 import VariantSelector from "@/components/product/VariantSelector";
@@ -24,6 +31,22 @@ export default function ProductPage() {
 
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [selectedStyle, setSelectedStyle] = useState(product.styles[0]);
+
+  // The gallery is driven by the selected variant: each material × style maps
+  // to its own studio image, and picking a thumbnail updates the selectors.
+  const selectedKey = variantKey(selectedMaterial, selectedStyle);
+  const galleryVariants = getProductVariants(product).map((v) => ({
+    key: v.key,
+    label: v.label,
+    src: getVariantImage(product, v.material, v.style),
+  }));
+
+  const handleSelectVariant = (key: string) => {
+    const variant = getProductVariants(product).find((v) => v.key === key);
+    if (!variant) return;
+    setSelectedMaterial(variant.material);
+    setSelectedStyle(variant.style);
+  };
 
   const materialLabels: Record<string, string> = {
     Gold: t.product.gold,
@@ -45,7 +68,11 @@ export default function ProductPage() {
     <>
       <section className="py-4 md:py-16 px-4 md:px-12">
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-20">
-          <ProductGallery images={product.images.gallery} />
+          <ProductGallery
+            variants={galleryVariants}
+            selectedKey={selectedKey}
+            onSelect={handleSelectVariant}
+          />
 
           <div className="flex flex-col gap-6 md:gap-8 md:py-8 md:sticky md:top-24 md:self-start">
             <div>
