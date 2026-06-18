@@ -63,7 +63,7 @@ export default function Home() {
               priority
               quality={90}
               sizes="100vw"
-              className="object-cover object-left"
+              className="object-cover object-center md:object-left"
             />
           </div>
         </div>
@@ -71,8 +71,8 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/35 md:hidden" />
         {/* Desktop: dark on the right where the text block sits */}
         <div className="absolute inset-0 hidden md:block bg-gradient-to-l from-black/55 via-black/20 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-start md:justify-end">
-          <div className="px-6 md:px-16 lg:px-24 max-w-[80%] md:max-w-2xl text-center md:text-right">
+        <div className="absolute inset-0 flex items-center justify-center md:justify-end">
+          <div className="px-6 md:px-16 lg:px-24 max-w-2xl text-center md:text-right">
             <h1 className="hero-text-enter font-heading text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-wide leading-[1.04]">
               {h.hero.headline}
             </h1>
