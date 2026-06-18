@@ -83,13 +83,13 @@ export default function ProductGallery({ variants, selectedKey, onSelect }: Prod
         ))}
       </div>
 
-      {/* Mobile dots */}
-      <div className="flex md:hidden items-center justify-center gap-2.5 pt-3 pb-1">
+      {/* Mobile indicators - tiny horizontal bars */}
+      <div className="flex md:hidden items-center justify-center gap-1.5 pt-4 pb-1">
         {variants.map((v) => (
           <button
             key={v.key}
             onClick={() => onSelect(v.key)}
-            className={`rounded-full transition-all ${v.key === selectedKey ? "w-2 h-2 bg-[var(--color-text-primary)]" : "w-1.5 h-1.5 bg-[var(--color-border)]"}`}
+            className={`h-[3px] rounded-[1px] transition-all duration-300 ${v.key === selectedKey ? "w-6 bg-[var(--color-text-primary)]" : "w-4 bg-[var(--color-border)]"}`}
             aria-label={v.label}
           />
         ))}

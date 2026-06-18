@@ -58,8 +58,8 @@ export default function Home() {
           <div className="hero-drift absolute inset-0">
             {/* Phone: portrait crop framing the hand chain */}
             <Image
-              src="/images/na_taknini_portrait.webp"
-              alt="Gold hand chain resting on warm sand-toned fabric"
+              src="/images/naslovna_portrait.webp"
+              alt="Gold hand chain resting on soft white fabric"
               fill
               priority
               quality={90}
@@ -213,12 +213,21 @@ export default function Home() {
             </ScrollReveal>
           </div>
           <ScrollReveal className="relative aspect-[4/5] md:aspect-auto order-1 md:order-2">
+            {/* Phone: na_taknini; tablet & up: naslovna */}
+            <Image
+              src="/images/na_taknini.webp"
+              alt="Gold hand chain resting on warm sand-toned fabric"
+              fill
+              quality={90}
+              className="object-cover object-[40%_center] md:hidden"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
             <Image
               src="/images/naslovna.webp"
               alt="Gold hand chain resting on soft white fabric"
               fill
               quality={90}
-              className="object-cover"
+              className="hidden object-cover md:block"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           </ScrollReveal>
