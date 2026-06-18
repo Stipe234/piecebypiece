@@ -71,8 +71,8 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/35 md:hidden" />
         {/* Desktop: dark on the right where the text block sits */}
         <div className="absolute inset-0 hidden md:block bg-gradient-to-l from-black/55 via-black/20 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-center md:justify-end">
-          <div className="px-6 md:px-16 lg:px-24 max-w-2xl text-center md:text-right">
+        <div className="absolute inset-0 flex items-center justify-start md:justify-end">
+          <div className="px-6 md:px-16 lg:px-24 max-w-[80%] md:max-w-2xl text-center md:text-right">
             <h1 className="hero-text-enter font-heading text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-wide leading-[1.04]">
               {h.hero.headline}
             </h1>
@@ -189,7 +189,7 @@ export default function Home() {
       {/* ── 6. Why Hand Chains ── */}
       <section className="bg-[var(--color-bg-secondary)]">
         <div className="grid grid-cols-1 md:grid-cols-2 md:min-h-[88vh]">
-          <div className="flex flex-col justify-center px-6 md:px-20 py-20 md:py-32">
+          <div className="flex flex-col justify-center px-6 md:px-20 py-20 md:py-32 order-2 md:order-1">
             <ScrollReveal>
               <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-[var(--color-text-tertiary)] mb-8">
                 {h.why.title}
@@ -201,7 +201,7 @@ export default function Home() {
               </div>
             </ScrollReveal>
           </div>
-          <ScrollReveal className="relative aspect-[4/5] md:aspect-auto">
+          <ScrollReveal className="relative aspect-[4/5] md:aspect-auto order-1 md:order-2">
             <Image
               src="/images/naslovna.webp"
               alt="Gold hand chain resting on soft white fabric"
