@@ -56,6 +56,17 @@ export default function Home() {
       <section className="relative h-[100svh] min-h-[600px] overflow-hidden">
         <div className="hero-image-enter absolute inset-0">
           <div className="hero-drift absolute inset-0">
+            {/* Phone: portrait crop framing the hand chain */}
+            <Image
+              src="/images/na_taknini_portrait.webp"
+              alt="Gold hand chain resting on warm sand-toned fabric"
+              fill
+              priority
+              quality={90}
+              sizes="100vw"
+              className="object-cover object-center md:hidden"
+            />
+            {/* Tablet & up: full landscape, anchored left */}
             <Image
               src="/images/na_taknini.webp"
               alt="Gold hand chain resting on warm sand-toned fabric"
@@ -63,7 +74,7 @@ export default function Home() {
               priority
               quality={90}
               sizes="100vw"
-              className="object-cover object-[40%_center] md:object-left"
+              className="hidden object-cover object-left md:block"
             />
           </div>
         </div>
@@ -71,8 +82,8 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/35 md:hidden" />
         {/* Desktop: dark on the right where the text block sits */}
         <div className="absolute inset-0 hidden md:block bg-gradient-to-l from-black/55 via-black/20 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="px-6 md:px-16 lg:px-24 max-w-2xl text-center md:text-right">
+        <div className="absolute inset-0 flex items-center justify-center md:justify-end">
+          <div className="px-6 md:px-16 lg:px-24 max-w-2xl text-center md:text-right md:mr-[4%] lg:mr-[8%]">
             <h1 className="hero-text-enter font-heading text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-wide leading-[1.04]">
               {h.hero.headline}
             </h1>
