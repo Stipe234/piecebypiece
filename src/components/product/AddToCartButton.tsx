@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 interface AddToCartButtonProps {
   product: Product;
   selectedMaterial: string;
+  selectedStyle: string;
   selectedLength: string;
   disabled?: boolean;
   label?: string;
@@ -17,6 +18,7 @@ interface AddToCartButtonProps {
 export default function AddToCartButton({
   product,
   selectedMaterial,
+  selectedStyle,
   selectedLength,
   disabled = false,
   label,
@@ -30,7 +32,7 @@ export default function AddToCartButton({
       return;
     }
 
-    addItem(product, selectedMaterial, selectedLength);
+    addItem(product, selectedMaterial, selectedStyle, selectedLength);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };

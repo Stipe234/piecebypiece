@@ -22,6 +22,7 @@ interface LineItem {
   productId: string;
   quantity: number;
   material: string;
+  style: string;
   length: string;
 }
 
@@ -55,6 +56,10 @@ export async function POST(request: Request) {
         throw new Error(`Invalid material for product: ${item.productId}`);
       }
 
+      if (!product.styles.includes(item.style)) {
+        throw new Error(`Invalid style for product: ${item.productId}`);
+      }
+
       if (!product.lengths.includes(item.length)) {
         throw new Error(`Invalid length for product: ${item.productId}`);
       }
@@ -80,6 +85,7 @@ export async function POST(request: Request) {
         productId: item.productId,
         quantity: item.quantity,
         material: item.material,
+        style: item.style,
         length: item.length,
         unitPriceCents,
         productName: content.name,

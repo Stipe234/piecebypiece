@@ -8,6 +8,7 @@ export interface CartItem {
   product: Product;
   quantity: number;
   selectedMaterial: string;
+  selectedStyle: string;
   selectedLength: string;
 }
 
@@ -16,7 +17,7 @@ interface CartContextType {
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (product: Product, material: string, length: string) => void;
+  addItem: (product: Product, material: string, style: string, length: string) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -26,8 +27,8 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-function getCartItemId(productId: string, material: string, length: string) {
-  return `${productId}:${material}:${length}`;
+function getCartItemId(productId: string, material: string, style: string, length: string) {
+  return `${productId}:${material}:${style}:${length}`;
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -37,9 +38,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
-  const addItem = useCallback((product: Product, material: string, length: string) => {
+  const addItem = useCallback((product: Product, material: string, style: string, length: string) => {
     setItems((prev) => {
-      const itemId = getCartItemId(product.id, material, length);
+      const itemId = getCartItemId(product.id, material, style, length);
       const existing = prev.find((item) => item.id === itemId);
       if (existing) {
         return prev.map((item) =>
@@ -55,6 +56,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           product,
           quantity: 1,
           selectedMaterial: material,
+          selectedStyle: style,
           selectedLength: length,
         },
       ];

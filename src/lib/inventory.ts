@@ -826,6 +826,37 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
         where order_id = any(${sql.array(orderIds)})
       `;
 
+  const variantRows = await sql<{
+    product_id: string;
+    material: string;
+    style: string;
+    total_units: number;
+    reserved_units: number;
+    sold_units: number;
+    updated_at: string;
+  }[]>`
+    select product_id, material, style, total_units, reserved_units, sold_units, updated_at::text
+    from variant_inventory
+    order by product_id, material, style
+  `;
+
+  const variantsByProduct = variantRows.reduce<Record<string, DashboardVariant[]>>((acc, row) => {
+    const availableUnits = Math.max(row.total_units - row.reserved_units - row.sold_units, 0);
+    (acc[row.product_id] ??= []).push({
+      variantKey: variantKey(row.material, row.style),
+      material: row.material,
+      style: row.style,
+      label: `${row.material} · ${row.style}`,
+      totalUnits: row.total_units,
+      soldUnits: row.sold_units,
+      reservedUnits: row.reserved_units,
+      availableUnits,
+      isLowStock: availableUnits > 0 && availableUnits <= LOW_STOCK_THRESHOLD,
+      updatedAt: row.updated_at,
+    });
+    return acc;
+  }, {});
+
   const overview = overviewRows[0];
   const orderItemsByOrder = orderItemRows.reduce<Record<string, DashboardOrder["items"]>>((acc, item) => {
     acc[item.order_id] ??= [];
@@ -875,6 +906,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
         updatedAt: row.updated_at,
         priceCents: row.price_cents ?? fallbackPriceCents,
         isActive: row.is_active ?? true,
+        variants: variantsByProduct[row.product_id] ?? [],
       };
     }),
     orders: orderRows.map((row) => ({

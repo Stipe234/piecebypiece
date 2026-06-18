@@ -41,6 +41,7 @@ export default function CheckoutPage() {
             productId: item.product.id,
             quantity: item.quantity,
             material: item.selectedMaterial,
+            style: item.selectedStyle,
             length: item.selectedLength,
           })),
           locale,

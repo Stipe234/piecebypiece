@@ -57,7 +57,7 @@ export default function Home() {
         <div className="hero-image-enter absolute inset-0">
           <div className="hero-drift absolute inset-0">
             <Image
-              src="/images/naslovna.png"
+              src="/images/naslovna.webp"
               alt="Gold hand chain resting on soft white fabric"
               fill
               priority
@@ -197,8 +197,8 @@ export default function Home() {
           </div>
           <ScrollReveal className="relative aspect-[4/5] md:aspect-auto">
             <Image
-              src="/images/warm.jpg"
-              alt="Close-up of a gold hand chain on skin in warm light"
+              src="/images/na_taknini.webp"
+              alt="Gold hand chain resting on warm sand-toned fabric"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -210,8 +210,8 @@ export default function Home() {
       {/* ── 7. Closing ── */}
       <section className="relative h-[80vh] min-h-[480px] overflow-hidden">
         <Image
-          src="/images/na_taknini.png"
-          alt="Gold hand chain resting on warm sand-toned fabric"
+          src="/images/editorial.jpg"
+          alt="Hand chain resting against skin"
           fill
           className="object-cover object-center"
           sizes="100vw"
