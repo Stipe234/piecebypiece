@@ -70,7 +70,7 @@ export const products: Product[] = [
     content: {
       en: {
         label: "The Hand Chain",
-        name: "Edition 001",
+        name: "Piece 001",
         description:
           "A hand chain that feels like part of you.\nOne quiet line, from wrist to finger.\nSubtle. Intentional. Yours.",
         shortDescription: "The hand chain that begins your collection.",

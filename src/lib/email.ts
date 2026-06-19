@@ -75,7 +75,7 @@ export async function sendWaitlistEmails(opts: { email: string; source: string |
 const COPY = {
   eyebrow: "Built Over Time",
   title: "You're on the list.",
-  p1: "Thank you for joining. You're now among the first to know when Edition 001 opens.",
+  p1: "Thank you for joining. You're now among the first to know when Piece 001 opens.",
   p2: "Piece by Piece is built on a simple idea: the best jewelry collections aren't bought all at once. They're collected slowly, intentionally, and personally — one piece at a time.",
   p3: "We'll write to you before anyone else, the moment the first edition is ready. No noise in between.",
   signoff: "With warmth,",
