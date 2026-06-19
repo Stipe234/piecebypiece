@@ -89,7 +89,7 @@ export default function ProductGallery({ variants, selectedKey, onSelect }: Prod
           <button
             key={v.key}
             onClick={() => onSelect(v.key)}
-            className={`h-[3px] rounded-[1px] transition-all duration-300 ${v.key === selectedKey ? "w-6 bg-[var(--color-text-primary)]" : "w-4 bg-[var(--color-border)]"}`}
+            className={`h-px transition-all duration-300 ${v.key === selectedKey ? "w-7 bg-[var(--color-text-primary)]" : "w-5 bg-[var(--color-border)]"}`}
             aria-label={v.label}
           />
         ))}
