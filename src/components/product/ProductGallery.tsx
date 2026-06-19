@@ -83,13 +83,13 @@ export default function ProductGallery({ variants, selectedKey, onSelect }: Prod
         ))}
       </div>
 
-      {/* Mobile indicators - tiny horizontal bars */}
-      <div className="flex md:hidden items-center justify-center gap-1.5 pt-4 pb-1">
+      {/* Mobile indicators - uniform em-dash marks */}
+      <div className="flex md:hidden items-center justify-center gap-2.5 pt-4 pb-1">
         {variants.map((v) => (
           <button
             key={v.key}
             onClick={() => onSelect(v.key)}
-            className={`h-px transition-all duration-300 ${v.key === selectedKey ? "w-7 bg-[var(--color-text-primary)]" : "w-5 bg-[var(--color-border)]"}`}
+            className={`h-px w-5 transition-colors duration-300 ${v.key === selectedKey ? "bg-[var(--color-text-primary)]" : "bg-[var(--color-border)]"}`}
             aria-label={v.label}
           />
         ))}

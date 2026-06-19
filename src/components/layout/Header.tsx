@@ -17,7 +17,8 @@ export default function Header() {
     "link-underline text-[11px] font-medium tracking-[0.18em] uppercase text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors";
 
   return (
-    <header className="sticky top-0 z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-sm border-b border-[var(--color-border)]">
+    <>
+      <header className="sticky top-0 z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-sm border-b border-[var(--color-border)]">
       <div className="max-w-[1440px] mx-auto px-4 md:px-12 flex items-center justify-between h-14 md:h-20">
         {/* Mobile menu */}
         <button
@@ -75,9 +76,13 @@ export default function Header() {
           </button>
         </div>
       </div>
+      </header>
 
+      {/* Overlays live OUTSIDE the header: the header's backdrop-blur would
+          otherwise become the containing block for their position:fixed,
+          trapping them in the header strip. */}
       <MobileNav isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
       <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
-    </header>
+    </>
   );
 }
