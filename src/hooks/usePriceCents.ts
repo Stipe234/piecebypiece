@@ -2,13 +2,28 @@
 
 import { useEffect, useState } from "react";
 
+export interface VariantAvail {
+  variantKey: string;
+  material: string;
+  style: string;
+  priceCents: number | null;
+  availableUnits: number;
+  isSoldOut: boolean;
+}
+
+export interface ProductAvail {
+  priceCents: number | null;
+  isActive: boolean;
+  variants: VariantAvail[];
+}
+
 /**
- * Fetches the live, override-aware price (in cents) for a product from the
- * availability API. Returns null until loaded — callers fall back to the
- * catalog price so the page still renders instantly.
+ * Fetches live, override-aware availability + per-variant pricing for a product.
+ * Returns null until loaded — callers fall back to the catalog price so the
+ * page renders instantly.
  */
-export function usePriceCents(productId: string): number | null {
-  const [cents, setCents] = useState<number | null>(null);
+export function useProductAvailability(productId: string): ProductAvail | null {
+  const [availability, setAvailability] = useState<ProductAvail | null>(null);
 
   useEffect(() => {
     if (!productId) return;
@@ -18,17 +33,15 @@ export function usePriceCents(productId: string): number | null {
       .then((data) => {
         if (!active) return;
         const entry = data?.availability?.[productId];
-        if (entry && typeof entry.priceCents === "number") {
-          setCents(entry.priceCents);
-        }
+        if (entry) setAvailability(entry as ProductAvail);
       })
       .catch(() => {
-        /* keep the catalog-price fallback */
+        /* keep the catalog fallback */
       });
     return () => {
       active = false;
     };
   }, [productId]);
 
-  return cents;
+  return availability;
 }

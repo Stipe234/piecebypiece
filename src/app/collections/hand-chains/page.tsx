@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useI18n } from "@/i18n/context";
 import { getProduct } from "@/data/products";
-import { usePriceCents } from "@/hooks/usePriceCents";
+import { useProductAvailability } from "@/hooks/usePriceCents";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
 const PRODUCT_HREF = "/products/edition-001";
@@ -12,14 +12,19 @@ const PRODUCT_HREF = "/products/edition-001";
 export default function HandChainsCollection() {
   const { t } = useI18n();
   const product = getProduct("edition-001");
-  const liveCents = usePriceCents(product?.id ?? "");
-  const price = liveCents != null ? liveCents / 100 : product?.price;
+  const availability = useProductAvailability(product?.id ?? "");
+
+  const priceFor = (material: string, style: string) => {
+    const variant = availability?.variants.find((v) => v.material === material && v.style === style);
+    const cents = variant?.priceCents ?? availability?.priceCents ?? null;
+    return cents != null ? cents / 100 : product?.price;
+  };
 
   const looks = [
-    { img: "/images/gold-static.jpg", label: `${t.product.gold} · ${t.product.static}` },
-    { img: "/images/silver-static.jpg", label: `${t.product.silver} · ${t.product.static}` },
-    { img: "/images/gold-dangling.jpg", label: `${t.product.gold} · ${t.product.dangling}` },
-    { img: "/images/silver-dangling.jpg", label: `${t.product.silver} · ${t.product.dangling}` },
+    { img: "/images/gold-static.jpg", label: `${t.product.gold} · ${t.product.static}`, material: "Gold", style: "Static" },
+    { img: "/images/silver-static.jpg", label: `${t.product.silver} · ${t.product.static}`, material: "Silver", style: "Static" },
+    { img: "/images/gold-dangling.jpg", label: `${t.product.gold} · ${t.product.dangling}`, material: "Gold", style: "Dangling" },
+    { img: "/images/silver-dangling.jpg", label: `${t.product.silver} · ${t.product.dangling}`, material: "Silver", style: "Dangling" },
   ];
 
   return (
@@ -38,30 +43,33 @@ export default function HandChainsCollection() {
 
       <section className="px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-x-5 md:gap-x-8 gap-y-14">
-          {looks.map((look, i) => (
-            <ScrollReveal key={look.img} delay={i * 90}>
-              <Link href={PRODUCT_HREF} className="block group">
-                <div className="img-tactile relative aspect-[4/5] overflow-hidden bg-white mb-4">
-                  <Image
-                    src={look.img}
-                    alt={look.label}
-                    fill
-                    quality={90}
-                    className="object-cover"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
-                </div>
-                <p className="text-center text-[11px] md:text-xs tracking-[0.12em] text-[var(--color-text-secondary)]">
-                  {look.label}
-                </p>
-                {price != null && (
-                  <p className="text-center text-[11px] md:text-xs text-[var(--color-text-tertiary)] mt-1">
-                    €{price}
+          {looks.map((look, i) => {
+            const lookPrice = priceFor(look.material, look.style);
+            return (
+              <ScrollReveal key={look.img} delay={i * 90}>
+                <Link href={PRODUCT_HREF} className="block group">
+                  <div className="img-tactile relative aspect-[4/5] overflow-hidden bg-white mb-4">
+                    <Image
+                      src={look.img}
+                      alt={look.label}
+                      fill
+                      quality={90}
+                      className="object-cover"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                    />
+                  </div>
+                  <p className="text-center text-[11px] md:text-xs tracking-[0.12em] text-[var(--color-text-secondary)]">
+                    {look.label}
                   </p>
-                )}
-              </Link>
-            </ScrollReveal>
-          ))}
+                  {lookPrice != null && (
+                    <p className="text-center text-[11px] md:text-xs text-[var(--color-text-tertiary)] mt-1">
+                      €{lookPrice}
+                    </p>
+                  )}
+                </Link>
+              </ScrollReveal>
+            );
+          })}
         </div>
       </section>
     </>

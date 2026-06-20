@@ -211,7 +211,7 @@ export default async function OwnerDashboardPage() {
                   </div>
 
                   <div className="mt-6">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Stock by variant</p>
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Variants — stock &amp; price</p>
                     <div className="mt-3 flex flex-col gap-2.5">
                       {product.variants.map((variant) => (
                         <div key={variant.variantKey} className="dash-inset rounded-xl px-4 py-3">
@@ -222,7 +222,8 @@ export default async function OwnerDashboardPage() {
                             label={variant.label}
                             available={variant.availableUnits}
                             total={variant.totalUnits}
-                            defaultValue={variant.totalUnits}
+                            defaultStock={variant.totalUnits}
+                            defaultPriceEuros={variant.priceCents / 100}
                           />
                         </div>
                       ))}
@@ -230,11 +231,10 @@ export default async function OwnerDashboardPage() {
                   </div>
 
                   <div className="mt-6">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Pricing</p>
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Visibility</p>
                     <div className="mt-3">
                       <ProductOverrideForm
                         productId={product.productId}
-                        priceEuros={product.priceCents / 100}
                         isActive={product.isActive}
                       />
                     </div>

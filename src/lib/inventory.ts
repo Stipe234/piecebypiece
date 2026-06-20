@@ -26,6 +26,7 @@ export interface ProductAvailability {
   isSoldOut: boolean;
   priceCents: number | null;
   isActive: boolean;
+  variants: VariantAvailability[];
 }
 
 export interface VariantAvailability {
@@ -38,6 +39,7 @@ export interface VariantAvailability {
   soldUnits: number;
   availableUnits: number;
   isSoldOut: boolean;
+  priceCents: number | null;
 }
 
 interface InventoryRow {
@@ -54,6 +56,7 @@ interface VariantInventoryRow {
   total_units: number;
   reserved_units: number;
   sold_units: number;
+  price_cents: number | null;
   updated_at: string;
 }
 
@@ -133,6 +136,7 @@ export interface DashboardVariant {
   reservedUnits: number;
   availableUnits: number;
   isLowStock: boolean;
+  priceCents: number;
   updatedAt: string;
 }
 
@@ -249,9 +253,16 @@ export async function ensureInventoryReady() {
           total_units integer not null check (total_units >= 0),
           reserved_units integer not null default 0 check (reserved_units >= 0),
           sold_units integer not null default 0 check (sold_units >= 0),
+          price_cents integer check (price_cents is null or price_cents >= 0),
           updated_at timestamptz not null default now(),
           primary key (product_id, material, style)
         )
+      `;
+
+      // Per-variant price (added for existing databases).
+      await sql`
+        alter table variant_inventory
+        add column if not exists price_cents integer
       `;
 
       // Reservation items become variant-scoped. Add the columns, then widen the PK
@@ -341,6 +352,8 @@ export async function ensureInventoryReady() {
       `;
 
       for (const product of products) {
+        const basePriceCents = Math.round(product.price * 100);
+
         await sql`
           insert into inventory_items (product_id, total_units)
           values (${product.id}, ${product.inventory.totalUnits})
@@ -349,19 +362,26 @@ export async function ensureInventoryReady() {
 
         await sql`
           insert into product_overrides (product_id, price_cents, is_active)
-          values (${product.id}, ${Math.round(product.price * 100)}, true)
+          values (${product.id}, ${basePriceCents}, true)
           on conflict (product_id) do nothing
         `;
 
         // Seed one stock row per variant. Each variant starts at the product's
-        // configured units; the owner sets real per-variant counts in the dashboard.
+        // configured units and base price; the owner sets real per-variant
+        // counts and prices in the dashboard.
         for (const variant of getProductVariants(product)) {
           await sql`
-            insert into variant_inventory (product_id, material, style, total_units)
-            values (${product.id}, ${variant.material}, ${variant.style}, ${product.inventory.totalUnits})
+            insert into variant_inventory (product_id, material, style, total_units, price_cents)
+            values (${product.id}, ${variant.material}, ${variant.style}, ${product.inventory.totalUnits}, ${basePriceCents})
             on conflict (product_id, material, style) do nothing
           `;
         }
+
+        // Backfill price for variant rows created before per-variant pricing.
+        await sql`
+          update variant_inventory set price_cents = ${basePriceCents}
+          where product_id = ${product.id} and price_cents is null
+        `;
       }
     })();
   }
@@ -411,39 +431,73 @@ export async function getAvailabilityMap(productIds?: string[]) {
   await releaseExpiredReservations();
   const sql = getSql();
 
-  const rows = productIds && productIds.length > 0
-    ? await sql<(InventoryRow & { price_cents: number | null; is_active: boolean | null })[]>`
-        select i.product_id, i.total_units, i.reserved_units, i.sold_units,
-               o.price_cents, o.is_active
+  const overrideRows = productIds && productIds.length > 0
+    ? await sql<{ product_id: string; price_cents: number | null; is_active: boolean | null }[]>`
+        select i.product_id, o.price_cents, o.is_active
         from inventory_items i
         left join product_overrides o on o.product_id = i.product_id
         where i.product_id = any(${sql.array(productIds)})
       `
-    : await sql<(InventoryRow & { price_cents: number | null; is_active: boolean | null })[]>`
-        select i.product_id, i.total_units, i.reserved_units, i.sold_units,
-               o.price_cents, o.is_active
+    : await sql<{ product_id: string; price_cents: number | null; is_active: boolean | null }[]>`
+        select i.product_id, o.price_cents, o.is_active
         from inventory_items i
         left join product_overrides o on o.product_id = i.product_id
       `;
 
+  const variantRows = productIds && productIds.length > 0
+    ? await sql<VariantInventoryRow[]>`
+        select product_id, material, style, total_units, reserved_units, sold_units, price_cents, updated_at::text
+        from variant_inventory
+        where product_id = any(${sql.array(productIds)})
+        order by product_id, material, style
+      `
+    : await sql<VariantInventoryRow[]>`
+        select product_id, material, style, total_units, reserved_units, sold_units, price_cents, updated_at::text
+        from variant_inventory
+        order by product_id, material, style
+      `;
+
+  const variantsByProduct = new Map<string, VariantAvailability[]>();
+  for (const row of variantRows) {
+    const availableUnits = Math.max(row.total_units - row.reserved_units - row.sold_units, 0);
+    const list = variantsByProduct.get(row.product_id) ?? [];
+    list.push({
+      productId: row.product_id,
+      variantKey: `${row.material}|${row.style}`,
+      material: row.material,
+      style: row.style,
+      totalUnits: row.total_units,
+      reservedUnits: row.reserved_units,
+      soldUnits: row.sold_units,
+      availableUnits,
+      isSoldOut: availableUnits === 0,
+      priceCents: row.price_cents,
+    });
+    variantsByProduct.set(row.product_id, list);
+  }
+
+  // variant_inventory is the source of truth; product-level numbers aggregate
+  // from the variants so the storefront and dashboard always agree.
   return Object.fromEntries(
-    rows.map((row) => {
-      const availableUnits = Math.max(
-        row.total_units - row.reserved_units - row.sold_units,
-        0,
-      );
+    overrideRows.map((row) => {
+      const variants = variantsByProduct.get(row.product_id) ?? [];
+      const totalUnits = variants.reduce((s, v) => s + v.totalUnits, 0);
+      const reservedUnits = variants.reduce((s, v) => s + v.reservedUnits, 0);
+      const soldUnits = variants.reduce((s, v) => s + v.soldUnits, 0);
+      const availableUnits = variants.reduce((s, v) => s + v.availableUnits, 0);
 
       return [
         row.product_id,
         {
           productId: row.product_id,
-          totalUnits: row.total_units,
-          reservedUnits: row.reserved_units,
-          soldUnits: row.sold_units,
+          totalUnits,
+          reservedUnits,
+          soldUnits,
           availableUnits,
           isSoldOut: availableUnits === 0,
           priceCents: row.price_cents,
           isActive: row.is_active ?? true,
+          variants,
         } satisfies ProductAvailability,
       ];
     }),
@@ -833,9 +887,10 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
     total_units: number;
     reserved_units: number;
     sold_units: number;
+    price_cents: number | null;
     updated_at: string;
   }[]>`
-    select product_id, material, style, total_units, reserved_units, sold_units, updated_at::text
+    select product_id, material, style, total_units, reserved_units, sold_units, price_cents, updated_at::text
     from variant_inventory
     order by product_id, material, style
   `;
@@ -869,6 +924,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
         reservedUnits,
         availableUnits,
         isLowStock: availableUnits > 0 && availableUnits <= LOW_STOCK_THRESHOLD,
+        priceCents: row?.price_cents ?? Math.round(product.price * 100),
         updatedAt: row?.updated_at ?? "",
       };
     });
@@ -968,11 +1024,13 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
 }
 
 /** Set the stock total for one material × style variant (source of truth). */
-export async function updateVariantTotal(
+/** Set the stock total and price for one material × style variant. */
+export async function updateVariant(
   productId: string,
   material: string,
   style: string,
   totalUnits: number,
+  priceCents: number,
 ) {
   await ensureInventoryReady();
   const sql = getSql();
@@ -980,14 +1038,17 @@ export async function updateVariantTotal(
   if (!Number.isInteger(totalUnits) || totalUnits < 0) {
     throw new InventoryError("Total inventory must be a non-negative whole number.", productId);
   }
+  if (!Number.isInteger(priceCents) || priceCents < 0) {
+    throw new InventoryError("Enter a valid price.", productId);
+  }
 
   // Upsert: create the variant row if missing, otherwise update — but never
-  // below what's already sold + reserved.
+  // drop the stock total below what's already sold + reserved.
   const rows = await sql<{ product_id: string }[]>`
-    insert into variant_inventory (product_id, material, style, total_units)
-    values (${productId}, ${material}, ${style}, ${totalUnits})
+    insert into variant_inventory (product_id, material, style, total_units, price_cents)
+    values (${productId}, ${material}, ${style}, ${totalUnits}, ${priceCents})
     on conflict (product_id, material, style) do update
-      set total_units = ${totalUnits}, updated_at = now()
+      set total_units = ${totalUnits}, price_cents = ${priceCents}, updated_at = now()
       where ${totalUnits} >= variant_inventory.sold_units + variant_inventory.reserved_units
     returning product_id
   `;
@@ -1162,6 +1223,19 @@ export async function updateProductOverride(
     do update set price_cents = excluded.price_cents,
                   is_active = excluded.is_active,
                   updated_at = now()
+  `;
+}
+
+/** Toggle whether a product shows on the storefront (price is per-variant). */
+export async function updateProductActive(productId: string, isActive: boolean) {
+  await ensureInventoryReady();
+  const sql = getSql();
+
+  await sql`
+    insert into product_overrides (product_id, is_active, updated_at)
+    values (${productId}, ${isActive}, now())
+    on conflict (product_id)
+    do update set is_active = excluded.is_active, updated_at = now()
   `;
 }
 

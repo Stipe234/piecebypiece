@@ -17,8 +17,8 @@ import {
   markOrderRefunded,
   updateInventoryTotal,
   updateOrderShipping,
-  updateProductOverride,
-  updateVariantTotal,
+  updateProductActive,
+  updateVariant,
   type ShippingStatus,
 } from "@/lib/inventory";
 import { getStripe } from "@/lib/stripe";
@@ -111,7 +111,7 @@ export async function saveInventoryTotal(
   }
 }
 
-export async function saveVariantStock(
+export async function saveVariant(
   _prevState: OwnerActionState | undefined,
   formData: FormData,
 ): Promise<OwnerActionState> {
@@ -120,26 +120,32 @@ export async function saveVariantStock(
   const productId = String(formData.get("productId") ?? "");
   const material = String(formData.get("material") ?? "");
   const style = String(formData.get("style") ?? "");
-  const raw = formData.get("totalUnits");
-  const totalUnits = Number(raw);
+  const stockRaw = formData.get("totalUnits");
+  const totalUnits = Number(stockRaw);
+  const priceRaw = String(formData.get("priceEuros") ?? "").replace(",", ".").trim();
+  const priceEuros = Number(priceRaw);
 
   if (!productId || !material || !style) {
     return { error: "Missing variant." };
   }
 
-  if (raw === null || raw === "" || !Number.isFinite(totalUnits)) {
-    return { error: "Enter a whole number." };
+  if (stockRaw === null || stockRaw === "" || !Number.isFinite(totalUnits)) {
+    return { error: "Enter a whole number for stock." };
+  }
+
+  if (!Number.isFinite(priceEuros) || priceEuros < 0) {
+    return { error: "Enter a price in euros." };
   }
 
   try {
-    await updateVariantTotal(productId, material, style, totalUnits);
+    await updateVariant(productId, material, style, totalUnits, Math.round(priceEuros * 100));
     revalidatePath("/owner");
     return { success: true };
   } catch (error) {
     if (error instanceof InventoryError) {
       return { error: error.message };
     }
-    return { error: "Unable to save stock." };
+    return { error: "Unable to save variant." };
   }
 }
 
@@ -150,20 +156,14 @@ export async function saveProductOverride(
   await requireOwnerAuth();
 
   const productId = String(formData.get("productId") ?? "");
-  const priceRaw = String(formData.get("priceEuros") ?? "").replace(",", ".").trim();
-  const priceEuros = Number(priceRaw);
   const isActive = formData.get("isActive") === "on";
 
   if (!productId) {
     return { error: "Missing product." };
   }
 
-  if (!Number.isFinite(priceEuros) || priceEuros < 0) {
-    return { error: "Enter a price in euros." };
-  }
-
   try {
-    await updateProductOverride(productId, Math.round(priceEuros * 100), isActive);
+    await updateProductActive(productId, isActive);
     revalidatePath("/owner");
     return { success: true };
   } catch (error) {

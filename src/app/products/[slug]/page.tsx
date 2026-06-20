@@ -13,7 +13,7 @@ import {
   variantKey,
 } from "@/data/products";
 import { useI18n } from "@/i18n/context";
-import { usePriceCents } from "@/hooks/usePriceCents";
+import { useProductAvailability } from "@/hooks/usePriceCents";
 import ProductGallery from "@/components/product/ProductGallery";
 import VariantSelector from "@/components/product/VariantSelector";
 import LayersWithRow from "@/components/product/LayersWithRow";
@@ -33,13 +33,15 @@ export default function ProductPage() {
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [selectedStyle, setSelectedStyle] = useState(product.styles[0]);
 
-  // Live, override-aware price from the dashboard; falls back to catalog price.
-  const liveCents = usePriceCents(product.id);
-  const displayPrice = liveCents != null ? liveCents / 100 : product.price;
-
   // The gallery is driven by the selected variant: each material × style maps
   // to its own studio image, and picking a thumbnail updates the selectors.
   const selectedKey = variantKey(selectedMaterial, selectedStyle);
+
+  // Live, override-aware price for the selected variant; falls back to catalog.
+  const availability = useProductAvailability(product.id);
+  const selectedVariant = availability?.variants.find((v) => v.variantKey === selectedKey);
+  const liveCents = selectedVariant?.priceCents ?? availability?.priceCents ?? null;
+  const displayPrice = liveCents != null ? liveCents / 100 : product.price;
   const galleryVariants = getProductVariants(product).map((v) => ({
     key: v.key,
     label: v.label,
