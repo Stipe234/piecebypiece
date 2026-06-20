@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { getProductById, getProductContent } from "@/data/products";
+import { getProductById, getProductContent, variantKey } from "@/data/products";
 import type { Locale } from "@/i18n/translations";
-import { getCatalogOverrides } from "@/lib/inventory";
 import {
   attachReservationSession,
   createReservation,
+  getAvailabilityMap,
   InventoryError,
   releaseReservationById,
 } from "@/lib/inventory";
@@ -39,7 +39,8 @@ export async function POST(request: Request) {
 
     const localeKey: Locale = "en";
     const origin = request.headers.get("origin") || new URL(request.url).origin;
-    const overrides = await getCatalogOverrides();
+    const productIds = [...new Set(items.map((i) => i.productId))];
+    const availability = await getAvailabilityMap(productIds);
     const validatedItems = items.map((item) => {
       const product = getProductById(item.productId);
 
@@ -47,8 +48,8 @@ export async function POST(request: Request) {
         throw new Error(`Unknown product: ${item.productId}`);
       }
 
-      const override = overrides[item.productId];
-      if (override && !override.isActive) {
+      const avail = availability[item.productId];
+      if (avail && !avail.isActive) {
         throw new Error(`Product is no longer available: ${item.productId}`);
       }
 
@@ -68,7 +69,9 @@ export async function POST(request: Request) {
         throw new Error(`Invalid quantity for product: ${item.productId}`);
       }
 
-      const unitPriceCents = override?.priceCents ?? Math.round(product.price * 100);
+      // Per-variant price (falls back to product-level / catalog price).
+      const variant = avail?.variants.find((v) => v.variantKey === variantKey(item.material, item.style));
+      const unitPriceCents = variant?.priceCents ?? avail?.priceCents ?? Math.round(product.price * 100);
 
       return {
         item,
@@ -79,7 +82,11 @@ export async function POST(request: Request) {
     });
 
     const stripe = getStripe();
-    const sessionExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
+    // Our stock hold lasts 5 minutes (the countdown the shopper sees). Stripe's
+    // own session expiry has a 30-minute minimum, so it's a separate, longer
+    // safety window — completeReservationFromSession still honours a late payment.
+    const reservationExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
+    const stripeExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
     const reservationId = await createReservation(
       validatedItems.map(({ item, product, content, unitPriceCents }) => ({
         productId: item.productId,
@@ -91,7 +98,7 @@ export async function POST(request: Request) {
         productName: content.name,
         productSlug: product.slug,
       })),
-      sessionExpiresAt,
+      reservationExpiresAt,
     );
 
     try {
@@ -99,7 +106,7 @@ export async function POST(request: Request) {
         mode: "payment",
         payment_method_types: ["card"],
         locale: "auto",
-        expires_at: Math.floor(sessionExpiresAt.getTime() / 1000),
+        expires_at: Math.floor(stripeExpiresAt.getTime() / 1000),
         metadata: {
           reservationId,
         },
@@ -139,7 +146,7 @@ export async function POST(request: Request) {
 
       await attachReservationSession(reservationId, session.id);
 
-      return NextResponse.json({ url: session.url });
+      return NextResponse.json({ url: session.url, expiresAt: reservationExpiresAt.toISOString() });
     } catch (error) {
       await releaseReservationById(reservationId);
       throw error;

@@ -408,19 +408,21 @@ export async function releaseExpiredReservations() {
 
     const reservationIds = expiredReservations.map(({ id }) => id);
 
-    const reservedItems = await tx<{ product_id: string; quantity: number }[]>`
-      select product_id, sum(quantity)::int as quantity
+    const reservedItems = await tx<{ product_id: string; material: string; style: string; quantity: number }[]>`
+      select product_id, material, style, sum(quantity)::int as quantity
       from stock_reservation_items
       where reservation_id = any(${tx.array(reservationIds)})
-      group by product_id
+      group by product_id, material, style
     `;
 
     for (const item of reservedItems) {
       await tx`
-        update inventory_items
+        update variant_inventory
         set reserved_units = greatest(reserved_units - ${item.quantity}, 0),
             updated_at = now()
         where product_id = ${item.product_id}
+          and material = ${item.material}
+          and style = ${item.style}
       `;
     }
   });
@@ -509,14 +511,19 @@ export async function createReservation(items: ReservationLineItem[], sessionExp
   await releaseExpiredReservations();
   const sql = getSql();
 
+  // Aggregate by variant (product × material × style).
   const normalizedItems = Object.values(
-    items.reduce<Record<string, { productId: string; quantity: number }>>((acc, item) => {
-      const existing = acc[item.productId];
-      acc[item.productId] = existing
-        ? { ...existing, quantity: existing.quantity + item.quantity }
-        : { productId: item.productId, quantity: item.quantity };
-      return acc;
-    }, {}),
+    items.reduce<Record<string, { productId: string; material: string; style: string; quantity: number }>>(
+      (acc, item) => {
+        const key = `${item.productId}|${item.material}|${item.style}`;
+        const existing = acc[key];
+        acc[key] = existing
+          ? { ...existing, quantity: existing.quantity + item.quantity }
+          : { productId: item.productId, material: item.material, style: item.style, quantity: item.quantity };
+        return acc;
+      },
+      {},
+    ),
   );
 
   const reservationId = randomUUID();
@@ -528,13 +535,17 @@ export async function createReservation(items: ReservationLineItem[], sessionExp
     `;
 
     for (const item of normalizedItems) {
-      const updatedRows = await tx<InventoryRow[]>`
-        update inventory_items
+      // Atomic per-variant reserve: only succeeds if enough is available, so
+      // two simultaneous buyers can't oversell the same variant.
+      const updatedRows = await tx<{ product_id: string }[]>`
+        update variant_inventory
         set reserved_units = reserved_units + ${item.quantity},
             updated_at = now()
         where product_id = ${item.productId}
+          and material = ${item.material}
+          and style = ${item.style}
           and (total_units - sold_units - reserved_units) >= ${item.quantity}
-        returning product_id, total_units, reserved_units, sold_units
+        returning product_id
       `;
 
       if (updatedRows.length === 0) {
@@ -542,8 +553,8 @@ export async function createReservation(items: ReservationLineItem[], sessionExp
       }
 
       await tx`
-        insert into stock_reservation_items (reservation_id, product_id, quantity)
-        values (${reservationId}, ${item.productId}, ${item.quantity})
+        insert into stock_reservation_items (reservation_id, product_id, material, style, quantity)
+        values (${reservationId}, ${item.productId}, ${item.material}, ${item.style}, ${item.quantity})
       `;
     }
   });
@@ -580,18 +591,20 @@ export async function releaseReservationById(reservationId: string) {
       return;
     }
 
-    const items = await tx<{ product_id: string; quantity: number }[]>`
-      select product_id, quantity
+    const items = await tx<{ product_id: string; material: string; style: string; quantity: number }[]>`
+      select product_id, material, style, quantity
       from stock_reservation_items
       where reservation_id = ${reservationId}
     `;
 
     for (const item of items) {
       await tx`
-        update inventory_items
+        update variant_inventory
         set reserved_units = greatest(reserved_units - ${item.quantity}, 0),
             updated_at = now()
         where product_id = ${item.product_id}
+          and material = ${item.material}
+          and style = ${item.style}
       `;
     }
 
@@ -652,24 +665,41 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
       return;
     }
 
-    if (reservation.status !== "pending") {
+    // The 5-minute hold may have lapsed before the payment confirmed. We still
+    // honour a paid order: if expired, its reserved units were already released
+    // so we only add to sold; if pending, we move reserved -> sold.
+    const reservationExpired = reservation.status === "expired";
+    if (reservation.status !== "pending" && !reservationExpired) {
       throw new InventoryError("Reservation is no longer active.", reservationId);
     }
 
-    const items = await tx<{ product_id: string; quantity: number }[]>`
-      select product_id, quantity
+    const items = await tx<{ product_id: string; material: string; style: string; quantity: number }[]>`
+      select product_id, material, style, quantity
       from stock_reservation_items
       where reservation_id = ${reservationId}
     `;
 
     for (const item of items) {
-      await tx`
-        update inventory_items
-        set reserved_units = greatest(reserved_units - ${item.quantity}, 0),
-            sold_units = sold_units + ${item.quantity},
-            updated_at = now()
-        where product_id = ${item.product_id}
-      `;
+      if (reservationExpired) {
+        await tx`
+          update variant_inventory
+          set sold_units = sold_units + ${item.quantity},
+              updated_at = now()
+          where product_id = ${item.product_id}
+            and material = ${item.material}
+            and style = ${item.style}
+        `;
+      } else {
+        await tx`
+          update variant_inventory
+          set reserved_units = greatest(reserved_units - ${item.quantity}, 0),
+              sold_units = sold_units + ${item.quantity},
+              updated_at = now()
+          where product_id = ${item.product_id}
+            and material = ${item.material}
+            and style = ${item.style}
+        `;
+      }
     }
 
     await tx`

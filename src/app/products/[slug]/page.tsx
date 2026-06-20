@@ -13,7 +13,7 @@ import {
   variantKey,
 } from "@/data/products";
 import { useI18n } from "@/i18n/context";
-import { useProductAvailability } from "@/hooks/usePriceCents";
+import { useProductAvailability } from "@/hooks/useProductAvailability";
 import ProductGallery from "@/components/product/ProductGallery";
 import VariantSelector from "@/components/product/VariantSelector";
 import LayersWithRow from "@/components/product/LayersWithRow";
@@ -38,7 +38,7 @@ export default function ProductPage() {
   const selectedKey = variantKey(selectedMaterial, selectedStyle);
 
   // Live, override-aware price for the selected variant; falls back to catalog.
-  const availability = useProductAvailability(product.id);
+  const { availability } = useProductAvailability(product.id);
   const selectedVariant = availability?.variants.find((v) => v.variantKey === selectedKey);
   const liveCents = selectedVariant?.priceCents ?? availability?.priceCents ?? null;
   const displayPrice = liveCents != null ? liveCents / 100 : product.price;

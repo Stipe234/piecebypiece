@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useI18n } from "@/i18n/context";
 import { getProduct } from "@/data/products";
-import { useProductAvailability } from "@/hooks/usePriceCents";
+import { useProductAvailability } from "@/hooks/useProductAvailability";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
 const PRODUCT_HREF = "/products/edition-001";
@@ -12,7 +12,7 @@ const PRODUCT_HREF = "/products/edition-001";
 export default function HandChainsCollection() {
   const { t } = useI18n();
   const product = getProduct("edition-001");
-  const availability = useProductAvailability(product?.id ?? "");
+  const { availability } = useProductAvailability(product?.id ?? "");
 
   const priceFor = (material: string, style: string) => {
     const variant = availability?.variants.find((v) => v.material === material && v.style === style);

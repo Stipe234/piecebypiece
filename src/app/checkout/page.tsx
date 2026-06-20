@@ -1,37 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { getProductContent } from "@/data/products";
 import { useI18n } from "@/i18n/context";
 import Button from "@/components/ui/Button";
+import ReservationBanner from "@/components/checkout/ReservationBanner";
 
 export default function CheckoutPage() {
   const { items, subtotal } = useCart();
   const { t, locale } = useI18n();
-  const [loading, setLoading] = useState(false);
+  const [reservation, setReservation] = useState<{ url: string; expiresAt: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [expired, setExpired] = useState(false);
   const [error, setError] = useState("");
 
-  if (items.length === 0) {
-    return (
-      <section className="py-32 px-6 text-center">
-        <p className="text-sm text-[var(--color-text-tertiary)] mb-6">{t.cart.empty}</p>
-        <Link
-          href="/collections/hand-chains"
-          className="text-sm text-[var(--color-text-secondary)] underline underline-offset-4 hover:text-[var(--color-text-primary)] transition-colors"
-        >
-          {t.cart.continueShopping}
-        </Link>
-      </section>
-    );
-  }
+  // Stable signature of the cart so we only re-reserve when it actually changes.
+  const itemsKey = items.map((i) => `${i.id}x${i.quantity}`).join(",");
 
-  const handleCheckout = async () => {
+  const reserve = useCallback(async () => {
+    if (items.length === 0) return;
     setLoading(true);
     setError("");
-
+    setExpired(false);
+    setReservation(null);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -49,19 +43,38 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(
           data.error || (res.status === 409 ? t.checkout.stockConflict : "Something went wrong"),
         );
       }
-
-      window.location.href = data.url;
+      setReservation({ url: data.url, expiresAt: data.expiresAt });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
       setLoading(false);
     }
-  };
+  }, [items, locale, t.checkout.stockConflict]);
+
+  // Reserve the stock (5-min hold) as soon as the shopper reaches checkout.
+  useEffect(() => {
+    reserve();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsKey]);
+
+  if (items.length === 0) {
+    return (
+      <section className="py-32 px-6 text-center">
+        <p className="text-sm text-[var(--color-text-tertiary)] mb-6">{t.cart.empty}</p>
+        <Link
+          href="/collections/hand-chains"
+          className="text-sm text-[var(--color-text-secondary)] underline underline-offset-4 hover:text-[var(--color-text-primary)] transition-colors"
+        >
+          {t.cart.continueShopping}
+        </Link>
+      </section>
+    );
+  }
 
   return (
     <section className="py-8 md:py-20 px-4 md:px-12">
@@ -69,6 +82,12 @@ export default function CheckoutPage() {
         <h1 className="font-heading text-2xl md:text-3xl font-light tracking-wide mb-8 md:mb-12 text-center">
           {t.checkout.title}
         </h1>
+
+        {reservation && !expired && (
+          <div className="mb-6">
+            <ReservationBanner expiresAt={reservation.expiresAt} onExpire={() => setExpired(true)} />
+          </div>
+        )}
 
         <div className="bg-[var(--color-bg-secondary)] p-5 md:p-8">
           <h2 className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-4 md:mb-6">
@@ -90,7 +109,7 @@ export default function CheckoutPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{getProductContent(item.product, locale).name}</p>
                   <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                    {item.selectedMaterial} / {item.selectedLength}
+                    {item.selectedMaterial} / {item.selectedStyle}
                   </p>
                   <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
                     {t.cart.quantity}: {item.quantity}
@@ -118,13 +137,23 @@ export default function CheckoutPage() {
         </div>
 
         <div className="mt-6 md:mt-8">
-          {error && (
-            <p className="text-sm text-red-600 text-center mb-4">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600 text-center mb-4">{error}</p>}
 
-          <Button onClick={handleCheckout} fullWidth disabled={loading}>
-            {loading ? "Redirecting..." : t.checkout.placeOrder}
-          </Button>
+          {expired ? (
+            <Button onClick={reserve} fullWidth>
+              Refresh hold
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                if (reservation) window.location.href = reservation.url;
+              }}
+              fullWidth
+              disabled={loading || !reservation}
+            >
+              {loading ? "Reserving..." : t.checkout.placeOrder}
+            </Button>
+          )}
           <p className="text-xs text-[var(--color-text-tertiary)] text-center mt-3">
             {t.checkout.paymentNote}
           </p>
