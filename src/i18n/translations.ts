@@ -37,11 +37,12 @@ export const translations = {
     waitlist: {
       cta: "Join the Waitlist",
       title: "Join the waitlist",
-      text: "Each edition is released in limited numbers. Add your name to be the first when it opens.",
+      status: "Waitlist",
+      text: "This piece isn't on sale yet. It opens in limited numbers — join the waitlist and we'll email you the moment you can buy it. No payment now.",
       placeholder: "Email address",
       submit: "Join",
-      thanks: "You're on the list.",
-      note: "No payment now. We'll write to you before it opens.",
+      thanks: "You're on the list. We'll email you when it opens.",
+      note: "No payment now. We'll email you before it opens.",
       error: "Something went wrong. Please try again.",
     },
 
@@ -194,6 +195,7 @@ export const translations = {
     collection: {
       launchLabel: "The Launch Collection",
       title: "Hand Chains",
+      waitlistNote: "Now on the waitlist — choose your piece to join. No payment yet.",
       storyQuote:
         "We started with hand chains because hands are how you meet the world.",
       storyText:

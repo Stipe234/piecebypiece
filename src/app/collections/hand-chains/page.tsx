@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useI18n } from "@/i18n/context";
+import { getProduct } from "@/data/products";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
 const PRODUCT_HREF = "/products/edition-001";
 
 export default function HandChainsCollection() {
   const { t } = useI18n();
+  const price = getProduct("edition-001")?.price;
 
   const looks = [
     { img: "/images/gold-static.jpg", label: `${t.product.gold} · ${t.product.static}` },
@@ -26,6 +28,9 @@ export default function HandChainsCollection() {
         <h1 className="font-heading text-4xl md:text-6xl font-light tracking-wide">
           {t.collection.title}
         </h1>
+        <p className="mt-5 md:mt-6 text-sm text-[var(--color-text-secondary)] max-w-md mx-auto leading-relaxed">
+          {t.collection.waitlistNote}
+        </p>
       </section>
 
       <section className="px-6 md:px-12 pb-28 md:pb-40">
@@ -46,6 +51,11 @@ export default function HandChainsCollection() {
                 <p className="text-center text-[11px] md:text-xs tracking-[0.12em] text-[var(--color-text-secondary)]">
                   {look.label}
                 </p>
+                {price != null && (
+                  <p className="text-center text-[11px] md:text-xs text-[var(--color-text-tertiary)] mt-1">
+                    €{price}
+                  </p>
+                )}
               </Link>
             </ScrollReveal>
           ))}

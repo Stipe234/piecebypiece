@@ -82,6 +82,14 @@ export default function ProductPage() {
               <h1 className="font-heading text-2xl md:text-4xl font-light tracking-wide">
                 {productContent.name}
               </h1>
+              <div className="mt-3 md:mt-4 flex items-center gap-3">
+                <span className="text-lg md:text-xl text-[var(--color-text-primary)]">
+                  €{product.price}
+                </span>
+                <span className="inline-flex items-center border border-[var(--color-border-dark)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-text-primary)]">
+                  {t.waitlist.status}
+                </span>
+              </div>
             </div>
 
             <div className="flex flex-col gap-4 md:gap-5">
@@ -101,7 +109,10 @@ export default function ProductPage() {
               />
             </div>
 
-            <div>
+            <div className="border-t border-[var(--color-border)] pt-6">
+              <p className="text-[11px] tracking-[0.22em] uppercase text-[var(--color-text-tertiary)] mb-3">
+                {t.waitlist.title}
+              </p>
               <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">
                 {t.waitlist.text}
               </p>
