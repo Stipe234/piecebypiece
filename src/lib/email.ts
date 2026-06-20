@@ -75,7 +75,7 @@ export async function sendWaitlistEmails(opts: { email: string; source: string |
 const COPY = {
   eyebrow: "Built Over Time",
   title: "You're in.",
-  p1: "Piece by Piece begins with Piece 001 — a hand chain drawn in one quiet line from wrist to finger.",
+  p1: "Piece by Piece begins with Piece 001, a hand chain drawn in one quiet line from wrist to finger.",
   p2: "Released in limited numbers, it will be shared first with the waitlist.",
   p3: "You'll have early access when it opens.",
   signoff: "With love,",
