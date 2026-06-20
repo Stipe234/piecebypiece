@@ -18,6 +18,7 @@ import {
   updateInventoryTotal,
   updateOrderShipping,
   updateProductOverride,
+  updateVariantTotal,
   type ShippingStatus,
 } from "@/lib/inventory";
 import { getStripe } from "@/lib/stripe";
@@ -100,6 +101,38 @@ export async function saveInventoryTotal(
 
   try {
     await updateInventoryTotal(productId, totalUnits);
+    revalidatePath("/owner");
+    return { success: true };
+  } catch (error) {
+    if (error instanceof InventoryError) {
+      return { error: error.message };
+    }
+    return { error: "Unable to save stock." };
+  }
+}
+
+export async function saveVariantStock(
+  _prevState: OwnerActionState | undefined,
+  formData: FormData,
+): Promise<OwnerActionState> {
+  await requireOwnerAuth();
+
+  const productId = String(formData.get("productId") ?? "");
+  const material = String(formData.get("material") ?? "");
+  const style = String(formData.get("style") ?? "");
+  const raw = formData.get("totalUnits");
+  const totalUnits = Number(raw);
+
+  if (!productId || !material || !style) {
+    return { error: "Missing variant." };
+  }
+
+  if (raw === null || raw === "" || !Number.isFinite(totalUnits)) {
+    return { error: "Enter a whole number." };
+  }
+
+  try {
+    await updateVariantTotal(productId, material, style, totalUnits);
     revalidatePath("/owner");
     return { success: true };
   } catch (error) {

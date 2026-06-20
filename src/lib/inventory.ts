@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Stripe } from "stripe";
-import { getProductById, getProductVariants, products, variantKey } from "@/data/products";
+import { getProductVariants, products } from "@/data/products";
 import { getSql } from "@/lib/db";
 
 type ReservationStatus = "pending" | "completed" | "released" | "expired";
@@ -840,22 +840,71 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
     order by product_id, material, style
   `;
 
-  const variantsByProduct = variantRows.reduce<Record<string, DashboardVariant[]>>((acc, row) => {
-    const availableUnits = Math.max(row.total_units - row.reserved_units - row.sold_units, 0);
-    (acc[row.product_id] ??= []).push({
-      variantKey: variantKey(row.material, row.style),
-      material: row.material,
-      style: row.style,
-      label: `${row.material} · ${row.style}`,
-      totalUnits: row.total_units,
-      soldUnits: row.sold_units,
-      reservedUnits: row.reserved_units,
+  const variantRowByKey = new Map<string, (typeof variantRows)[number]>();
+  for (const row of variantRows) {
+    variantRowByKey.set(`${row.product_id}|${row.material}|${row.style}`, row);
+  }
+
+  const overridesByProduct = new Map(
+    inventoryRows.map((row) => [row.product_id, { priceCents: row.price_cents, isActive: row.is_active }]),
+  );
+
+  // Catalog-driven: only real products and their exact material × style
+  // variants. variant_inventory is the source of truth for counts; stray rows
+  // from earlier seeds are ignored, so no phantom products appear.
+  const dashboardProducts: DashboardProduct[] = products.map((product) => {
+    const variants: DashboardVariant[] = getProductVariants(product).map((v) => {
+      const row = variantRowByKey.get(`${product.id}|${v.material}|${v.style}`);
+      const totalUnits = row?.total_units ?? 0;
+      const reservedUnits = row?.reserved_units ?? 0;
+      const soldUnits = row?.sold_units ?? 0;
+      const availableUnits = Math.max(totalUnits - reservedUnits - soldUnits, 0);
+      return {
+        variantKey: v.key,
+        material: v.material,
+        style: v.style,
+        label: v.label,
+        totalUnits,
+        soldUnits,
+        reservedUnits,
+        availableUnits,
+        isLowStock: availableUnits > 0 && availableUnits <= LOW_STOCK_THRESHOLD,
+        updatedAt: row?.updated_at ?? "",
+      };
+    });
+
+    const totalUnits = variants.reduce((s, v) => s + v.totalUnits, 0);
+    const soldUnits = variants.reduce((s, v) => s + v.soldUnits, 0);
+    const reservedUnits = variants.reduce((s, v) => s + v.reservedUnits, 0);
+    const availableUnits = variants.reduce((s, v) => s + v.availableUnits, 0);
+    const updatedAt = variants.reduce((latest, v) => (v.updatedAt > latest ? v.updatedAt : latest), "");
+    const override = overridesByProduct.get(product.id);
+
+    return {
+      productId: product.id,
+      slug: product.slug,
+      name: product.content.en.name,
+      totalUnits,
+      soldUnits,
+      reservedUnits,
       availableUnits,
       isLowStock: availableUnits > 0 && availableUnits <= LOW_STOCK_THRESHOLD,
-      updatedAt: row.updated_at,
-    });
-    return acc;
-  }, {});
+      updatedAt: updatedAt || new Date().toISOString(),
+      priceCents: override?.priceCents ?? Math.round(product.price * 100),
+      isActive: override?.isActive ?? true,
+      variants,
+    };
+  });
+
+  const inventoryTotals = dashboardProducts.reduce(
+    (acc, p) => {
+      acc.sold += p.soldUnits;
+      acc.available += p.availableUnits;
+      acc.reserved += p.reservedUnits;
+      return acc;
+    },
+    { sold: 0, available: 0, reserved: 0 },
+  );
 
   const overview = overviewRows[0];
   const orderItemsByOrder = orderItemRows.reduce<Record<string, DashboardOrder["items"]>>((acc, item) => {
@@ -878,9 +927,9 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
     overview: {
       revenueCents: overview?.revenue_cents ?? 0,
       totalOrders: overview?.total_orders ?? 0,
-      unitsSold: overview?.units_sold ?? 0,
-      unitsAvailable: overview?.units_available ?? 0,
-      reservedUnits: overview?.reserved_units ?? 0,
+      unitsSold: inventoryTotals.sold,
+      unitsAvailable: inventoryTotals.available,
+      reservedUnits: inventoryTotals.reserved,
       pendingShipments: overview?.pending_shipments ?? 0,
       refundedCents: overview?.refunded_cents ?? 0,
       revenueSeries: seriesRows.map((row) => ({
@@ -889,26 +938,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
         orderCount: row.order_count,
       })),
     },
-    products: inventoryRows.map((row) => {
-      const product = getProductById(row.product_id);
-      const availableUnits = Math.max(row.total_units - row.reserved_units - row.sold_units, 0);
-      const fallbackPriceCents = product ? Math.round(product.price * 100) : 0;
-
-      return {
-        productId: row.product_id,
-        slug: product?.slug ?? row.product_id,
-        name: product?.content.en.name ?? row.product_id,
-        totalUnits: row.total_units,
-        soldUnits: row.sold_units,
-        reservedUnits: row.reserved_units,
-        availableUnits,
-        isLowStock: availableUnits > 0 && availableUnits <= LOW_STOCK_THRESHOLD,
-        updatedAt: row.updated_at,
-        priceCents: row.price_cents ?? fallbackPriceCents,
-        isActive: row.is_active ?? true,
-        variants: variantsByProduct[row.product_id] ?? [],
-      };
-    }),
+    products: dashboardProducts,
     orders: orderRows.map((row) => ({
       id: row.id,
       stripeSessionId: row.stripe_session_id,
@@ -935,6 +965,39 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
       items: orderItemsByOrder[row.id] ?? [],
     })),
   };
+}
+
+/** Set the stock total for one material × style variant (source of truth). */
+export async function updateVariantTotal(
+  productId: string,
+  material: string,
+  style: string,
+  totalUnits: number,
+) {
+  await ensureInventoryReady();
+  const sql = getSql();
+
+  if (!Number.isInteger(totalUnits) || totalUnits < 0) {
+    throw new InventoryError("Total inventory must be a non-negative whole number.", productId);
+  }
+
+  // Upsert: create the variant row if missing, otherwise update — but never
+  // below what's already sold + reserved.
+  const rows = await sql<{ product_id: string }[]>`
+    insert into variant_inventory (product_id, material, style, total_units)
+    values (${productId}, ${material}, ${style}, ${totalUnits})
+    on conflict (product_id, material, style) do update
+      set total_units = ${totalUnits}, updated_at = now()
+      where ${totalUnits} >= variant_inventory.sold_units + variant_inventory.reserved_units
+    returning product_id
+  `;
+
+  if (rows.length === 0) {
+    throw new InventoryError(
+      "New stock total cannot be lower than sold plus reserved units.",
+      productId,
+    );
+  }
 }
 
 export async function updateInventoryTotal(productId: string, totalUnits: number) {

@@ -4,13 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useI18n } from "@/i18n/context";
 import { getProduct } from "@/data/products";
+import { usePriceCents } from "@/hooks/usePriceCents";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
 const PRODUCT_HREF = "/products/edition-001";
 
 export default function HandChainsCollection() {
   const { t } = useI18n();
-  const price = getProduct("edition-001")?.price;
+  const product = getProduct("edition-001");
+  const liveCents = usePriceCents(product?.id ?? "");
+  const price = liveCents != null ? liveCents / 100 : product?.price;
 
   const looks = [
     { img: "/images/gold-static.jpg", label: `${t.product.gold} · ${t.product.static}` },

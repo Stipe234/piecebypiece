@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { logoutOwner } from "@/app/owner/actions";
-import InventoryEditForm from "@/components/owner/InventoryEditForm";
+import VariantStockForm from "@/components/owner/VariantStockForm";
 import OrdersPanel from "@/components/owner/OrdersPanel";
 import ProductOverrideForm from "@/components/owner/ProductOverrideForm";
 import RevenueSparkline from "@/components/owner/RevenueSparkline";
@@ -210,22 +210,33 @@ export default async function OwnerDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 grid gap-6 md:grid-cols-2">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Stock</p>
-                      <div className="mt-3">
-                        <InventoryEditForm productId={product.productId} defaultValue={product.totalUnits} />
-                      </div>
+                  <div className="mt-6">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Stock by variant</p>
+                    <div className="mt-3 flex flex-col gap-2.5">
+                      {product.variants.map((variant) => (
+                        <div key={variant.variantKey} className="dash-inset rounded-xl px-4 py-3">
+                          <VariantStockForm
+                            productId={product.productId}
+                            material={variant.material}
+                            style={variant.style}
+                            label={variant.label}
+                            available={variant.availableUnits}
+                            total={variant.totalUnits}
+                            defaultValue={variant.totalUnits}
+                          />
+                        </div>
+                      ))}
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Pricing</p>
-                      <div className="mt-3">
-                        <ProductOverrideForm
-                          productId={product.productId}
-                          priceEuros={product.priceCents / 100}
-                          isActive={product.isActive}
-                        />
-                      </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Pricing</p>
+                    <div className="mt-3">
+                      <ProductOverrideForm
+                        productId={product.productId}
+                        priceEuros={product.priceCents / 100}
+                        isActive={product.isActive}
+                      />
                     </div>
                   </div>
                 </article>

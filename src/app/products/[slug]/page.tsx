@@ -13,6 +13,7 @@ import {
   variantKey,
 } from "@/data/products";
 import { useI18n } from "@/i18n/context";
+import { usePriceCents } from "@/hooks/usePriceCents";
 import ProductGallery from "@/components/product/ProductGallery";
 import VariantSelector from "@/components/product/VariantSelector";
 import LayersWithRow from "@/components/product/LayersWithRow";
@@ -31,6 +32,10 @@ export default function ProductPage() {
 
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [selectedStyle, setSelectedStyle] = useState(product.styles[0]);
+
+  // Live, override-aware price from the dashboard; falls back to catalog price.
+  const liveCents = usePriceCents(product.id);
+  const displayPrice = liveCents != null ? liveCents / 100 : product.price;
 
   // The gallery is driven by the selected variant: each material × style maps
   // to its own studio image, and picking a thumbnail updates the selectors.
@@ -84,7 +89,7 @@ export default function ProductPage() {
               </h1>
               <div className="mt-3 md:mt-4 flex items-center gap-3">
                 <span className="text-lg md:text-xl text-[var(--color-text-primary)]">
-                  €{product.price}
+                  €{displayPrice}
                 </span>
                 <span className="inline-flex items-center border border-[var(--color-border-dark)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-text-primary)]">
                   {t.waitlist.status}

@@ -60,7 +60,7 @@ export async function sendWaitlistEmails(opts: { email: string; source: string |
   await Promise.allSettled([
     sendEmail({
       to: opts.email,
-      subject: "Welcome — Piece by Piece",
+      subject: "You're on the list — Piece by Piece",
       html: welcomeHtml(),
     }),
     sendEmail({
@@ -75,12 +75,13 @@ export async function sendWaitlistEmails(opts: { email: string; source: string |
 const COPY = {
   eyebrow: "Built Over Time",
   title: "You're on the list.",
-  p1: "Thank you for joining. You're now among the first to know when Piece 001 opens.",
-  p2: "Piece by Piece is built on a simple idea: the best jewelry collections aren't bought all at once. They're collected slowly, intentionally, and personally — one piece at a time.",
-  p3: "We'll write to you before anyone else, the moment the first edition is ready. No noise in between.",
-  signoff: "With warmth,",
+  p1: "Thank you for joining. You're now among the first, which means you'll see Piece 001 before anyone else.",
+  p2: "Piece by Piece begins with a single hand chain. One quiet line from wrist to finger, designed to be worn every day and collected slowly. Good jewellery isn't built all at once. It's built over time, piece by piece.",
+  p3: "Piece 001 will be released in limited numbers. When it does, you'll be the first to know.",
+  p4: "As an early member, you'll have first access when the collection opens.",
+  signoff: "With love,",
   team: "Piece by Piece",
-  footer: "You're receiving this because you joined the waitlist at piecebypiecewear.com.",
+  footer: "You're receiving this email because you joined the waitlist at piecebypiecewear.com.",
 };
 
 function welcomeHtml() {
@@ -117,7 +118,8 @@ function welcomeHtml() {
             <td style="padding:28px 44px 0 44px;">
               <p style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p1}</p>
               <p style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p2}</p>
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p3}</p>
+              <p style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p3}</p>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p4}</p>
             </td>
           </tr>
           <tr>
