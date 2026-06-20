@@ -25,9 +25,11 @@ export async function POST(request: Request) {
   try {
     const { created, signup } = await addWaitlistSignup(email, source, "en", material, style);
 
-    // Only email a fresh signup; never block the response on email delivery.
+    // Only email a fresh signup. We must await: on serverless the function is
+    // frozen once the response returns, which kills any in-flight email request.
+    // sendWaitlistEmails never throws (Promise.allSettled), so this can't fail the signup.
     if (created) {
-      void sendWaitlistEmails({ email: signup.email, source });
+      await sendWaitlistEmails({ email: signup.email, source });
     }
 
     return NextResponse.json({ ok: true, alreadyJoined: !created });

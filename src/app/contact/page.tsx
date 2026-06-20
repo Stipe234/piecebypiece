@@ -2,7 +2,7 @@
 
 import { useI18n } from "@/i18n/context";
 
-const EMAIL = "hello@piecebypiecewear.com";
+const EMAIL = "info@piecebypiecewear.com";
 
 export default function ContactPage() {
   const { t } = useI18n();
