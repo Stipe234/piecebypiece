@@ -253,6 +253,7 @@ export async function sendBroadcastAction(
   await requireOwnerAuth();
 
   const subject = String(formData.get("subject") ?? "").trim();
+  const eyebrow = String(formData.get("eyebrow") ?? "").trim();
   const heading = String(formData.get("heading") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();
   const confirmed = formData.get("confirm") === "on";
@@ -270,7 +271,7 @@ export async function sendBroadcastAction(
     return { error: "There are no subscribers to send to yet." };
   }
 
-  const result = await sendBroadcast({ recipients, subject, heading, body });
+  const result = await sendBroadcast({ recipients, subject, eyebrow, heading, body });
 
   if (result.skipped) {
     return { error: "Email isn't configured yet (RESEND_API_KEY is missing), so nothing was sent." };
