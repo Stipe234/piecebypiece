@@ -74,6 +74,144 @@ export async function sendWaitlistEmails(opts: { email: string; firstName?: stri
   ]);
 }
 
+function firstNameOf(fullName: string | null | undefined): string | null {
+  const n = fullName?.trim();
+  if (!n) return null;
+  return n.split(/\s+/)[0];
+}
+
+/** Branded shell for order-status emails: heading, paragraphs, optional CTA button. */
+function orderEmailHtml(opts: {
+  eyebrow: string;
+  heading: string;
+  paragraphs: string[];
+  button?: { label: string; url: string };
+}): string {
+  // Only allow http(s) links — never render an unsafe href.
+  const safeUrl = opts.button && /^https?:\/\//i.test(opts.button.url) ? opts.button.url : null;
+  const renderedParagraphs = opts.paragraphs
+    .map((p, i) => {
+      const isLast = i === opts.paragraphs.length - 1 && !safeUrl;
+      const margin = isLast ? "0" : "0 0 18px 0";
+      return `              <p style="margin:${margin};font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${escapeHtml(p)}</p>`;
+    })
+    .join("\n");
+
+  const buttonRow = safeUrl
+    ? `
+          <tr>
+            <td style="padding:26px 44px 0 44px;">
+              <a href="${escapeHtml(safeUrl)}" style="display:inline-block;background-color:#1a1a1a;color:#fcfaf5;text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:14px 30px;">${escapeHtml(opts.button!.label)}</a>
+            </td>
+          </tr>`
+    : "";
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+</head>
+<body style="margin:0;padding:0;background-color:#f4f0e8;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0e8;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#fcfaf5;border:1px solid #e6e0d6;">
+          <tr>
+            <td align="center" style="padding:36px 40px 0 40px;">
+              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:#000000;">Piece&nbsp;by&nbsp;Piece</p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:28px 40px 0 40px;">
+              <div style="width:32px;height:1px;background-color:#c9a96e;margin:0 auto;"></div>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:24px 40px 0 40px;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#6b6660;">${escapeHtml(opts.eyebrow)}</p>
+              <h1 style="margin:14px 0 0 0;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:32px;line-height:1.2;color:#1a1a1a;">${escapeHtml(opts.heading)}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 44px 0 44px;">
+${renderedParagraphs}
+            </td>
+          </tr>${buttonRow}
+          <tr>
+            <td style="padding:30px 44px 40px 44px;">
+              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:16px;color:#2a2724;">With love,</p>
+              <p style="margin:4px 0 0 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;letter-spacing:2px;color:#1a1a1a;">Piece by Piece</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 44px 40px 44px;">
+              <div style="height:1px;background-color:#e6e0d6;margin-bottom:18px;"></div>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.7;color:#9c968c;">You're receiving this because you placed an order at piecebypiecewear.com. Reply to this email if you need anything.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/** Email the customer when their order is packed, shipped, or delivered. Best effort. */
+export async function sendOrderStatusEmail(opts: {
+  to: string;
+  customerName: string | null;
+  status: "packed" | "shipped" | "delivered";
+  carrier?: string | null;
+  trackingUrl?: string | null;
+}): Promise<{ sent: boolean; skipped: boolean }> {
+  const first = firstNameOf(opts.customerName);
+  const hi = first ? `Hi ${first},` : "Hello,";
+
+  let subject: string;
+  let eyebrow: string;
+  let heading: string;
+  let paragraphs: string[];
+  let button: { label: string; url: string } | undefined;
+
+  if (opts.status === "packed") {
+    subject = "Your order is packed — Piece by Piece";
+    eyebrow = "Your order";
+    heading = "It's packed.";
+    paragraphs = [
+      hi,
+      "Your piece has been packed by hand with care, and we've arranged collection with our courier.",
+      "As soon as they pick it up, we'll email you a tracking link so you can follow it all the way to your door.",
+    ];
+  } else if (opts.status === "shipped") {
+    subject = "Your order is on its way — Piece by Piece";
+    eyebrow = "On its way";
+    heading = "Your order has shipped.";
+    const via = opts.carrier?.trim() ? ` with ${opts.carrier.trim()}` : "";
+    paragraphs = [hi, `Your order is on its way${via}. You can follow its journey using the link below.`];
+    if (opts.trackingUrl?.trim()) {
+      button = { label: "Track your order", url: opts.trackingUrl.trim() };
+    } else {
+      paragraphs.push("We'll keep you posted until it arrives.");
+    }
+  } else {
+    subject = "Your order has been delivered — Piece by Piece";
+    eyebrow = "Delivered";
+    heading = "It's arrived.";
+    paragraphs = [
+      hi,
+      "Your order has been delivered. We hope it becomes part of how you move through your days.",
+      "Wear it well — and if anything isn't quite right, just reply to this email.",
+    ];
+  }
+
+  const html = orderEmailHtml({ eyebrow, heading, paragraphs, button });
+  const res = await sendEmail({ to: opts.to, subject, html });
+  return { sent: res.sent, skipped: res.skipped === true };
+}
+
 const RESEND_BATCH_ENDPOINT = "https://api.resend.com/emails/batch";
 
 export interface BroadcastResult {

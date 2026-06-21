@@ -58,6 +58,8 @@ export default function OrdersPanel({ orders }: Props) {
           order.customerPhone,
           order.stripeSessionId,
           order.trackingNumber,
+          order.carrier,
+          order.trackingUrl,
         ]
           .filter(Boolean)
           .join(" ")
@@ -182,7 +184,8 @@ export default function OrdersPanel({ orders }: Props) {
               <ShippingEditForm
                 orderId={order.id}
                 currentStatus={order.shippingStatus}
-                currentTracking={order.trackingNumber}
+                currentCarrier={order.carrier}
+                currentTrackingUrl={order.trackingUrl}
               />
 
               <div className="mt-4">

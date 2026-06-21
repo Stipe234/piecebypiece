@@ -94,6 +94,31 @@ export async function getWaitlistSignups(): Promise<WaitlistSignup[]> {
   return rows.map(mapRow);
 }
 
+export interface WaitlistStats {
+  total: number;
+  last7Days: number;
+  latestSignupAt: string | null;
+}
+
+/** Signup counts for the dashboard. "now" comes from the DB, never render. */
+export async function getWaitlistStats(): Promise<WaitlistStats> {
+  await ensureWaitlistReady();
+  const sql = getSql();
+  const rows = await sql<{ total: number; last7: number; latest: string | null }[]>`
+    select
+      count(*)::int as total,
+      count(*) filter (where created_at >= now() - interval '7 days')::int as last7,
+      max(created_at)::text as latest
+    from waitlist_signups
+  `;
+  const row = rows[0];
+  return {
+    total: row?.total ?? 0,
+    last7Days: row?.last7 ?? 0,
+    latestSignupAt: row?.latest ?? null,
+  };
+}
+
 interface WaitlistRow {
   id: string;
   email: string;

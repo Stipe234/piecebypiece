@@ -6,7 +6,7 @@ import RevenueSparkline from "@/components/owner/RevenueSparkline";
 import WaitlistPanel from "@/components/owner/WaitlistPanel";
 import BroadcastPanel from "@/components/owner/BroadcastPanel";
 import { getOwnerDashboardData } from "@/lib/inventory";
-import { getWaitlistSignups } from "@/lib/waitlist";
+import { getWaitlistSignups, getWaitlistStats } from "@/lib/waitlist";
 import { requireOwnerAuth } from "@/lib/owner-auth";
 
 export const dynamic = "force-dynamic";
@@ -46,9 +46,7 @@ export default async function OwnerDashboardPage() {
   await requireOwnerAuth();
   const data = await getOwnerDashboardData();
   const waitlist = await getWaitlistSignups();
-  const weekAgoMs = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  const waitlistLast7 = waitlist.filter((s) => new Date(s.createdAt).getTime() >= weekAgoMs).length;
-  const latestSignupAt = waitlist.length > 0 ? waitlist[0].createdAt : null;
+  const waitlistStats = await getWaitlistStats();
   // "Running low" uses the same 10%-remaining rule as the per-variant bars below.
   const isVariantLow = (availableUnits: number, totalUnits: number) =>
     availableUnits > 0 && (totalUnits <= 0 || (availableUnits / totalUnits) * 100 <= 10);
@@ -264,11 +262,11 @@ export default async function OwnerDashboardPage() {
               <div className="dash-inset mt-6 flex flex-wrap items-center gap-x-10 gap-y-2 rounded-xl px-5 py-4 text-sm">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">New this week</p>
-                  <p className="font-numeric mt-1 text-lg font-medium text-[var(--color-text-primary)]">+{waitlistLast7}</p>
+                  <p className="font-numeric mt-1 text-lg font-medium text-[var(--color-text-primary)]">+{waitlistStats.last7Days}</p>
                 </div>
                 <div className="ml-auto text-right">
                   <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Latest signup</p>
-                  <p className="font-numeric mt-1 text-xs">{latestSignupAt ? formatDate(latestSignupAt) : "—"}</p>
+                  <p className="font-numeric mt-1 text-xs">{waitlistStats.latestSignupAt ? formatDate(waitlistStats.latestSignupAt) : "—"}</p>
                 </div>
               </div>
             </article>

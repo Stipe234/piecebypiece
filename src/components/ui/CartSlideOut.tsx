@@ -109,7 +109,11 @@ export default function CartSlideOut() {
               <span className="text-sm font-medium">{t.cart.subtotal}</span>
               <span className="text-sm font-medium">€{subtotal}</span>
             </div>
-            <p className="text-xs text-[var(--color-text-tertiary)] mb-4">{t.cart.shippingNote}</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] mb-2">{t.cart.shippingNote}</p>
+            <p className="mb-4 inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-secondary)]">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c9a96e]" aria-hidden="true" />
+              {t.product.handmade}
+            </p>
             <Link href="/checkout" onClick={closeCart}>
               <Button fullWidth>{t.cart.checkout}</Button>
             </Link>

@@ -134,6 +134,11 @@ export default function CheckoutPage() {
               <span>€{subtotal}</span>
             </div>
           </div>
+
+          <div className="mt-4 flex items-center gap-2 border-t border-[var(--color-border)] pt-4 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-secondary)]">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c9a96e]" aria-hidden="true" />
+            {t.product.handmade}
+          </div>
         </div>
 
         <div className="mt-6 md:mt-8">

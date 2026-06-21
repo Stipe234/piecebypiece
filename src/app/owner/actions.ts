@@ -23,7 +23,7 @@ import {
 } from "@/lib/inventory";
 import { getStripe } from "@/lib/stripe";
 import { getWaitlistSignups } from "@/lib/waitlist";
-import { sendBroadcast } from "@/lib/email";
+import { sendBroadcast, sendOrderStatusEmail } from "@/lib/email";
 
 export interface OwnerLoginState {
   error?: string;
@@ -32,6 +32,7 @@ export interface OwnerLoginState {
 export interface OwnerActionState {
   error?: string;
   success?: boolean;
+  message?: string;
 }
 
 async function getClientIdentifier() {
@@ -222,15 +223,54 @@ export async function saveShippingStatus(
 
   const orderId = String(formData.get("orderId") ?? "");
   const shippingStatus = String(formData.get("shippingStatus") ?? "") as ShippingStatus;
-  const trackingNumber = String(formData.get("trackingNumber") ?? "").trim() || null;
+  const carrier = String(formData.get("carrier") ?? "").trim() || null;
+  const trackingUrl = String(formData.get("trackingUrl") ?? "").trim() || null;
 
   if (!orderId) {
     return { error: "Missing order." };
   }
 
+  // The shipped email promises a tracking link, so require both before shipping.
+  if (shippingStatus === "shipped" && (!carrier || !trackingUrl)) {
+    return { error: "Add the carrier and tracking link before marking it shipped." };
+  }
+  if (trackingUrl && !/^https?:\/\//i.test(trackingUrl)) {
+    return { error: "The tracking link must be a full URL starting with http:// or https://." };
+  }
+
   try {
-    await updateOrderShipping(orderId, shippingStatus, trackingNumber);
+    const result = await updateOrderShipping(orderId, shippingStatus, carrier, trackingUrl);
     revalidatePath("/owner");
+
+    if (!result) {
+      return { error: "Order not found." };
+    }
+
+    // Email the customer once per forward step (packed → shipped → delivered);
+    // re-saving the same status won't resend.
+    const rank: Record<ShippingStatus, number> = { pending: 0, packed: 1, shipped: 2, delivered: 3 };
+    const movedForward = rank[shippingStatus] > rank[result.previousStatus];
+
+    if (movedForward && shippingStatus !== "pending") {
+      if (!result.customerEmail) {
+        return { success: true, message: "Saved. No customer email on file, so nothing was sent." };
+      }
+      const sendResult = await sendOrderStatusEmail({
+        to: result.customerEmail,
+        customerName: result.customerName,
+        status: shippingStatus,
+        carrier: result.carrier,
+        trackingUrl: result.trackingUrl,
+      });
+      if (sendResult.skipped) {
+        return { success: true, message: "Saved. Email isn't configured yet, so the customer wasn't notified." };
+      }
+      if (!sendResult.sent) {
+        return { success: true, message: "Saved, but the notification email failed to send — check the logs." };
+      }
+      return { success: true, message: `Saved — ${result.customerEmail} notified.` };
+    }
+
     return { success: true };
   } catch (error) {
     if (error instanceof InventoryError) {

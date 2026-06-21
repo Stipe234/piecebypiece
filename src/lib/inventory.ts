@@ -84,6 +84,8 @@ interface OrderRow {
   customer_phone: string | null;
   shipping_status: ShippingStatus;
   tracking_number: string | null;
+  carrier: string | null;
+  tracking_url: string | null;
   amount_total_cents: number;
   currency: string;
   item_count: number;
@@ -163,6 +165,8 @@ export interface DashboardOrder {
   customerPhone: string | null;
   shippingStatus: ShippingStatus;
   trackingNumber: string | null;
+  carrier: string | null;
+  trackingUrl: string | null;
   amountTotalCents: number;
   currency: string;
   itemCount: number;
@@ -338,7 +342,9 @@ export async function ensureInventoryReady() {
         alter table orders
         add column if not exists refunded_at timestamptz,
         add column if not exists refund_amount_cents integer not null default 0,
-        add column if not exists stripe_payment_intent_id text
+        add column if not exists stripe_payment_intent_id text,
+        add column if not exists carrier text,
+        add column if not exists tracking_url text
       `;
 
       await sql`
@@ -837,6 +843,8 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
         customer_phone,
         shipping_status,
         tracking_number,
+        carrier,
+        tracking_url,
         amount_total_cents,
         currency,
         item_count,
@@ -1033,6 +1041,8 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
       customerPhone: row.customer_phone,
       shippingStatus: row.shipping_status,
       trackingNumber: row.tracking_number,
+      carrier: row.carrier,
+      trackingUrl: row.tracking_url,
       amountTotalCents: row.amount_total_cents,
       currency: row.currency,
       itemCount: row.item_count,
@@ -1319,11 +1329,20 @@ export async function getAllOrdersForExport() {
   return { orders: orderRows, items: itemRows };
 }
 
+export interface ShippingUpdateResult {
+  previousStatus: ShippingStatus;
+  customerEmail: string | null;
+  customerName: string | null;
+  carrier: string | null;
+  trackingUrl: string | null;
+}
+
 export async function updateOrderShipping(
   orderId: string,
   shippingStatus: ShippingStatus,
-  trackingNumber: string | null,
-) {
+  carrier: string | null,
+  trackingUrl: string | null,
+): Promise<ShippingUpdateResult | null> {
   await ensureInventoryReady();
   const sql = getSql();
 
@@ -1331,15 +1350,40 @@ export async function updateOrderShipping(
     throw new InventoryError("Invalid shipping status.");
   }
 
-  await sql`
-    update orders
-    set shipping_status = ${shippingStatus},
-        tracking_number = ${trackingNumber?.trim() || null},
-        fulfilled_at = case
-          when ${shippingStatus} in ('shipped', 'delivered') then coalesce(fulfilled_at, now())
-          else fulfilled_at
-        end,
-        updated_at = now()
-    where id = ${orderId}
-  `;
+  const cleanCarrier = carrier?.trim() || null;
+  const cleanTrackingUrl = trackingUrl?.trim() || null;
+
+  // Read the prior status (and who to notify) under a row lock, then update —
+  // so the caller can tell a forward step (e.g. → shipped) from a re-save.
+  return sql.begin(async (tx) => {
+    const before = await tx<{ shipping_status: ShippingStatus; customer_email: string | null; customer_name: string | null }[]>`
+      select shipping_status, customer_email, customer_name
+      from orders
+      where id = ${orderId}
+      for update
+    `;
+
+    if (before.length === 0) return null;
+
+    await tx`
+      update orders
+      set shipping_status = ${shippingStatus},
+          carrier = ${cleanCarrier},
+          tracking_url = ${cleanTrackingUrl},
+          fulfilled_at = case
+            when ${shippingStatus} in ('shipped', 'delivered') then coalesce(fulfilled_at, now())
+            else fulfilled_at
+          end,
+          updated_at = now()
+      where id = ${orderId}
+    `;
+
+    return {
+      previousStatus: before[0].shipping_status,
+      customerEmail: before[0].customer_email,
+      customerName: before[0].customer_name,
+      carrier: cleanCarrier,
+      trackingUrl: cleanTrackingUrl,
+    } satisfies ShippingUpdateResult;
+  });
 }
