@@ -108,7 +108,7 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/intimate.jpg`,
   description: DEFAULT_DESCRIPTION,
-  sameAs: ["https://www.instagram.com/piecebypiecewear/"] as string[],
+  sameAs: ["https://www.instagram.com/piecebypiece.wear/"] as string[],
 };
 
 const websiteJsonLd = {

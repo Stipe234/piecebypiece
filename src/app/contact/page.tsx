@@ -21,7 +21,7 @@ export default function ContactPage() {
           <a href={`mailto:${EMAIL}`} className="text-sm tracking-[0.05em] border-b border-[var(--color-border-dark)] hover:border-transparent pb-0.5 transition-colors">
             {EMAIL}
           </a>
-          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="text-[11px] tracking-[0.2em] uppercase text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors">
+          <a href="https://www.instagram.com/piecebypiece.wear/" target="_blank" rel="noopener noreferrer" className="text-[11px] tracking-[0.2em] uppercase text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors">
             {t.nav.instagram}
           </a>
         </div>
