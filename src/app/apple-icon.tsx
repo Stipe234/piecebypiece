@@ -21,24 +21,24 @@ export default function AppleIcon() {
       >
         <div
           style={{
-            fontSize: 110,
-            fontWeight: 300,
+            fontSize: 88,
+            fontWeight: 500,
             lineHeight: 1,
-            letterSpacing: "-0.04em",
+            letterSpacing: "0.01em",
           }}
         >
-          p
+          PBP
         </div>
         <div
           style={{
-            marginTop: 8,
-            fontSize: 12,
-            letterSpacing: "0.3em",
+            marginTop: 14,
+            fontSize: 13,
+            letterSpacing: "0.28em",
             textTransform: "uppercase",
             color: "#a89c8b",
           }}
         >
-          piece
+          Piece by Piece
         </div>
       </div>
     ),

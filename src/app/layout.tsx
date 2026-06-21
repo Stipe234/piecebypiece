@@ -106,7 +106,7 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: SITE_NAME,
   url: SITE_URL,
-  logo: `${SITE_URL}/images/intimate.jpg`,
+  logo: `${SITE_URL}/logo.png`,
   description: DEFAULT_DESCRIPTION,
   sameAs: ["https://www.instagram.com/piecebypiece.wear/"] as string[],
 };
