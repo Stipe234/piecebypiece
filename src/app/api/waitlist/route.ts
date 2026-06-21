@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  let body: { email?: unknown; source?: unknown; locale?: unknown; material?: unknown; style?: unknown };
+  let body: { email?: unknown; firstName?: unknown; source?: unknown; locale?: unknown; material?: unknown; style?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   }
 
   const email = typeof body.email === "string" ? body.email.trim() : "";
+  const firstName = typeof body.firstName === "string" ? body.firstName.trim().slice(0, 80) || null : null;
   const source = typeof body.source === "string" ? body.source.slice(0, 40) : null;
   const material = typeof body.material === "string" ? body.material.slice(0, 40) : null;
   const style = typeof body.style === "string" ? body.style.slice(0, 40) : null;
@@ -23,13 +24,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { created, signup } = await addWaitlistSignup(email, source, "en", material, style);
+    const { created, signup } = await addWaitlistSignup(email, source, "en", material, style, firstName);
 
     // Only email a fresh signup. We must await: on serverless the function is
     // frozen once the response returns, which kills any in-flight email request.
     // sendWaitlistEmails never throws (Promise.allSettled), so this can't fail the signup.
     if (created) {
-      await sendWaitlistEmails({ email: signup.email, source });
+      await sendWaitlistEmails({ email: signup.email, firstName: signup.firstName, source });
     }
 
     return NextResponse.json({ ok: true, alreadyJoined: !created });

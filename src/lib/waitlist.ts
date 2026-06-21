@@ -4,6 +4,7 @@ import { getSql } from "@/lib/db";
 export interface WaitlistSignup {
   id: string;
   email: string;
+  firstName: string | null;
   source: string | null;
   locale: string | null;
   material: string | null;
@@ -28,11 +29,13 @@ export async function ensureWaitlistReady() {
       `;
 
       // The product page captures the material × style the shopper wanted.
-      // Nullable: footer/homepage signups carry no variant.
+      // Nullable: footer/homepage signups carry no variant. first_name lets us
+      // greet people by name in emails; older rows simply have none.
       await sql`
         alter table waitlist_signups
         add column if not exists material text,
-        add column if not exists style text
+        add column if not exists style text,
+        add column if not exists first_name text
       `;
     })();
   }
@@ -54,6 +57,7 @@ export async function addWaitlistSignup(
   locale: string | null,
   material: string | null = null,
   style: string | null = null,
+  firstName: string | null = null,
 ): Promise<AddWaitlistResult> {
   await ensureWaitlistReady();
   const sql = getSql();
@@ -61,17 +65,18 @@ export async function addWaitlistSignup(
   const id = randomUUID();
 
   // Upsert so a repeat email still records the variant the shopper picked.
-  // coalesce keeps an existing variant if a later signup (e.g. the footer
-  // newsletter form) arrives with no variant — never overwrite a real choice
-  // with NULL, and leave `source` as first set. `(xmax = 0)` distinguishes a
-  // fresh insert from an update so we only send the welcome email once.
+  // coalesce keeps an existing value if a later signup (e.g. the footer
+  // newsletter form) arrives with no variant/name — never overwrite a real
+  // choice with NULL, and leave `source` as first set. `(xmax = 0)` distinguishes
+  // a fresh insert from an update so we only send the welcome email once.
   const rows = await sql<(WaitlistRow & { created: boolean })[]>`
-    insert into waitlist_signups (id, email, source, locale, material, style)
-    values (${id}, ${normalized}, ${source}, ${locale}, ${material}, ${style})
+    insert into waitlist_signups (id, email, source, locale, material, style, first_name)
+    values (${id}, ${normalized}, ${source}, ${locale}, ${material}, ${style}, ${firstName})
     on conflict (email) do update set
       material = coalesce(excluded.material, waitlist_signups.material),
-      style = coalesce(excluded.style, waitlist_signups.style)
-    returning id, email, source, locale, material, style, created_at::text, (xmax = 0) as created
+      style = coalesce(excluded.style, waitlist_signups.style),
+      first_name = coalesce(excluded.first_name, waitlist_signups.first_name)
+    returning id, email, first_name, source, locale, material, style, created_at::text, (xmax = 0) as created
   `;
 
   const row = rows[0];
@@ -82,7 +87,7 @@ export async function getWaitlistSignups(): Promise<WaitlistSignup[]> {
   await ensureWaitlistReady();
   const sql = getSql();
   const rows = await sql<WaitlistRow[]>`
-    select id, email, source, locale, material, style, created_at::text
+    select id, email, first_name, source, locale, material, style, created_at::text
     from waitlist_signups
     order by created_at desc
   `;
@@ -92,6 +97,7 @@ export async function getWaitlistSignups(): Promise<WaitlistSignup[]> {
 interface WaitlistRow {
   id: string;
   email: string;
+  first_name: string | null;
   source: string | null;
   locale: string | null;
   material: string | null;
@@ -103,6 +109,7 @@ function mapRow(row: WaitlistRow): WaitlistSignup {
   return {
     id: row.id,
     email: row.email,
+    firstName: row.first_name,
     source: row.source,
     locale: row.locale,
     material: row.material,

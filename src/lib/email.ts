@@ -10,7 +10,7 @@
  * saved to the database), so the form keeps working before email is configured.
  */
 
-import { broadcastHtml } from "./broadcast-template";
+import { broadcastHtml, escapeHtml } from "./broadcast-template";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
@@ -58,18 +58,18 @@ async function sendEmail(payload: { to: string; subject: string; html: string; r
 }
 
 /** Fire welcome + owner-notification emails. Best effort — never throws. */
-export async function sendWaitlistEmails(opts: { email: string; source: string | null }) {
+export async function sendWaitlistEmails(opts: { email: string; firstName?: string | null; source: string | null }) {
   await Promise.allSettled([
     sendEmail({
       to: opts.email,
       subject: "You're on the list — Piece by Piece",
-      html: welcomeHtml(),
+      html: welcomeHtml(opts.firstName),
     }),
     sendEmail({
       to: getOwnerEmail(),
       replyTo: opts.email,
       subject: `New waitlist signup — ${opts.email}`,
-      html: ownerHtml(opts.email, opts.source),
+      html: ownerHtml(opts.email, opts.source, opts.firstName),
     }),
   ]);
 }
@@ -155,8 +155,12 @@ const COPY = {
   footer: "You're receiving this because you joined the Piece by Piece waitlist.",
 };
 
-function welcomeHtml() {
+function welcomeHtml(firstName?: string | null) {
   const c = COPY;
+  const name = firstName?.trim();
+  const greeting = name
+    ? `<p style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">Hi ${escapeHtml(name)},</p>\n              `
+    : "";
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -187,7 +191,7 @@ function welcomeHtml() {
           </tr>
           <tr>
             <td style="padding:28px 44px 0 44px;">
-              <p style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p1}</p>
+              ${greeting}<p style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p1}</p>
               <p style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p2}</p>
               <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${c.p3}</p>
             </td>
@@ -212,7 +216,8 @@ function welcomeHtml() {
 </html>`;
 }
 
-function ownerHtml(email: string, source: string | null) {
+function ownerHtml(email: string, source: string | null, firstName?: string | null) {
+  const name = firstName?.trim();
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#f4f0e8;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f0e8;">
@@ -220,7 +225,8 @@ function ownerHtml(email: string, source: string | null) {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#fcfaf5;border:1px solid #e6e0d6;">
         <tr><td style="padding:32px 36px;">
           <p style="margin:0;font-family:Georgia,serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#6b6660;">New waitlist signup</p>
-          <p style="margin:16px 0 0 0;font-family:Georgia,serif;font-size:24px;color:#1a1a1a;">${email}</p>
+          ${name ? `<p style="margin:16px 0 0 0;font-family:Georgia,serif;font-size:22px;color:#1a1a1a;">${escapeHtml(name)}</p>` : ""}
+          <p style="margin:${name ? "4px" : "16px"} 0 0 0;font-family:Georgia,serif;font-size:${name ? "16px" : "24px"};color:${name ? "#6b6660" : "#1a1a1a"};">${email}</p>
           <p style="margin:18px 0 0 0;font-family:Arial,sans-serif;font-size:13px;color:#6b6660;">Source: ${source ?? "—"}</p>
           <p style="margin:6px 0 0 0;font-family:Arial,sans-serif;font-size:13px;color:#6b6660;">Reply to this email to write back directly.</p>
         </td></tr>

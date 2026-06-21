@@ -13,18 +13,19 @@ export default function WaitlistForm({
   style?: string;
 }) {
   const { t } = useI18n();
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email || status === "loading") return;
+    if (!email || !firstName || status === "loading") return;
     setStatus("loading");
     try {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "waitlist", material, style }),
+        body: JSON.stringify({ email, firstName, source: "waitlist", material, style }),
       });
       if (!res.ok) throw new Error("failed");
       setStatus("done");
@@ -43,6 +44,16 @@ export default function WaitlistForm({
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
+      <input
+        type="text"
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
+        placeholder={t.waitlist.firstNamePlaceholder}
+        required
+        disabled={status === "loading"}
+        aria-label={t.waitlist.firstNamePlaceholder}
+        className="mb-3 w-full bg-transparent border-b border-[var(--color-border)] py-2.5 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-border-dark)] transition-colors disabled:opacity-50"
+      />
       <div className="flex gap-2">
         <input
           type="email"

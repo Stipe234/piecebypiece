@@ -2,7 +2,6 @@ import Link from "next/link";
 import { logoutOwner } from "@/app/owner/actions";
 import VariantStockForm from "@/components/owner/VariantStockForm";
 import OrdersPanel from "@/components/owner/OrdersPanel";
-import ProductOverrideForm from "@/components/owner/ProductOverrideForm";
 import RevenueSparkline from "@/components/owner/RevenueSparkline";
 import WaitlistPanel from "@/components/owner/WaitlistPanel";
 import BroadcastPanel from "@/components/owner/BroadcastPanel";
@@ -47,6 +46,9 @@ export default async function OwnerDashboardPage() {
   await requireOwnerAuth();
   const data = await getOwnerDashboardData();
   const waitlist = await getWaitlistSignups();
+  const weekAgoMs = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const waitlistLast7 = waitlist.filter((s) => new Date(s.createdAt).getTime() >= weekAgoMs).length;
+  const latestSignupAt = waitlist.length > 0 ? waitlist[0].createdAt : null;
   // "Running low" uses the same 10%-remaining rule as the per-variant bars below.
   const isVariantLow = (availableUnits: number, totalUnits: number) =>
     availableUnits > 0 && (totalUnits <= 0 || (availableUnits / totalUnits) * 100 <= 10);
@@ -231,18 +233,45 @@ export default async function OwnerDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">Visibility</p>
-                    <div className="mt-3">
-                      <ProductOverrideForm
-                        productId={product.productId}
-                        isActive={product.isActive}
-                      />
-                    </div>
-                  </div>
                 </article>
               );
             })}
+
+            {/* Joined the list — waitlist signups, styled to match the product cards */}
+            <article className="dash-card rounded-2xl p-6 md:p-8">
+              <div className="flex items-center gap-2.5">
+                <span className="text-[var(--color-text-tertiary)]">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </span>
+                <p className="font-heading text-2xl font-light text-[var(--color-text-primary)] md:text-3xl">Joined the list</p>
+              </div>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.26em] text-[var(--color-text-tertiary)]">Waitlist</p>
+
+              <div className="mt-6 flex items-end gap-3">
+                <span className="font-numeric text-6xl font-semibold leading-none text-[var(--color-text-primary)] md:text-7xl">
+                  {waitlist.length}
+                </span>
+                <span className="pb-1 text-[11px] uppercase tracking-[0.26em] text-[var(--color-text-tertiary)]">
+                  {waitlist.length === 1 ? "subscriber" : "subscribers"}
+                </span>
+              </div>
+
+              <div className="dash-inset mt-6 flex flex-wrap items-center gap-x-10 gap-y-2 rounded-xl px-5 py-4 text-sm">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">New this week</p>
+                  <p className="font-numeric mt-1 text-lg font-medium text-[var(--color-text-primary)]">+{waitlistLast7}</p>
+                </div>
+                <div className="ml-auto text-right">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Latest signup</p>
+                  <p className="font-numeric mt-1 text-xs">{latestSignupAt ? formatDate(latestSignupAt) : "—"}</p>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
 

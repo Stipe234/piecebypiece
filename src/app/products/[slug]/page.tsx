@@ -89,6 +89,10 @@ export default function ProductPage() {
               <h1 className="font-heading text-2xl md:text-4xl font-light tracking-wide">
                 {productContent.name}
               </h1>
+              <p className="mt-2 md:mt-3 inline-flex items-center gap-2 text-[10px] md:text-[11px] font-medium tracking-[0.22em] uppercase text-[var(--color-text-secondary)]">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c9a96e]" aria-hidden="true" />
+                {t.product.handmade}
+              </p>
               <div className="mt-3 md:mt-4 flex items-center gap-3">
                 <span className="text-lg md:text-xl text-[var(--color-text-primary)]">
                   €{displayPrice}

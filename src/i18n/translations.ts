@@ -39,6 +39,7 @@ export const translations = {
       title: "Join the waitlist",
       status: "Waitlist",
       text: "This piece isn't on sale yet. It opens in limited numbers — join the waitlist and we'll email you the moment you can buy it. No payment now.",
+      firstNamePlaceholder: "First name",
       placeholder: "Email address",
       submit: "Join",
       thanks: "You're on the list. We'll email you when it opens.",
@@ -53,7 +54,7 @@ export const translations = {
         body: "Jewelry designed to be collected slowly, worn daily, and layered intentionally.",
         cta: "Shop Hand Chains",
       },
-      trust: ["Waterproof", "Tarnish Resistant", "Designed For Everyday Wear", "Made To Layer"],
+      trust: ["Handmade in Italy", "Waterproof", "Tarnish Resistant", "Designed For Everyday Wear", "Made To Layer"],
       philosophy: {
         headline: "Good jewelry takes time.",
         body: [
@@ -121,6 +122,7 @@ export const translations = {
     // Product
     product: {
       label: "Hand Chain 001",
+      handmade: "Handmade in Italy",
       name: "The First Piece",
       description:
         "A hand chain that feels like part of you.\nOne quiet line, from wrist to finger.\nSubtle. Intentional. Yours.",

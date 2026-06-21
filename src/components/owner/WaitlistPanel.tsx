@@ -50,9 +50,14 @@ export default function WaitlistPanel({ signups }: { signups: WaitlistSignup[] }
             {signups.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-4 py-3.5">
                 <div className="min-w-0">
+                  {s.firstName ? (
+                    <span className="block truncate text-sm text-[var(--color-text-primary)]">{s.firstName}</span>
+                  ) : null}
                   <a
                     href={`mailto:${s.email}`}
-                    className="block truncate text-sm text-[var(--color-text-primary)] transition hover:text-[var(--color-text-tertiary)]"
+                    className={`block truncate transition hover:text-[var(--color-text-tertiary)] ${
+                      s.firstName ? "text-xs text-[var(--color-text-tertiary)]" : "text-sm text-[var(--color-text-primary)]"
+                    }`}
                   >
                     {s.email}
                   </a>
