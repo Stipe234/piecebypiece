@@ -48,7 +48,7 @@ export default function HandChainsCollection() {
             return (
               <ScrollReveal key={look.img} delay={i * 90}>
                 <Link href={PRODUCT_HREF} className="block group">
-                  <div className="img-tactile relative aspect-[4/5] overflow-hidden bg-white mb-4">
+                  <div className="img-tactile relative aspect-[3/5] overflow-hidden bg-white mb-4">
                     <Image
                       src={look.img}
                       alt={look.label}

@@ -24,15 +24,7 @@ function TrustIcon({ i }: { i: number }) {
       return (
         <svg {...common}><path d="M12 3 3 9.5 12 21l9-11.5z" /><path d="M3 9.5h18" /><path d="M9 3 7.5 9.5 12 21" /><path d="M15 3l1.5 6.5L12 21" /></svg>
       );
-    case 1: // Waterproof — droplet
-      return (
-        <svg {...common}><path d="M12 3c3 4 5.5 6.8 5.5 9.6A5.5 5.5 0 0 1 12 18a5.5 5.5 0 0 1-5.5-5.4C6.5 9.8 9 7 12 3Z" /></svg>
-      );
-    case 2: // Tarnish resistant — sparkle
-      return (
-        <svg {...common}><path d="M12 3v18M3 12h18M6 6l12 12M18 6 6 18" /></svg>
-      );
-    case 3: // Everyday wear — sun
+    case 1: // Everyday wear — sun
       return (
         <svg {...common}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
       );
@@ -106,11 +98,11 @@ export default function Home() {
 
       {/* ── 2. Trust bar ── */}
       <section className="border-b border-[var(--color-border)]">
-        <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-5">
+        <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-3">
           {h.trust.map((item, i) => (
             <div
               key={item}
-              className="flex flex-col items-center text-center gap-3 px-4 py-8 md:py-12 border-[var(--color-border)] [&:nth-child(odd):not(:last-child)]:border-r [&:nth-child(-n+4)]:border-b [&:last-child]:col-span-2 md:[&:last-child]:col-span-1 md:[&:not(:last-child)]:border-r md:[&:nth-child(-n+4)]:border-b-0"
+              className="flex flex-col items-center text-center gap-3 px-4 py-8 md:py-12 border-[var(--color-border)] [&:nth-child(odd):not(:last-child)]:border-r [&:nth-child(-n+2)]:border-b [&:last-child]:col-span-2 md:[&:last-child]:col-span-1 md:[&:not(:last-child)]:border-r md:[&:nth-child(-n+2)]:border-b-0"
             >
               <span className="text-[var(--color-text-tertiary)]"><TrustIcon i={i} /></span>
               <span className="text-[10px] md:text-[11px] tracking-[0.18em] uppercase text-[var(--color-text-secondary)]">
@@ -148,7 +140,7 @@ export default function Home() {
           {looks.map((look, i) => (
             <ScrollReveal key={look.img} delay={i * 90}>
               <Link href={PRODUCT_HREF} className="block group">
-                <div className="img-tactile relative aspect-[4/5] overflow-hidden bg-white mb-4">
+                <div className="img-tactile relative aspect-[3/5] overflow-hidden bg-white mb-4">
                   <Image
                     src={look.img}
                     alt={look.label}

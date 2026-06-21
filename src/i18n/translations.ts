@@ -54,7 +54,7 @@ export const translations = {
         body: "Jewelry designed to be collected slowly, worn daily, and layered intentionally.",
         cta: "Shop Hand Chains",
       },
-      trust: ["Handmade in Italy", "Waterproof", "Tarnish Resistant", "Designed For Everyday Wear", "Made To Layer"],
+      trust: ["Handmade in Italy", "Designed For Everyday Wear", "Made To Layer"],
       philosophy: {
         headline: "Good jewelry takes time.",
         body: [

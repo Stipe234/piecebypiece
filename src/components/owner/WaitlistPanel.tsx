@@ -7,7 +7,7 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 }
 
-export default function WaitlistPanel({ signups }: { signups: WaitlistSignup[] }) {
+export default function WaitlistPanel({ signups, last7Days }: { signups: WaitlistSignup[]; last7Days: number }) {
   const [copied, setCopied] = useState(false);
 
   const copyAll = async () => {
@@ -41,6 +41,13 @@ export default function WaitlistPanel({ signups }: { signups: WaitlistSignup[] }
           </button>
         )}
       </div>
+
+      {signups.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-[11px] uppercase tracking-[0.2em] text-[var(--color-text-tertiary)]">
+          <span className="text-[var(--color-text-secondary)]">+{last7Days} this week</span>
+          <span>Latest {formatDate(signups[0].createdAt)}</span>
+        </div>
+      )}
 
       {signups.length === 0 ? (
         <p className="mt-8 text-sm text-[var(--color-text-tertiary)]">No signups yet. They&apos;ll appear here the moment someone joins.</p>

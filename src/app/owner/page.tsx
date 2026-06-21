@@ -146,7 +146,7 @@ export default async function OwnerDashboardPage() {
             </div>
           </div>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div className="mt-8 grid items-start gap-6 lg:grid-cols-2">
             {data.products.map((product) => {
               const stockFill = product.totalUnits > 0
                 ? Math.max(Math.min((product.availableUnits / product.totalUnits) * 100, 100), 0)
@@ -250,24 +250,8 @@ export default async function OwnerDashboardPage() {
               </div>
               <p className="mt-1 text-[11px] uppercase tracking-[0.26em] text-[var(--color-text-tertiary)]">Waitlist</p>
 
-              <div className="mt-6 flex items-end gap-3">
-                <span className="font-numeric text-6xl font-semibold leading-none text-[var(--color-text-primary)] md:text-7xl">
-                  {waitlist.length}
-                </span>
-                <span className="pb-1 text-[11px] uppercase tracking-[0.26em] text-[var(--color-text-tertiary)]">
-                  {waitlist.length === 1 ? "subscriber" : "subscribers"}
-                </span>
-              </div>
-
-              <div className="dash-inset mt-6 flex flex-wrap items-center gap-x-10 gap-y-2 rounded-xl px-5 py-4 text-sm">
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">New this week</p>
-                  <p className="font-numeric mt-1 text-lg font-medium text-[var(--color-text-primary)]">+{waitlistStats.last7Days}</p>
-                </div>
-                <div className="ml-auto text-right">
-                  <p className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-text-tertiary)]">Latest signup</p>
-                  <p className="font-numeric mt-1 text-xs">{waitlistStats.latestSignupAt ? formatDate(waitlistStats.latestSignupAt) : "—"}</p>
-                </div>
+              <div className="mt-6">
+                <WaitlistPanel signups={waitlist} last7Days={waitlistStats.last7Days} />
               </div>
             </article>
           </div>
@@ -278,14 +262,6 @@ export default async function OwnerDashboardPage() {
           <SectionHeading eyebrow="Orders" title="Recent sales & shipping" />
           <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
             <OrdersPanel orders={data.orders} />
-          </div>
-        </div>
-
-        {/* ── Waitlist ── */}
-        <div className="mt-14 border-t border-[var(--color-border)] pt-12">
-          <SectionHeading eyebrow="Waitlist" title="Joined the list" />
-          <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
-            <WaitlistPanel signups={waitlist} />
           </div>
         </div>
 
