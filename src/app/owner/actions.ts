@@ -22,6 +22,8 @@ import {
   type ShippingStatus,
 } from "@/lib/inventory";
 import { getStripe } from "@/lib/stripe";
+import { getWaitlistSignups } from "@/lib/waitlist";
+import { sendBroadcast } from "@/lib/email";
 
 export interface OwnerLoginState {
   error?: string;
@@ -236,4 +238,50 @@ export async function saveShippingStatus(
     }
     return { error: "Unable to update shipping." };
   }
+}
+
+export interface BroadcastState {
+  error?: string;
+  success?: boolean;
+  message?: string;
+}
+
+export async function sendBroadcastAction(
+  _prevState: BroadcastState | undefined,
+  formData: FormData,
+): Promise<BroadcastState> {
+  await requireOwnerAuth();
+
+  const subject = String(formData.get("subject") ?? "").trim();
+  const heading = String(formData.get("heading") ?? "").trim();
+  const body = String(formData.get("body") ?? "").trim();
+  const confirmed = formData.get("confirm") === "on";
+
+  if (!subject || !heading || !body) {
+    return { error: "Add a subject, a heading, and a message before sending." };
+  }
+  if (!confirmed) {
+    return { error: "Tick the confirmation box so this isn't sent by accident." };
+  }
+
+  const signups = await getWaitlistSignups();
+  const recipients = signups.map((s) => s.email);
+  if (recipients.length === 0) {
+    return { error: "There are no subscribers to send to yet." };
+  }
+
+  const result = await sendBroadcast({ recipients, subject, heading, body });
+
+  if (result.skipped) {
+    return { error: "Email isn't configured yet (RESEND_API_KEY is missing), so nothing was sent." };
+  }
+  if (result.sent === 0) {
+    return { error: `Sending failed for all ${result.total} subscribers. Check the logs and try again.` };
+  }
+
+  const failedNote = result.failed > 0 ? ` ${result.failed} failed — check the logs.` : "";
+  return {
+    success: true,
+    message: `Sent to ${result.sent} of ${result.total} subscriber${result.total === 1 ? "" : "s"}.${failedNote}`,
+  };
 }

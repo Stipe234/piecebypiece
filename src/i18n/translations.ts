@@ -136,7 +136,7 @@ export const translations = {
       silver: "Silver Plated",
       materialsAndDimensions: "Materials & Dimensions",
       materialsAndDimensionsContent:
-        "14k gold-filled chain (Gold) or sterling silver (Silver). Total length adjustable between 16\u201318cm. Lobster clasp. Chain width: 1mm. Handmade with care.",
+        "14k gold-filled chain (Gold) or sterling silver (Silver). Total length adjustable between 16\u201318cm. Lobster clasp. Chain width: 1mm. Handmade in Italy.",
       care: "Care",
       careContent:
         "This piece is deliberately fine. It is meant to be felt, not seen from across the room. Wear it with awareness, the way you would anything you value. Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn. This is not fragility. It is lightness, by design.",

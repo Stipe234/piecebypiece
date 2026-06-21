@@ -76,7 +76,7 @@ export const products: Product[] = [
         shortDescription: "The hand chain that begins your collection.",
         details: {
           materialsAndDimensions:
-            "Gold plated or silver plated chain. Lobster clasp. Chain width: 1mm. Handmade with care.",
+            "Gold plated or silver plated chain. Lobster clasp. Chain width: 1mm. Handmade in Italy.",
           care:
             "Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn.",
           shipping:

@@ -5,6 +5,7 @@ import OrdersPanel from "@/components/owner/OrdersPanel";
 import ProductOverrideForm from "@/components/owner/ProductOverrideForm";
 import RevenueSparkline from "@/components/owner/RevenueSparkline";
 import WaitlistPanel from "@/components/owner/WaitlistPanel";
+import BroadcastPanel from "@/components/owner/BroadcastPanel";
 import { getOwnerDashboardData } from "@/lib/inventory";
 import { getWaitlistSignups } from "@/lib/waitlist";
 import { requireOwnerAuth } from "@/lib/owner-auth";
@@ -258,6 +259,14 @@ export default async function OwnerDashboardPage() {
           <SectionHeading eyebrow="Waitlist" title="Joined the list" />
           <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
             <WaitlistPanel signups={waitlist} />
+          </div>
+        </div>
+
+        {/* ── Broadcast ── */}
+        <div className="mt-14 border-t border-[var(--color-border)] pt-12">
+          <SectionHeading eyebrow="Broadcast" title="Email all subscribers" />
+          <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
+            <BroadcastPanel subscriberCount={waitlist.length} />
           </div>
         </div>
       </div>

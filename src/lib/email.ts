@@ -72,6 +72,79 @@ export async function sendWaitlistEmails(opts: { email: string; source: string |
   ]);
 }
 
+const RESEND_BATCH_ENDPOINT = "https://api.resend.com/emails/batch";
+
+export interface BroadcastResult {
+  /** Recipients we attempted to send to. */
+  total: number;
+  /** Messages Resend accepted. */
+  sent: number;
+  /** Messages Resend rejected or that errored. */
+  failed: number;
+  /** True when RESEND_API_KEY is missing, so nothing was sent. */
+  skipped: boolean;
+}
+
+/**
+ * Send one branded email to every recipient via Resend's batch endpoint
+ * (max 100 messages per request). Each recipient gets their own message, so
+ * addresses are never shared. Replies land on the From address (info@…),
+ * which forwards to the owner — no reply_to needed. Best effort: never throws.
+ */
+export async function sendBroadcast(opts: {
+  recipients: string[];
+  subject: string;
+  heading: string;
+  body: string;
+}): Promise<BroadcastResult> {
+  const total = opts.recipients.length;
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    console.warn("[email] RESEND_API_KEY not set — skipping broadcast to", total, "recipient(s)");
+    return { total, sent: 0, failed: 0, skipped: true };
+  }
+  if (total === 0) {
+    return { total: 0, sent: 0, failed: 0, skipped: false };
+  }
+
+  const paragraphs = opts.body
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const html = broadcastHtml(opts.heading, paragraphs);
+  const from = getFrom();
+
+  let sent = 0;
+  let failed = 0;
+
+  // Resend's batch endpoint accepts at most 100 messages per request.
+  for (let i = 0; i < opts.recipients.length; i += 100) {
+    const chunk = opts.recipients.slice(i, i + 100);
+    const payload = chunk.map((to) => ({ from, to: [to], subject: opts.subject, html }));
+
+    try {
+      const res = await fetch(RESEND_BATCH_ENDPOINT, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        sent += chunk.length;
+      } else {
+        failed += chunk.length;
+        console.error("[email] broadcast batch error", res.status, await res.text());
+      }
+    } catch (error) {
+      failed += chunk.length;
+      console.error("[email] broadcast batch request failed", error);
+    }
+  }
+
+  return { total, sent, failed, skipped: false };
+}
+
 const COPY = {
   eyebrow: "Built Over Time",
   title: "You're in.",
@@ -156,4 +229,76 @@ function ownerHtml(email: string, source: string | null) {
     </td></tr>
   </table>
 </body></html>`;
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** Branded shell for owner broadcasts: a heading plus freeform paragraphs. */
+function broadcastHtml(heading: string, paragraphs: string[]) {
+  const list = paragraphs.length > 0 ? paragraphs : [""];
+  const renderedParagraphs = list
+    .map((p, i) => {
+      const margin = i === list.length - 1 ? "0" : "0 0 18px 0";
+      const text = escapeHtml(p).replace(/\n/g, "<br />");
+      return `              <p style="margin:${margin};font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.85;color:#2a2724;">${text}</p>`;
+    })
+    .join("\n");
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+</head>
+<body style="margin:0;padding:0;background-color:#f4f0e8;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0e8;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#fcfaf5;border:1px solid #e6e0d6;">
+          <tr>
+            <td align="center" style="padding:36px 40px 0 40px;">
+              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:#000000;">Piece&nbsp;by&nbsp;Piece</p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:28px 40px 0 40px;">
+              <div style="width:32px;height:1px;background-color:#c9a96e;margin:0 auto;"></div>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:24px 40px 0 40px;">
+              <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:32px;line-height:1.2;color:#1a1a1a;">${escapeHtml(heading)}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 44px 0 44px;">
+${renderedParagraphs}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:30px 44px 40px 44px;">
+              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:16px;color:#2a2724;">With love,</p>
+              <p style="margin:4px 0 0 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;letter-spacing:2px;color:#1a1a1a;">Piece by Piece</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 44px 40px 44px;">
+              <div style="height:1px;background-color:#e6e0d6;margin-bottom:18px;"></div>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.7;color:#9c968c;">You're receiving this because you joined the Piece by Piece waitlist. Reply to this email if you'd prefer not to receive updates.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
 }
