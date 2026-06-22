@@ -22,7 +22,7 @@ import {
   type ShippingStatus,
 } from "@/lib/inventory";
 import { getStripe } from "@/lib/stripe";
-import { deleteWaitlistSignup, getWaitlistSignups } from "@/lib/waitlist";
+import { getWaitlistSignups } from "@/lib/waitlist";
 import { sendBroadcast, sendOrderStatusEmail } from "@/lib/email";
 
 export interface OwnerLoginState {
@@ -277,16 +277,6 @@ export async function saveShippingStatus(
       return { error: error.message };
     }
     return { error: "Unable to update shipping." };
-  }
-}
-
-export async function deleteSignupAction(formData: FormData): Promise<void> {
-  await requireOwnerAuth();
-
-  const id = String(formData.get("id") ?? "");
-  if (id) {
-    await deleteWaitlistSignup(id);
-    revalidatePath("/owner");
   }
 }
 
