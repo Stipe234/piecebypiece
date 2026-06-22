@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useI18n } from "@/i18n/context";
-import { getProduct } from "@/data/products";
+import { getProduct, getVariantPrice } from "@/data/products";
+import { formatEur } from "@/lib/format";
 import { useProductAvailability } from "@/hooks/useProductAvailability";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
@@ -17,7 +18,8 @@ export default function HandChainsCollection() {
   const priceFor = (material: string, style: string) => {
     const variant = availability?.variants.find((v) => v.material === material && v.style === style);
     const cents = variant?.priceCents ?? availability?.priceCents ?? null;
-    return cents != null ? cents / 100 : product?.price;
+    if (cents != null) return cents / 100;
+    return product ? getVariantPrice(product, style) : undefined;
   };
 
   const looks = [
@@ -63,7 +65,7 @@ export default function HandChainsCollection() {
                   </p>
                   {lookPrice != null && (
                     <p className="text-center text-[11px] md:text-xs text-[var(--color-text-tertiary)] mt-1">
-                      €{lookPrice}
+                      {formatEur(lookPrice)}
                     </p>
                   )}
                 </Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import type { Product } from "@/data/products";
+import { getVariantPrice, type Product } from "@/data/products";
 
 export interface CartItem {
   id: string;
@@ -85,7 +85,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + getVariantPrice(item.product, item.selectedStyle) * item.quantity,
+    0,
+  );
 
   return (
     <CartContext.Provider

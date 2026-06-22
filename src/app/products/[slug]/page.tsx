@@ -10,8 +10,10 @@ import {
   getLayersWithProducts,
   getProductVariants,
   getVariantImage,
+  getVariantPrice,
   variantKey,
 } from "@/data/products";
+import { formatEur } from "@/lib/format";
 import { useI18n } from "@/i18n/context";
 import { useProductAvailability } from "@/hooks/useProductAvailability";
 import ProductGallery from "@/components/product/ProductGallery";
@@ -41,7 +43,7 @@ export default function ProductPage() {
   const { availability } = useProductAvailability(product.id);
   const selectedVariant = availability?.variants.find((v) => v.variantKey === selectedKey);
   const liveCents = selectedVariant?.priceCents ?? availability?.priceCents ?? null;
-  const displayPrice = liveCents != null ? liveCents / 100 : product.price;
+  const displayPrice = liveCents != null ? liveCents / 100 : getVariantPrice(product, selectedStyle);
   const galleryVariants = getProductVariants(product).map((v) => ({
     key: v.key,
     label: v.label,
@@ -95,7 +97,7 @@ export default function ProductPage() {
               </p>
               <div className="mt-3 md:mt-4 flex items-center gap-3">
                 <span className="text-lg md:text-xl text-[var(--color-text-primary)]">
-                  €{displayPrice}
+                  {formatEur(displayPrice)}
                 </span>
                 <span className="inline-flex items-center border border-[var(--color-border-dark)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-text-primary)]">
                   {t.waitlist.status}

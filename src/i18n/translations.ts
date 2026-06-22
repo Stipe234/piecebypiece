@@ -98,7 +98,7 @@ export const translations = {
 
     // Brand statement
     brandStatement:
-      "Good jewellery is not bought all at once, it is built over time. Piece by piece.",
+      "Good jewelry is not bought all at once, it is built over time. Piece by piece.",
 
     // Homepage product highlight
     productHighlight: {
@@ -161,7 +161,7 @@ export const translations = {
 
     // Pull quote
     pullQuote:
-      "The most powerful jewellery\ndoesn\u2019t ask for attention.\nIt belongs.",
+      "The most powerful jewelry\ndoesn\u2019t ask for attention.\nIt belongs.",
 
     // Coming soon
     comingSoon: {
@@ -182,14 +182,14 @@ export const translations = {
     wearStory: {
       quote:
         "Wear it tomorrow. And the day after.\nLet it become part of how you move through the world.",
-      text: "This piece is designed to stay. Not for a season, not for an occasion, for your life. The chain will soften with wear. The clasp will become familiar. In time, you will forget you put it on. That is the point.",
+      text: "This piece is designed to stay. Not for a season, not for an occasion, for your life.",
     },
 
     // PDP delicacy note
     delicacy: {
       label: "Made to be light",
       title: "Delicate by design.",
-      text: "This chain is fine because it is meant to be. Heavier jewellery announces itself. This piece whispers. It sits so close to the skin that it becomes part of your hand, not something sitting on top of it. That lightness is intentional, it is what makes the piece feel like yours from the first wear. Treat it gently. It will repay you with years of quiet presence.",
+      text: "This chain is fine because it is meant to be. Heavier jewelry announces itself. This piece whispers. It sits so close to the skin that it becomes part of your hand, not something sitting on top of it. That lightness is intentional, it is what makes the piece feel like yours from the first wear. Treat it gently. It will repay you with years of quiet presence.",
     },
 
     // Collection page
@@ -210,10 +210,10 @@ export const translations = {
     // About page
     about: {
       opening:
-        "A great jewellery collection is not built all at once. It is built over time, with intention, and a personal hand.",
+        "A great jewelry collection is not built all at once. It is built over time, piece by piece.",
       beliefLabel: "What We Believe",
       beliefP1:
-        "We make jewellery that feels natural on the body and easy to wear daily. It elevates the wearer without overpowering them. The pieces never scream for attention, they sit close to the skin, catch light softly, and make you feel comfortable, put-together, and confident.",
+        "We make jewelry that feels natural on the body and easy to wear daily. It elevates the wearer without overpowering them. The pieces never scream for attention, they sit close to the skin, catch light softly, and make you feel comfortable, put-together, and confident.",
       beliefP2:
         "Each piece marks a moment, a mood, or a phase. When layered together, those pieces tell a story. You build your stack the same way you build confidence and style. Over time. Thoughtfully. Piece by piece.",
       values: [
@@ -223,7 +223,7 @@ export const translations = {
         },
         {
           title: "Intentional Design",
-          text: "Nothing exists by accident. Every chain, link, and clasp is considered, not to impress, but to feel right. When jewellery feels right, it changes how you carry yourself.",
+          text: "Every chain, link, and clasp is considered, not to impress, but to feel right. When jewelry feels right, it changes how you carry yourself. The hand chain is intentionally designed to be dainty and minimalistic, and because of this delicate design, it should be handled with care.",
         },
         {
           title: "Built to Layer",
@@ -231,7 +231,7 @@ export const translations = {
         },
       ],
       closing:
-        "Good jewellery takes time.\nGreat stacks are built piece by piece.",
+        "Good jewelry takes time.\nGreat stacks are built piece by piece.",
     },
 
     // Cart

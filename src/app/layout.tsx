@@ -20,9 +20,9 @@ const cormorant = Cormorant_Garamond({
 
 const SITE_URL = "https://www.piecebypiecewear.com";
 const SITE_NAME = "Piece by Piece";
-const DEFAULT_TITLE = "Piece by Piece | Minimalist Everyday Jewellery";
+const DEFAULT_TITLE = "Piece by Piece | Minimalist Everyday Jewelry";
 const DEFAULT_DESCRIPTION =
-  "Minimalist, everyday jewellery designed to be worn and built over time, creating quiet confidence, piece by piece.";
+  "Minimalist, everyday jewelry designed to be worn and built over time, creating quiet confidence, piece by piece.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -34,13 +34,13 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   generator: "Next.js",
   keywords: [
-    "minimalist jewellery",
-    "everyday jewellery",
+    "minimalist jewelry",
+    "everyday jewelry",
     "hand chain",
     "gold hand chain",
     "silver hand chain",
-    "layered jewellery",
-    "delicate jewellery",
+    "layered jewelry",
+    "delicate jewelry",
     "Piece by Piece",
     "piecebypiece",
     "piecebypiecewear",

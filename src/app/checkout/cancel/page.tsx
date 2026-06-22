@@ -9,7 +9,7 @@ export default function CheckoutCancelPage() {
         <hr className="hr-accent mx-auto mb-10" />
 
         <h1 className="font-heading text-2xl md:text-3xl font-light tracking-wide mb-4">
-          Order cancelled
+          Order canceled
         </h1>
         <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-8">
           Your order was not completed. You have not been charged.

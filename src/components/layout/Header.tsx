@@ -38,9 +38,10 @@ export default function Header() {
           <Link href="/about" className={navLinkClass}>{t.nav.ourStory}</Link>
         </nav>
 
-        {/* Logo */}
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-          <span className="font-heading text-base md:text-xl font-medium tracking-[0.12em] md:tracking-[0.18em] uppercase whitespace-nowrap">
+        {/* Logo — centered both axes; absolute positioning takes it out of flow,
+            so it needs explicit vertical centering to sit level in the bar. */}
+        <Link href="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 leading-none">
+          <span className="block font-heading text-base md:text-xl font-medium tracking-[0.12em] md:tracking-[0.18em] uppercase whitespace-nowrap leading-none">
             Piece by Piece
           </span>
         </Link>

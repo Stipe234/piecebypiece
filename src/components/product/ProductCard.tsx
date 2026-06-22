@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getProductContent, type Product } from "@/data/products";
+import { formatEur } from "@/lib/format";
 import { useI18n } from "@/i18n/context";
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -43,7 +44,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
       <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--color-text-tertiary)]">{content.label}</p>
       <h3 className="text-sm font-medium mt-0.5">{content.name}</h3>
-      <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">€{product.price}</p>
+      <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">{formatEur(product.price)}</p>
     </Link>
   );
 }

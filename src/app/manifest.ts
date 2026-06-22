@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Piece by Piece",
     short_name: "Piece by Piece",
     description:
-      "Minimalist, everyday jewellery designed to be worn and built over time.",
+      "Minimalist, everyday jewelry designed to be worn and built over time.",
     start_url: "/",
     display: "standalone",
     background_color: "#f6f1ea",

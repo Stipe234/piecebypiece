@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { getProductContent } from "@/data/products";
+import { getProductContent, getVariantPrice } from "@/data/products";
+import { formatEur } from "@/lib/format";
 import { useI18n } from "@/i18n/context";
 import Button from "@/components/ui/Button";
 import ReservationBanner from "@/components/checkout/ReservationBanner";
@@ -115,7 +116,7 @@ export default function CheckoutPage() {
                     {t.cart.quantity}: {item.quantity}
                   </p>
                 </div>
-                <p className="text-sm font-medium flex-shrink-0">€{item.product.price * item.quantity}</p>
+                <p className="text-sm font-medium flex-shrink-0">{formatEur(getVariantPrice(item.product, item.selectedStyle) * item.quantity)}</p>
               </div>
             ))}
           </div>
@@ -123,7 +124,7 @@ export default function CheckoutPage() {
           <div className="border-t border-[var(--color-border)] pt-3 md:pt-4 flex flex-col gap-2">
             <div className="flex justify-between text-sm">
               <span className="text-[var(--color-text-secondary)]">{t.cart.subtotal}</span>
-              <span>€{subtotal}</span>
+              <span>{formatEur(subtotal)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-[var(--color-text-secondary)]">{t.product.shippingLabel}</span>
@@ -131,7 +132,7 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between text-sm font-medium pt-2 border-t border-[var(--color-border)]">
               <span>{t.checkout.total}</span>
-              <span>€{subtotal}</span>
+              <span>{formatEur(subtotal)}</span>
             </div>
           </div>
 

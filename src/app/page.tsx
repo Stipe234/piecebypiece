@@ -223,14 +223,18 @@ export default function Home() {
 
       {/* ── 7. Closing ── */}
       <section className="relative h-[80vh] min-h-[480px] overflow-hidden">
-        <Image
-          src="/images/editorial.jpg"
-          alt="Hand chain resting against skin"
-          fill
-          quality={90}
-          className="object-cover object-center"
-          sizes="100vw"
-        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-label="Hand chain worn with pocket jeans"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        >
+          <source src="/images/pocket_jeans.webm" type="video/webm" />
+          <source src="/images/pocket_jeans.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-black/30" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <ScrollReveal className="scroll-reveal-fade">

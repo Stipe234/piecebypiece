@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const TITLE = "About";
 const DESCRIPTION =
-  "Piece by Piece is built on a single belief, that good jewellery is not bought all at once. It is built over time, piece by piece. Read our story.";
+  "Piece by Piece is built on a single belief, that good jewelry is not bought all at once. It is built over time, piece by piece. Read our story.";
 
 export const metadata: Metadata = {
   title: TITLE,

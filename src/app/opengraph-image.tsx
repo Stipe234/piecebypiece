@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Piece by Piece, Minimalist Everyday Jewellery";
+export const alt = "Piece by Piece, Minimalist Everyday Jewelry";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -42,7 +42,7 @@ export default async function OpengraphImage() {
             lineHeight: 1.4,
           }}
         >
-          Minimalist, everyday jewellery, worn and built over time.
+          Minimalist, everyday jewelry, worn and built over time.
         </div>
         <div
           style={{

@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { getProductContent } from "@/data/products";
+import { getProductContent, getVariantPrice } from "@/data/products";
+import { formatEur } from "@/lib/format";
 import { useI18n } from "@/i18n/context";
 import Button from "./Button";
 
@@ -85,7 +86,7 @@ export default function CartSlideOut() {
                           </button>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-sm font-medium">€{item.product.price * item.quantity}</span>
+                          <span className="text-sm font-medium">{formatEur(getVariantPrice(item.product, item.selectedStyle) * item.quantity)}</span>
                           <button
                             onClick={() => removeItem(item.id)}
                             className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] underline"
@@ -107,7 +108,7 @@ export default function CartSlideOut() {
           <div className="p-6 border-t border-[var(--color-border)]">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">{t.cart.subtotal}</span>
-              <span className="text-sm font-medium">€{subtotal}</span>
+              <span className="text-sm font-medium">{formatEur(subtotal)}</span>
             </div>
             <p className="text-xs text-[var(--color-text-tertiary)] mb-2">{t.cart.shippingNote}</p>
             <p className="mb-4 inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-secondary)]">

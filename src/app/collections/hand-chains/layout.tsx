@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const TITLE = "Hand Chains";
 const DESCRIPTION =
-  "Hand chains by Piece by Piece, delicate, layered jewellery that traces from wrist to finger. Designed for everyday wear in 14k gold-filled and sterling silver.";
+  "Hand chains by Piece by Piece, delicate, layered jewelry that traces from wrist to finger. Designed for everyday wear in 14k gold-filled and sterling silver.";
 
 export const metadata: Metadata = {
   title: TITLE,

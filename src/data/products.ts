@@ -15,7 +15,12 @@ export interface ProductContent {
 export interface Product {
   id: string;
   slug: string;
+  /** Base / "from" price in euros — the lowest variant price. Used wherever a
+   *  single number is shown (cards, metadata) and as the display fallback. */
   price: number;
+  /** Per-style price in euros. Price varies by style (not material), e.g.
+   *  Static 55, Dangling 60. Falls back to `price` for any unlisted style. */
+  priceByStyle?: Record<string, number>;
   material: string;
   materials: string[];
   styles: string[];
@@ -40,7 +45,8 @@ export const products: Product[] = [
   {
     id: "1",
     slug: "edition-001",
-    price: 59,
+    price: 55,
+    priceByStyle: { Static: 55, Dangling: 60 },
     material: "gold",
     materials: ["Gold", "Silver"],
     styles: ["Static", "Dangling"],
@@ -78,7 +84,7 @@ export const products: Product[] = [
           materialsAndDimensions:
             "Gold plated or silver plated chain. Lobster clasp. Chain width: 1mm. Handmade in Italy.",
           care:
-            "Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn.",
+            "Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn. Please be gentle with me and treat me with care. Avoid catching the chain on fabrics or other objects, as the hand chain is delicate and designed to be worn thoughtfully.",
           shipping:
             "Complimentary shipping on all orders. Delivered in 3–5 business days.",
         },
@@ -117,6 +123,11 @@ export interface ProductVariant {
 /** Build the canonical variant key from a material + style pair. */
 export function variantKey(material: string, style: string): string {
   return `${material}|${style}`;
+}
+
+/** The catalog price in euros for a given style, falling back to the base price. */
+export function getVariantPrice(product: Product, style: string): number {
+  return product.priceByStyle?.[style] ?? product.price;
 }
 
 /** Resolve the studio image for a specific material × style variant. */

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Stripe } from "stripe";
-import { getProductVariants, products } from "@/data/products";
+import { getProductVariants, getVariantPrice, products } from "@/data/products";
 import { getSql } from "@/lib/db";
 
 type ReservationStatus = "pending" | "completed" | "released" | "expired";
@@ -373,21 +373,26 @@ export async function ensureInventoryReady() {
         `;
 
         // Seed one stock row per variant. Each variant starts at the product's
-        // configured units and base price; the owner sets real per-variant
-        // counts and prices in the dashboard.
+        // configured units and its canonical per-style price; the owner can
+        // adjust per-variant counts and prices in the dashboard.
         for (const variant of getProductVariants(product)) {
+          const variantPriceCents = Math.round(getVariantPrice(product, variant.style) * 100);
+
           await sql`
             insert into variant_inventory (product_id, material, style, total_units, price_cents)
-            values (${product.id}, ${variant.material}, ${variant.style}, ${product.inventory.totalUnits}, ${basePriceCents})
+            values (${product.id}, ${variant.material}, ${variant.style}, ${product.inventory.totalUnits}, ${variantPriceCents})
             on conflict (product_id, material, style) do nothing
           `;
-        }
 
-        // Backfill price for variant rows created before per-variant pricing.
-        await sql`
-          update variant_inventory set price_cents = ${basePriceCents}
-          where product_id = ${product.id} and price_cents is null
-        `;
+          // Backfill price for variant rows created before per-variant pricing.
+          await sql`
+            update variant_inventory set price_cents = ${variantPriceCents}
+            where product_id = ${product.id}
+              and material = ${variant.material}
+              and style = ${variant.style}
+              and price_cents is null
+          `;
+        }
       }
     })();
   }
@@ -962,7 +967,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
         reservedUnits,
         availableUnits,
         isLowStock: availableUnits > 0 && availableUnits <= LOW_STOCK_THRESHOLD,
-        priceCents: row?.price_cents ?? Math.round(product.price * 100),
+        priceCents: row?.price_cents ?? Math.round(getVariantPrice(product, v.style) * 100),
         updatedAt: row?.updated_at ?? "",
       };
     });

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { getProductById, getProductContent, variantKey } from "@/data/products";
+import { getProductById, getProductContent, getVariantPrice, variantKey } from "@/data/products";
 import type { Locale } from "@/i18n/translations";
 import {
   attachReservationSession,
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
 
       // Per-variant price (falls back to product-level / catalog price).
       const variant = avail?.variants.find((v) => v.variantKey === variantKey(item.material, item.style));
-      const unitPriceCents = variant?.priceCents ?? avail?.priceCents ?? Math.round(product.price * 100);
+      const unitPriceCents = variant?.priceCents ?? avail?.priceCents ?? Math.round(getVariantPrice(product, item.style) * 100);
 
       return {
         item,
