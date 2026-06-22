@@ -22,7 +22,7 @@ function TrustIcon({ i }: { i: number }) {
   switch (i) {
     case 0: // Handmade in Italy — gem
       return (
-        <svg {...common}><path d="M12 3 3 9.5 12 21l9-11.5z" /><path d="M3 9.5h18" /><path d="M9 3 7.5 9.5 12 21" /><path d="M15 3l1.5 6.5L12 21" /></svg>
+        <svg {...common}><path d="M6 3h12l4 6-10 13L2 9z" /><path d="M2 9h20" /><path d="M9 3 7 9l5 13 5-13-2-6" /></svg>
       );
     case 1: // Everyday wear — sun
       return (

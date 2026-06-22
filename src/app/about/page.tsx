@@ -10,7 +10,18 @@ export default function AboutPage() {
   return (
     <>
       <section className="relative h-[50vh] md:h-[60vh] min-h-[350px] md:min-h-[500px] overflow-hidden">
-        <Image src="/images/editorial.jpg" alt="Piece by Piece" fill quality={90} className="object-cover" priority sizes="100vw" />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-label="Piece by Piece"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        >
+          <source src="/images/pocket_jeans.webm" type="video/webm" />
+          <source src="/images/pocket_jeans.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-black/20" />
       </section>
 
