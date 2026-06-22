@@ -36,14 +36,14 @@ export default function AboutPage() {
         </ScrollReveal>
       </section>
 
-      <section className="bg-[var(--color-bg-secondary)] md:min-h-[80vh]">
-        <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2">
-          <ScrollReveal className="relative aspect-[3/4] md:aspect-auto">
-            <Image src="/images/naslovna.webp" alt="Gold hand chain resting on soft white fabric" fill quality={90} className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+      <section className="bg-[var(--color-bg-secondary)]">
+        <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 md:items-center">
+          <ScrollReveal className="relative aspect-[3/4] md:aspect-[4/5]">
+            <Image src="/images/naslovna.webp" alt="Gold hand chain resting on soft white fabric" fill quality={90} className="object-cover object-center" sizes="(max-width: 768px) 100vw, 50vw" />
           </ScrollReveal>
-          <div className="flex flex-col justify-center px-6 md:px-20 py-16 md:py-32">
+          <div className="flex flex-col justify-center px-6 md:px-20 py-12 md:py-16">
             <ScrollReveal>
-              <p className="text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-8">
+              <p className="text-sm tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-8">
                 {t.about.beliefLabel}
               </p>
               <div className="flex flex-col gap-6 text-sm md:text-base text-[var(--color-text-secondary)] leading-[1.8] max-w-md">
@@ -55,14 +55,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-20 md:py-40 px-6">
+      <section className="py-14 md:py-24 px-6">
         <div className="max-w-[960px] mx-auto">
           <ScrollReveal>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {t.about.values.map((value) => (
                 <div key={value.title}>
                   <hr className="hr-accent mb-6" />
-                  <h3 className="font-heading text-xl font-light tracking-wide mb-4">{value.title}</h3>
+                  <h3 className="font-heading text-2xl md:text-3xl font-light tracking-wide mb-4">{value.title}</h3>
                   <p className="text-sm text-[var(--color-text-secondary)] leading-[1.8]">{value.text}</p>
                 </div>
               ))}

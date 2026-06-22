@@ -132,7 +132,7 @@ export default function Home() {
       {/* ── 4. The Collection ── */}
       <section className="bg-[var(--color-bg-secondary)] py-20 md:py-32 px-6 md:px-12">
         <ScrollReveal>
-          <p className="text-center text-[10px] md:text-xs tracking-[0.3em] uppercase text-[var(--color-text-tertiary)] mb-12 md:mb-20">
+          <p className="text-center text-xs md:text-sm tracking-[0.3em] uppercase text-[var(--color-text-tertiary)] mb-12 md:mb-20">
             {h.collectionTitle}
           </p>
         </ScrollReveal>
@@ -198,7 +198,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 md:min-h-[88vh]">
           <div className="flex flex-col justify-center px-6 md:px-20 py-20 md:py-32 order-2 md:order-1">
             <ScrollReveal>
-              <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-[var(--color-text-tertiary)] mb-8">
+              <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-[var(--color-text-tertiary)] mb-8">
                 {h.why.title}
               </p>
               <div className="flex flex-col gap-4 text-base md:text-lg text-[var(--color-text-primary)] leading-[1.7] max-w-md font-light">

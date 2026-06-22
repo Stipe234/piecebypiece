@@ -19,7 +19,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-[var(--color-bg-primary)]/95 backdrop-blur-sm border-b border-[var(--color-border)]">
-      <div className="max-w-[1440px] mx-auto px-4 md:px-12 flex items-center justify-between h-14 md:h-20">
+      <div className="relative max-w-[1440px] mx-auto px-4 md:px-12 flex items-center justify-between h-14 md:h-20">
         {/* Mobile menu */}
         <button
           className="md:hidden text-[var(--color-text-primary)] p-1 -ml-1 tap-highlight-transparent"
@@ -38,10 +38,11 @@ export default function Header() {
           <Link href="/about" className={navLinkClass}>{t.nav.ourStory}</Link>
         </nav>
 
-        {/* Logo — centered both axes; absolute positioning takes it out of flow,
-            so it needs explicit vertical centering to sit level in the bar. */}
-        <Link href="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 leading-none">
-          <span className="block font-heading text-base md:text-xl font-medium tracking-[0.12em] md:tracking-[0.18em] uppercase whitespace-nowrap leading-none">
+        {/* Logo — horizontally centered via absolute, vertically centered by
+            stretching full-height and using flex items-center (same mechanism
+            as the icons) so the wordmark sits level with them at every size. */}
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2 inset-y-0 flex items-center">
+          <span className="font-heading text-base md:text-xl font-medium tracking-[0.12em] md:tracking-[0.18em] uppercase whitespace-nowrap leading-none">
             Piece by Piece
           </span>
         </Link>
