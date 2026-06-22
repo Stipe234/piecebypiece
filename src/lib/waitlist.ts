@@ -94,6 +94,14 @@ export async function getWaitlistSignups(): Promise<WaitlistSignup[]> {
   return rows.map(mapRow);
 }
 
+/** Remove a single signup by id. Returns the number of rows deleted (0 or 1). */
+export async function deleteWaitlistSignup(id: string): Promise<number> {
+  await ensureWaitlistReady();
+  const sql = getSql();
+  const result = await sql`delete from waitlist_signups where id = ${id}`;
+  return result.count;
+}
+
 export interface WaitlistStats {
   total: number;
   last7Days: number;

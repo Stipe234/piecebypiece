@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { WaitlistSignup } from "@/lib/waitlist";
+import { deleteSignupAction } from "@/app/owner/actions";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
@@ -74,7 +75,28 @@ export default function WaitlistPanel({ signups, last7Days }: { signups: Waitlis
                     </span>
                   ) : null}
                 </div>
-                <span className="font-numeric flex-shrink-0 text-[11px] text-[var(--color-text-tertiary)]">{formatDate(s.createdAt)}</span>
+                <div className="flex flex-shrink-0 items-center gap-3">
+                  <span className="font-numeric text-[11px] text-[var(--color-text-tertiary)]">{formatDate(s.createdAt)}</span>
+                  <form
+                    action={deleteSignupAction}
+                    onSubmit={(e) => {
+                      if (!window.confirm(`Delete ${s.email} from the list?`)) e.preventDefault();
+                    }}
+                  >
+                    <input type="hidden" name="id" value={s.id} />
+                    <button
+                      type="submit"
+                      aria-label={`Delete ${s.email}`}
+                      title="Delete signup"
+                      className="text-[var(--color-text-tertiary)] transition-colors hover:text-red-600"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a1 1 0 01-1 1H7a1 1 0 01-1-1V6" />
+                        <path d="M10 11v6M14 11v6" />
+                      </svg>
+                    </button>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>
