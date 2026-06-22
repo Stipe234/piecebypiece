@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { I18nProvider } from "@/i18n/context";
@@ -170,6 +171,7 @@ gtag('config', '${ga4Id}', { anonymize_ip: true });`}
             <SiteChrome>{children}</SiteChrome>
           </CartProvider>
         </I18nProvider>
+        <Analytics />
       </body>
     </html>
   );
