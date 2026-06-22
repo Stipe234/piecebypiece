@@ -9,7 +9,6 @@ export const translations = {
       ourStory: "Our Story",
       care: "Care",
       shipping: "Shipping",
-      returns: "Returns",
       contact: "Contact",
       instagram: "Instagram",
       search: "Search",

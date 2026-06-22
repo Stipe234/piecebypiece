@@ -4,9 +4,8 @@ import { getProduct, getProductContent, products } from "@/data/products";
 
 const SITE_URL = "https://www.piecebypiecewear.com";
 
-// We ship across the EU (mirrors the EU return policy below). Google's merchant
-// listing wants an explicit shippingDestination as a DefinedRegion of ISO
-// 3166-1 alpha-2 country codes.
+// We ship across the EU. Google's merchant listing wants an explicit
+// shippingDestination as a DefinedRegion of ISO 3166-1 alpha-2 country codes.
 const EU_SHIPPING_COUNTRIES = [
   "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR",
   "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK",
@@ -133,15 +132,6 @@ export default async function ProductLayout({ params, children }: Props) {
             unitCode: "DAY",
           },
         },
-      },
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        applicableCountry: "EU",
-        returnPolicyCategory:
-          "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 14,
-        returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/FreeReturn",
       },
     },
   };

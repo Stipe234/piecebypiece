@@ -54,7 +54,6 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
         <hr className="hr-accent mx-auto mb-6" />
         <nav className="flex flex-col items-center gap-3">
           <Link href="/shipping" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.shipping}</Link>
-          <Link href="/returns" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.returns}</Link>
           <Link href="/contact" onClick={onClose} className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.contact}</Link>
           <a href="https://www.instagram.com/piecebypiece.wear/" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--color-text-tertiary)] tracking-wide">{t.nav.instagram}</a>
         </nav>

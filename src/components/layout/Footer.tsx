@@ -32,7 +32,6 @@ export default function Footer() {
           <Link href="/collections/hand-chains" className={linkClass}>{t.nav.shop}</Link>
           <Link href="/about" className={linkClass}>{t.nav.ourStory}</Link>
           <Link href="/shipping" className={linkClass}>{t.nav.shipping}</Link>
-          <Link href="/returns" className={linkClass}>{t.nav.returns}</Link>
           <Link href="/contact" className={linkClass}>{t.nav.contact}</Link>
           <a href="https://www.instagram.com/piecebypiece.wear/" target="_blank" rel="noopener noreferrer" className={linkClass}>
             {t.nav.instagram}
