@@ -45,8 +45,8 @@ export const products: Product[] = [
   {
     id: "1",
     slug: "edition-001",
-    price: 55,
-    priceByStyle: { Static: 55, Dangling: 60 },
+    price: 60,
+    priceByStyle: { Static: 60, Dangling: 65 },
     material: "gold",
     materials: ["Gold", "Silver"],
     styles: ["Static", "Dangling"],

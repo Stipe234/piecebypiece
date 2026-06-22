@@ -15,9 +15,9 @@ if (!url) {
 }
 
 // Canonical prices in cents, keyed by style.
-const PRICE_CENTS_BY_STYLE = { Static: 5500, Dangling: 6000 };
+const PRICE_CENTS_BY_STYLE = { Static: 6000, Dangling: 6500 };
 // Product-level "from" price (the lowest variant) shown on cards / catalog.
-const BASE_PRICE_CENTS = 5500;
+const BASE_PRICE_CENTS = 6000;
 
 const apply = process.argv[2] === "apply";
 const sql = postgres(url, { max: 1, prepare: false });
