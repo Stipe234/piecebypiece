@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 import { useCart } from "@/context/CartContext";
 import { useI18n } from "@/i18n/context";
 import type { Product } from "@/data/products";
@@ -33,6 +34,11 @@ export default function AddToCartButton({
     }
 
     addItem(product, selectedMaterial, selectedStyle, selectedLength);
+    track("add_to_cart", {
+      product: product.slug,
+      material: selectedMaterial,
+      style: selectedStyle,
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };

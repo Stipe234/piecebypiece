@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { track } from "@vercel/analytics";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
@@ -152,7 +153,12 @@ export default function CheckoutPage() {
           ) : (
             <Button
               onClick={() => {
-                if (reservation) window.location.href = reservation.url;
+                if (reservation) {
+                  track("proceed_to_payment", {
+                    items: items.reduce((n, i) => n + i.quantity, 0),
+                  });
+                  window.location.href = reservation.url;
+                }
               }}
               fullWidth
               disabled={loading || !reservation}

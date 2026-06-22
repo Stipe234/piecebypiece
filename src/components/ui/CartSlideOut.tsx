@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { useCart } from "@/context/CartContext";
 import { getProductContent, getVariantPrice } from "@/data/products";
 import { formatEur } from "@/lib/format";
@@ -115,7 +116,16 @@ export default function CartSlideOut() {
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c9a96e]" aria-hidden="true" />
               {t.product.handmade}
             </p>
-            <Link href="/checkout" onClick={closeCart}>
+            <Link
+              href="/checkout"
+              onClick={() => {
+                track("begin_checkout", {
+                  items: items.reduce((n, i) => n + i.quantity, 0),
+                  subtotal,
+                });
+                closeCart();
+              }}
+            >
               <Button fullWidth>{t.cart.checkout}</Button>
             </Link>
           </div>
