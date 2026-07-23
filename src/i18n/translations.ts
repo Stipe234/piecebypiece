@@ -196,6 +196,7 @@ export const translations = {
       launchLabel: "The Launch Collection",
       title: "Hand Chains",
       waitlistNote: "Now on the waitlist — choose your piece to join. No payment yet.",
+      shopNote: "Choose your piece — each one is made by hand, just for you.",
       storyQuote:
         "We started with hand chains because hands are how you meet the world.",
       storyText:

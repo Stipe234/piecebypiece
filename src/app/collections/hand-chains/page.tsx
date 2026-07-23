@@ -39,7 +39,7 @@ export default function HandChainsCollection() {
           {t.collection.title}
         </h1>
         <p className="mt-5 md:mt-6 text-sm text-[var(--color-text-secondary)] max-w-md mx-auto leading-relaxed">
-          {t.collection.waitlistNote}
+          {t.collection.shopNote}
         </p>
       </section>
 

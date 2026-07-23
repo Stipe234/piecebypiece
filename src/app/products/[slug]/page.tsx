@@ -21,6 +21,7 @@ import LayersWithRow from "@/components/product/LayersWithRow";
 import Accordion from "@/components/ui/Accordion";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import WaitlistForm from "@/components/ui/WaitlistForm";
+import AddToCartButton from "@/components/product/AddToCartButton";
 
 export default function ProductPage() {
   const params = useParams();
@@ -69,6 +70,10 @@ export default function ProductPage() {
   const selectedVariant = availability?.variants.find((v) => v.variantKey === selectedKey);
   const liveCents = selectedVariant?.priceCents ?? availability?.priceCents ?? null;
   const displayPrice = liveCents != null ? liveCents / 100 : getVariantPrice(product, selectedStyle);
+  // Once availability has loaded, a sold-out variant swaps the buy button for the
+  // waitlist. Until it loads we allow the add — the checkout API re-checks stock
+  // atomically and refuses if it's actually gone.
+  const isSoldOut = selectedVariant?.isSoldOut ?? false;
   const galleryVariants = getProductVariants(product).map((v) => ({
     key: v.key,
     label: v.label,
@@ -133,9 +138,11 @@ export default function ProductPage() {
                 <span className="text-lg md:text-xl text-[var(--color-text-primary)]">
                   {formatEur(displayPrice)}
                 </span>
-                <span className="inline-flex items-center border border-[var(--color-border-dark)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-text-primary)]">
-                  {t.waitlist.status}
-                </span>
+                {isSoldOut && (
+                  <span className="inline-flex items-center border border-[var(--color-border-dark)] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-text-primary)]">
+                    {t.product.soldOut}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -157,17 +164,33 @@ export default function ProductPage() {
             </div>
 
             <div className="border-t border-[var(--color-border)] pt-6">
-              <p className="text-[11px] tracking-[0.22em] uppercase text-[var(--color-text-tertiary)] mb-3">
-                {t.waitlist.title}
-              </p>
-              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">
-                {t.waitlist.text}
-              </p>
-              <WaitlistForm
-                editionName={productContent.name}
-                material={selectedMaterial}
-                style={selectedStyle}
-              />
+              {isSoldOut ? (
+                <>
+                  <p className="text-[11px] tracking-[0.22em] uppercase text-[var(--color-text-tertiary)] mb-3">
+                    {t.waitlist.title}
+                  </p>
+                  <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">
+                    {t.waitlist.text}
+                  </p>
+                  <WaitlistForm
+                    editionName={productContent.name}
+                    material={selectedMaterial}
+                    style={selectedStyle}
+                  />
+                </>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <AddToCartButton
+                    product={product}
+                    selectedMaterial={selectedMaterial}
+                    selectedStyle={selectedStyle}
+                    selectedLength={product.lengths[0]}
+                  />
+                  <p className="text-xs text-[var(--color-text-tertiary)] text-center">
+                    {t.product.liveStock}
+                  </p>
+                </div>
+              )}
             </div>
 
             <Accordion items={accordionItems} />
