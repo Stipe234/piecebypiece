@@ -11,6 +11,8 @@
  */
 
 import { broadcastHtml, escapeHtml } from "./broadcast-template";
+import type { DeliveryMethod } from "./shipping";
+import { DEFAULT_ORDER_EMAIL_COPY, getOrderEmailCopy, type OrderEmailCopy } from "./settings";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
@@ -80,11 +82,13 @@ function firstNameOf(fullName: string | null | undefined): string | null {
   return n.split(/\s+/)[0];
 }
 
-/** Branded shell for order-status emails: heading, paragraphs, optional CTA button. */
+/** Branded shell for order-status emails: heading, paragraphs, optional content
+ *  block (already-escaped HTML, e.g. an order summary + care list), optional CTA. */
 function orderEmailHtml(opts: {
   eyebrow: string;
   heading: string;
   paragraphs: string[];
+  extraHtml?: string;
   button?: { label: string; url: string };
 }): string {
   // Only allow http(s) links — never render an unsafe href.
@@ -102,6 +106,16 @@ function orderEmailHtml(opts: {
           <tr>
             <td style="padding:26px 44px 0 44px;">
               <a href="${escapeHtml(safeUrl)}" style="display:inline-block;background-color:#1a1a1a;color:#fcfaf5;text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:14px 30px;">${escapeHtml(opts.button!.label)}</a>
+            </td>
+          </tr>`
+    : "";
+
+  // Caller-supplied HTML (already escaped) — e.g. the order summary + care list.
+  const extraRow = opts.extraHtml
+    ? `
+          <tr>
+            <td style="padding:24px 44px 0 44px;">
+${opts.extraHtml}
             </td>
           </tr>`
     : "";
@@ -138,7 +152,7 @@ function orderEmailHtml(opts: {
             <td style="padding:28px 44px 0 44px;">
 ${renderedParagraphs}
             </td>
-          </tr>${buttonRow}
+          </tr>${extraRow}${buttonRow}
           <tr>
             <td style="padding:30px 44px 40px 44px;">
               <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:16px;color:#2a2724;">With love,</p>
@@ -209,6 +223,142 @@ export async function sendOrderStatusEmail(opts: {
 
   const html = orderEmailHtml({ eyebrow, heading, paragraphs, button });
   const res = await sendEmail({ to: opts.to, subject, html });
+  return { sent: res.sent, skipped: res.skipped === true };
+}
+
+export interface OrderConfirmationItem {
+  name: string;
+  material: string;
+  style: string;
+  length: string;
+  quantity: number;
+  unitPriceCents: number;
+}
+
+function formatMoney(cents: number, currency: string): string {
+  const amount = (cents / 100).toFixed(2);
+  return currency.toLowerCase() === "eur" ? `€${amount}` : `${amount} ${currency.toUpperCase()}`;
+}
+
+/**
+ * The "thank you for your order" email, sent once when payment succeeds. Doubles
+ * as the care guide: the piece is fine and dainty by design, so wearing it well
+ * (on last, off first) is part of owning it. Best effort — never throws.
+ */
+export async function sendOrderConfirmationEmail(opts: {
+  to: string;
+  customerName: string | null;
+  items: OrderConfirmationItem[];
+  amountTotalCents: number;
+  currency: string;
+  fulfillment: DeliveryMethod;
+}): Promise<{ sent: boolean; skipped: boolean }> {
+  // Pull the owner-edited copy at send time so dashboard changes take effect
+  // immediately. Falls back to defaults if the settings row isn't there yet.
+  const copy = await getOrderEmailCopy();
+  const html = renderOrderConfirmationEmail(opts, copy);
+  const res = await sendEmail({ to: opts.to, subject: copy.subject, html });
+  return { sent: res.sent, skipped: res.skipped === true };
+}
+
+/** The exact HTML of the order-confirmation email. Split out from the sender so
+ *  it can be previewed in the browser without sending anything. Copy defaults to
+ *  the built-in text; the dashboard passes the owner-edited version. */
+export function renderOrderConfirmationEmail(
+  opts: {
+    customerName: string | null;
+    items: OrderConfirmationItem[];
+    amountTotalCents: number;
+    currency: string;
+    fulfillment: DeliveryMethod;
+  },
+  copy: OrderEmailCopy = DEFAULT_ORDER_EMAIL_COPY,
+): string {
+  const first = firstNameOf(opts.customerName);
+  const hi = first ? `Hi ${first},` : "Hello,";
+
+  const nextStep = opts.fulfillment === "pickup" ? copy.nextStepPickup : copy.nextStepDelivery;
+
+  const paragraphs = [hi, copy.intro, nextStep];
+
+  const itemRows = opts.items
+    .map((item) => {
+      const variant = [item.material, item.style, item.length]
+        .filter((part) => part && part.trim())
+        .map(escapeHtml)
+        .join(" · ");
+      const lineTotal = formatMoney(item.unitPriceCents * item.quantity, opts.currency);
+      return `                  <tr>
+                    <td style="padding:12px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#2a2724;">${item.quantity} × ${escapeHtml(item.name)}<br /><span style="font-size:12px;color:#6b6660;">${variant}</span></td>
+                    <td align="right" style="padding:12px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2a2724;white-space:nowrap;">${escapeHtml(lineTotal)}</td>
+                  </tr>`;
+    })
+    .join("\n");
+
+  const careItems = copy.careItems
+    .map(
+      (line) =>
+        `                  <li style="margin:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:#2a2724;">${escapeHtml(line)}</li>`,
+    )
+    .join("\n");
+
+  const extraHtml = `              <p style="margin:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6b6660;">Your order</p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e6e0d6;border-bottom:1px solid #e6e0d6;">
+${itemRows}
+              </table>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:14px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#6b6660;">Total</td>
+                  <td align="right" style="padding:14px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1a1a1a;">${escapeHtml(formatMoney(opts.amountTotalCents, opts.currency))}</td>
+                </tr>
+              </table>
+              <div style="height:1px;background-color:#e6e0d6;margin:26px 0 0 0;"></div>
+              <p style="margin:24px 0 12px 0;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6b6660;">${escapeHtml(copy.careHeading)}</p>
+              <ul style="margin:0;padding:0 0 0 18px;">
+${careItems}
+              </ul>
+              <p style="margin:16px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.8;color:#2a2724;">${escapeHtml(copy.careFooter)}</p>`;
+
+  return orderEmailHtml({
+    eyebrow: copy.eyebrow,
+    heading: copy.heading,
+    paragraphs,
+    extraHtml,
+  });
+}
+
+/**
+ * Send the official fiscalized invoice to the customer once Solo returns a JIR.
+ * This is the legal Croatian invoice (JIR/ZKI/QR on the PDF) — distinct from the
+ * friendly order-confirmation email and from Stripe's payment receipt. Best
+ * effort: never throws.
+ */
+export async function sendInvoiceEmail(opts: {
+  to: string;
+  customerName: string | null;
+  brojRacuna: string | null;
+  pdfUrl: string | null;
+}): Promise<{ sent: boolean; skipped: boolean }> {
+  const first = firstNameOf(opts.customerName);
+  const hi = first ? `Hi ${first},` : "Hello,";
+  const number = opts.brojRacuna ? ` (${opts.brojRacuna})` : "";
+
+  const paragraphs = [
+    hi,
+    `Here is your official invoice${number} for your order. It has been fiscalized with the Croatian Tax Administration.`,
+    "You'll find the JIR, ZKI and a verification QR code on the PDF. Keep it for your records.",
+  ];
+
+  const button = opts.pdfUrl && /^https?:\/\//i.test(opts.pdfUrl)
+    ? { label: "View your invoice", url: opts.pdfUrl }
+    : undefined;
+
+  if (!button) {
+    paragraphs.push("If the invoice link is missing, just reply to this email and we'll send it straight over.");
+  }
+
+  const html = orderEmailHtml({ eyebrow: "Your invoice", heading: "Your invoice", paragraphs, button });
+  const res = await sendEmail({ to: opts.to, subject: "Your invoice — Piece by Piece", html });
   return { sent: res.sent, skipped: res.skipped === true };
 }
 

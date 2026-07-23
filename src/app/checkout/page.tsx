@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { getProductContent, getVariantPrice } from "@/data/products";
 import { formatEur } from "@/lib/format";
+import { GLS_DELIVERY_CENTS, type DeliveryMethod } from "@/lib/shipping";
 import { useI18n } from "@/i18n/context";
 import Button from "@/components/ui/Button";
 import ReservationBanner from "@/components/checkout/ReservationBanner";
@@ -18,6 +19,12 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
   const [error, setError] = useState("");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
+
+  const deliveryFeeCents = deliveryMethod === "delivery" ? GLS_DELIVERY_CENTS : 0;
+  const total = subtotal + deliveryFeeCents / 100;
+  const deliveryFeeLabel =
+    deliveryFeeCents === 0 ? t.checkout.shippingFree : formatEur(deliveryFeeCents / 100);
 
   // Stable signature of the cart so we only re-reserve when it actually changes.
   const itemsKey = items.map((i) => `${i.id}x${i.quantity}`).join(",");
@@ -40,6 +47,7 @@ export default function CheckoutPage() {
             style: item.selectedStyle,
             length: item.selectedLength,
           })),
+          deliveryMethod,
           locale,
         }),
       });
@@ -56,13 +64,14 @@ export default function CheckoutPage() {
     } finally {
       setLoading(false);
     }
-  }, [items, locale, t.checkout.stockConflict]);
+  }, [items, locale, deliveryMethod, t.checkout.stockConflict]);
 
-  // Reserve the stock (5-min hold) as soon as the shopper reaches checkout.
+  // Reserve the stock (5-min hold) as soon as the shopper reaches checkout, and
+  // re-reserve if they switch delivery method (it changes the Stripe session).
   useEffect(() => {
     reserve();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemsKey]);
+  }, [itemsKey, deliveryMethod]);
 
   if (items.length === 0) {
     return (
@@ -90,6 +99,49 @@ export default function CheckoutPage() {
             <ReservationBanner expiresAt={reservation.expiresAt} onExpire={() => setExpired(true)} />
           </div>
         )}
+
+        <div className="mb-6">
+          <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-3">
+            {t.checkout.deliveryMethod}
+          </p>
+          <div className="grid grid-cols-2 gap-2 md:gap-3">
+            <button
+              type="button"
+              onClick={() => setDeliveryMethod("delivery")}
+              aria-pressed={deliveryMethod === "delivery"}
+              className={`text-left border p-3 md:p-4 rounded-sm transition-colors ${
+                deliveryMethod === "delivery"
+                  ? "border-[var(--color-accent-dark)] bg-[var(--color-bg-primary)]"
+                  : "border-[var(--color-border)] hover:border-[var(--color-text-tertiary)]"
+              }`}
+            >
+              <span className="block text-sm">{t.checkout.deliveryOption}</span>
+              <span className="block text-xs text-[var(--color-text-tertiary)] mt-1">
+                {deliveryFeeLabel} · {t.checkout.deliveryEstimate}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeliveryMethod("pickup")}
+              aria-pressed={deliveryMethod === "pickup"}
+              className={`text-left border p-3 md:p-4 rounded-sm transition-colors ${
+                deliveryMethod === "pickup"
+                  ? "border-[var(--color-accent-dark)] bg-[var(--color-bg-primary)]"
+                  : "border-[var(--color-border)] hover:border-[var(--color-text-tertiary)]"
+              }`}
+            >
+              <span className="block text-sm">{t.checkout.pickupOption}</span>
+              <span className="block text-xs text-[var(--color-text-tertiary)] mt-1">
+                {t.checkout.pickupFree}
+              </span>
+            </button>
+          </div>
+          {deliveryMethod === "pickup" && (
+            <p className="text-xs text-[var(--color-text-tertiary)] mt-3 leading-relaxed">
+              {t.checkout.pickupNote}
+            </p>
+          )}
+        </div>
 
         <div className="bg-[var(--color-bg-secondary)] p-5 md:p-8">
           <h2 className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-4 md:mb-6">
@@ -128,12 +180,14 @@ export default function CheckoutPage() {
               <span>{formatEur(subtotal)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-[var(--color-text-secondary)]">{t.product.shippingLabel}</span>
-              <span className="text-[var(--color-text-tertiary)]">{t.checkout.shippingFree}</span>
+              <span className="text-[var(--color-text-secondary)]">
+                {deliveryMethod === "pickup" ? t.checkout.pickupOption : t.checkout.deliveryOption}
+              </span>
+              <span className="text-[var(--color-text-tertiary)]">{deliveryFeeLabel}</span>
             </div>
             <div className="flex justify-between text-sm font-medium pt-2 border-t border-[var(--color-border)]">
               <span>{t.checkout.total}</span>
-              <span>{formatEur(subtotal)}</span>
+              <span>{formatEur(total)}</span>
             </div>
           </div>
 

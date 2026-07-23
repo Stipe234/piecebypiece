@@ -24,6 +24,7 @@ import {
 import { getStripe } from "@/lib/stripe";
 import { getWaitlistSignups } from "@/lib/waitlist";
 import { sendBroadcast, sendOrderStatusEmail } from "@/lib/email";
+import { saveOrderEmailCopy, type OrderEmailCopy } from "@/lib/settings";
 
 export interface OwnerLoginState {
   error?: string;
@@ -33,6 +34,8 @@ export interface OwnerActionState {
   error?: string;
   success?: boolean;
   message?: string;
+  /** Changes on every successful save; lets a client reload a preview. */
+  savedAt?: number;
 }
 
 async function getClientIdentifier() {
@@ -277,6 +280,45 @@ export async function saveShippingStatus(
       return { error: error.message };
     }
     return { error: "Unable to update shipping." };
+  }
+}
+
+export async function saveOrderEmailAction(
+  _prevState: OwnerActionState | undefined,
+  formData: FormData,
+): Promise<OwnerActionState> {
+  await requireOwnerAuth();
+
+  const get = (key: string) => String(formData.get(key) ?? "").trim();
+
+  // Care bullets come from one textarea, one bullet per line.
+  const careItems = get("careItems")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const copy: OrderEmailCopy = {
+    subject: get("subject"),
+    eyebrow: get("eyebrow"),
+    heading: get("heading"),
+    intro: get("intro"),
+    nextStepDelivery: get("nextStepDelivery"),
+    nextStepPickup: get("nextStepPickup"),
+    careHeading: get("careHeading"),
+    careItems,
+    careFooter: get("careFooter"),
+  };
+
+  if (!copy.subject || !copy.heading || !copy.intro) {
+    return { error: "Subject, heading and the opening paragraph can't be empty." };
+  }
+
+  try {
+    await saveOrderEmailCopy(copy);
+    revalidatePath("/owner");
+    return { success: true, message: "Saved — the next order confirmation will use this.", savedAt: Date.now() };
+  } catch {
+    return { error: "Unable to save the email. Please try again." };
   }
 }
 

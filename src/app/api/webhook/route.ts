@@ -5,6 +5,8 @@ import {
   markOrderRefundedByPaymentIntent,
   releaseReservationBySession,
 } from "@/lib/inventory";
+import { sendInvoiceEmail, sendOrderConfirmationEmail } from "@/lib/email";
+import { fiscalizeOrder, stornoOrderByPaymentIntent } from "@/lib/solo";
 
 export const runtime = "nodejs";
 
@@ -41,12 +43,50 @@ export async function POST(request: Request) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      await completeReservationFromSession(session);
+      const order = await completeReservationFromSession(session);
       console.log("Payment successful!", {
         sessionId: session.id,
         customerEmail: session.customer_details?.email,
         amountTotal: session.amount_total,
       });
+      // A newly-recorded order returns a summary; a Stripe webhook retry returns
+      // null (order already exists), so the confirmation is sent exactly once.
+      // Never let email trouble fail the webhook — the order is already saved,
+      // and a 500 would make Stripe retry without ever re-sending the email.
+      if (order?.customerEmail) {
+        try {
+          await sendOrderConfirmationEmail({
+            to: order.customerEmail,
+            customerName: order.customerName,
+            items: order.items,
+            amountTotalCents: order.amountTotalCents,
+            currency: order.currency,
+            fulfillment: order.fulfillment,
+          });
+        } catch (err) {
+          console.error("[webhook] order confirmation email failed", err);
+        }
+      }
+
+      // Fiscalize the sale (Croatian legal requirement) exactly once — `order` is
+      // non-null only for a newly-recorded order, so a webhook retry won't
+      // re-fiscalize. Never let fiscalization fail the webhook: the order is
+      // saved, and a failed attempt is stored for the retry job (48h window).
+      if (order) {
+        try {
+          const fiscal = await fiscalizeOrder(order.orderId);
+          if (fiscal?.status === "fiscalized" && order.customerEmail) {
+            await sendInvoiceEmail({
+              to: order.customerEmail,
+              customerName: order.customerName,
+              brojRacuna: fiscal.brojRacuna,
+              pdfUrl: fiscal.pdfUrl,
+            });
+          }
+        } catch (err) {
+          console.error("[webhook] fiscalization failed", err);
+        }
+      }
       break;
     }
     case "checkout.session.expired":
@@ -63,6 +103,16 @@ export async function POST(request: Request) {
 
       if (paymentIntentId && typeof charge.amount_refunded === "number") {
         await markOrderRefundedByPaymentIntent(paymentIntentId, charge.amount_refunded);
+
+        // Reverse the fiscal invoice. A full refund gets a storno; a partial
+        // refund is flagged for a manual credit note (odobrenje). Never let this
+        // fail the webhook — the refund is already recorded.
+        try {
+          const fullyRefunded = charge.amount_refunded >= charge.amount;
+          await stornoOrderByPaymentIntent(paymentIntentId, fullyRefunded);
+        } catch (err) {
+          console.error("[webhook] storno failed", err);
+        }
       }
       break;
     }

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { Stripe } from "stripe";
 import { getProductVariants, getVariantPrice, products } from "@/data/products";
 import { getSql } from "@/lib/db";
+import type { DeliveryMethod } from "@/lib/shipping";
 
 type ReservationStatus = "pending" | "completed" | "released" | "expired";
 export type ShippingStatus = "pending" | "packed" | "shipped" | "delivered";
@@ -89,6 +90,7 @@ interface OrderRow {
   amount_total_cents: number;
   currency: string;
   item_count: number;
+  fulfillment_method: DeliveryMethod;
   shipping_city: string | null;
   shipping_country: string | null;
   shipping_postal_code: string | null;
@@ -170,6 +172,7 @@ export interface DashboardOrder {
   amountTotalCents: number;
   currency: string;
   itemCount: number;
+  fulfillment: DeliveryMethod;
   createdAt: string;
   paidAt: string | null;
   fulfilledAt: string | null;
@@ -345,6 +348,12 @@ export async function ensureInventoryReady() {
         add column if not exists stripe_payment_intent_id text,
         add column if not exists carrier text,
         add column if not exists tracking_url text
+      `;
+
+      // How the customer will receive the order: 'delivery' (GLS) or 'pickup'.
+      await sql`
+        alter table orders
+        add column if not exists fulfillment_method text not null default 'delivery'
       `;
 
       await sql`
@@ -647,7 +656,33 @@ export async function releaseReservationBySession(sessionId: string) {
   await releaseReservationById(reservationId);
 }
 
-export async function completeReservationFromSession(session: Stripe.Checkout.Session) {
+export interface CompletedOrderSummary {
+  orderId: string;
+  customerEmail: string | null;
+  customerName: string | null;
+  amountTotalCents: number;
+  currency: string;
+  fulfillment: DeliveryMethod;
+  items: {
+    name: string;
+    material: string;
+    style: string;
+    length: string;
+    quantity: number;
+    unitPriceCents: number;
+  }[];
+}
+
+/**
+ * Finalise a paid checkout: move stock reserved -> sold and record the order.
+ * Returns a summary of the newly-created order (for the confirmation email), or
+ * `null` when there's nothing new to do — the reservation was already completed,
+ * or the order already exists (Stripe retries this webhook), so callers must not
+ * treat `null` as an error and must not send a second email.
+ */
+export async function completeReservationFromSession(
+  session: Stripe.Checkout.Session,
+): Promise<CompletedOrderSummary | null> {
   await ensureInventoryReady();
   await releaseExpiredReservations();
   const sql = getSql();
@@ -658,7 +693,7 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
     throw new InventoryError("Checkout session is missing reservation metadata.");
   }
 
-  await sql.begin(async (tx) => {
+  return await sql.begin(async (tx) => {
     const reservations = await tx<ReservationRow[]>`
       select id, status, line_items_json
       from stock_reservations
@@ -673,7 +708,7 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
     }
 
     if (reservation.status === "completed") {
-      return;
+      return null;
     }
 
     // The 5-minute hold may have lapsed before the payment confirmed. We still
@@ -729,7 +764,7 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
     `;
 
     if (existingOrders.length > 0) {
-      return;
+      return null;
     }
 
     const lineItems = (reservations[0].line_items_json ?? []) as ReservationLineItem[];
@@ -738,6 +773,7 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
     const customerName = session.customer_details?.name ?? null;
     const customerEmail = session.customer_details?.email ?? null;
     const customerPhone = session.customer_details?.phone ?? null;
+    const fulfillment: DeliveryMethod = session.metadata?.fulfillment === "pickup" ? "pickup" : "delivery";
     const amountTotalCents = session.amount_total ?? 0;
     const currency = session.currency ?? "eur";
     const itemCount = lineItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -758,6 +794,7 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
         amount_total_cents,
         currency,
         item_count,
+        fulfillment_method,
         shipping_line1,
         shipping_line2,
         shipping_city,
@@ -778,6 +815,7 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
         ${amountTotalCents},
         ${currency},
         ${itemCount},
+        ${fulfillment},
         ${shipping?.line1 ?? null},
         ${shipping?.line2 ?? null},
         ${shipping?.city ?? null},
@@ -817,6 +855,23 @@ export async function completeReservationFromSession(session: Stripe.Checkout.Se
         )
       `;
     }
+
+    return {
+      orderId,
+      customerEmail,
+      customerName,
+      amountTotalCents,
+      currency,
+      fulfillment,
+      items: lineItems.map((li) => ({
+        name: li.productName,
+        material: li.material,
+        style: li.style,
+        length: li.length,
+        quantity: li.quantity,
+        unitPriceCents: li.unitPriceCents,
+      })),
+    } satisfies CompletedOrderSummary;
   });
 }
 
@@ -853,6 +908,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
         amount_total_cents,
         currency,
         item_count,
+        fulfillment_method,
         shipping_city,
         shipping_country,
         shipping_postal_code,
@@ -1051,6 +1107,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
       amountTotalCents: row.amount_total_cents,
       currency: row.currency,
       itemCount: row.item_count,
+      fulfillment: row.fulfillment_method,
       createdAt: row.created_at,
       paidAt: row.paid_at,
       fulfilledAt: row.fulfilled_at,
@@ -1318,7 +1375,7 @@ export async function getAllOrdersForExport() {
   const orderRows = await sql<OrderRow[]>`
     select
       id, stripe_session_id, customer_name, customer_email, customer_phone,
-      shipping_status, tracking_number, amount_total_cents, currency, item_count,
+      shipping_status, tracking_number, amount_total_cents, currency, item_count, fulfillment_method,
       shipping_city, shipping_country, shipping_postal_code, shipping_line1, shipping_line2,
       created_at::text, paid_at::text, fulfilled_at::text, refunded_at::text, refund_amount_cents
     from orders

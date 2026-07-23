@@ -9,6 +9,12 @@ import {
   InventoryError,
   releaseReservationById,
 } from "@/lib/inventory";
+import {
+  DELIVERY_ESTIMATE_DAYS,
+  GLS_DELIVERY_CENTS,
+  isDeliveryMethod,
+  type DeliveryMethod,
+} from "@/lib/shipping";
 
 export const runtime = "nodejs";
 
@@ -28,10 +34,15 @@ interface LineItem {
 
 export async function POST(request: Request) {
   try {
-    const { items } = (await request.json()) as {
+    const body = (await request.json()) as {
       items: LineItem[];
+      deliveryMethod?: string;
       locale?: string;
     };
+    const items = body.items;
+    const deliveryMethod: DeliveryMethod = isDeliveryMethod(body.deliveryMethod)
+      ? body.deliveryMethod
+      : "delivery";
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "No items provided" }, { status: 400 });
@@ -102,13 +113,14 @@ export async function POST(request: Request) {
     );
 
     try {
-      const session = await stripe.checkout.sessions.create({
+      const sessionParams: Stripe.Checkout.SessionCreateParams = {
         mode: "payment",
         payment_method_types: ["card"],
         locale: "auto",
         expires_at: Math.floor(stripeExpiresAt.getTime() / 1000),
         metadata: {
           reservationId,
+          fulfillment: deliveryMethod,
         },
         line_items: validatedItems.map(({ item, product, content, unitPriceCents }) => {
           return {
@@ -124,25 +136,42 @@ export async function POST(request: Request) {
             quantity: item.quantity,
           };
         }),
-        shipping_address_collection: {
+        success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/checkout/cancel`,
+      };
+
+      if (deliveryMethod === "pickup") {
+        // Personal pickup: nothing to ship, so collect no address. Grab a phone
+        // number to arrange collection, and say so on the Stripe pay page.
+        sessionParams.phone_number_collection = { enabled: true };
+        sessionParams.custom_text = {
+          submit: {
+            message:
+              "You've chosen personal pickup — we'll email you to arrange collection. No shipping address needed.",
+          },
+        };
+      } else {
+        // GLS home delivery: collect a shipping address and attach the GLS rate.
+        sessionParams.shipping_address_collection = {
           allowed_countries: ["HR", "DE", "AT", "SI", "IT", "FR", "ES", "NL", "BE", "GB", "US"],
-        },
-        shipping_options: [
+        };
+        sessionParams.shipping_options = [
           {
             shipping_rate_data: {
               type: "fixed_amount",
-              fixed_amount: { amount: 0, currency: "eur" },
-              display_name: "Free shipping",
+              fixed_amount: { amount: GLS_DELIVERY_CENTS, currency: "eur" },
+              display_name:
+                GLS_DELIVERY_CENTS === 0 ? "GLS home delivery — free" : "GLS home delivery",
               delivery_estimate: {
-                minimum: { unit: "business_day", value: 3 },
-                maximum: { unit: "business_day", value: 5 },
+                minimum: { unit: "business_day", value: DELIVERY_ESTIMATE_DAYS.min },
+                maximum: { unit: "business_day", value: DELIVERY_ESTIMATE_DAYS.max },
               },
             },
           },
-        ],
-        success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/checkout/cancel`,
-      });
+        ];
+      }
+
+      const session = await stripe.checkout.sessions.create(sessionParams);
 
       await attachReservationSession(reservationId, session.id);
 

@@ -127,6 +127,15 @@ export default function OrdersPanel({ orders }: Props) {
                     <span className="border border-[var(--color-border)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                       {order.shippingStatus}
                     </span>
+                    <span
+                      className={`px-3 py-1 text-[11px] uppercase tracking-[0.18em] ${
+                        order.fulfillment === "pickup"
+                          ? "bg-[var(--color-accent-dark)] text-[var(--color-text-inverse)]"
+                          : "border border-[var(--color-border)] text-[var(--color-text-secondary)]"
+                      }`}
+                    >
+                      {order.fulfillment === "pickup" ? "Pickup" : "GLS delivery"}
+                    </span>
                     {order.refundedAt ? (
                       <span className="bg-[var(--color-bg-tertiary)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--color-error)]">
                         Refunded {formatMoney(order.refundAmountCents, order.currency)}
@@ -136,7 +145,11 @@ export default function OrdersPanel({ orders }: Props) {
                   <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
                     {order.customerEmail || "No email"}{order.customerPhone ? ` • ${order.customerPhone}` : ""}
                   </p>
-                  <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{formatAddress(order.shippingAddress)}</p>
+                  <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+                    {order.fulfillment === "pickup"
+                      ? "Personal pickup — no shipping address"
+                      : formatAddress(order.shippingAddress)}
+                  </p>
 
                   <dl className="mt-3 grid grid-cols-1 gap-x-5 gap-y-1 text-xs sm:grid-cols-3">
                     <div>

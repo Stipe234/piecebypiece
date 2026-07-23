@@ -262,6 +262,13 @@ export const translations = {
       croatia: "Croatia",
       total: "Total",
       shippingFree: "Free",
+      deliveryMethod: "Delivery method",
+      deliveryOption: "GLS home delivery",
+      deliveryEstimate: "3–5 business days",
+      pickupOption: "Personal pickup",
+      pickupFree: "Free · collect in person",
+      pickupNote:
+        "Choose pickup and we'll email you to arrange collection — no shipping address needed.",
       placeOrder: "Place Order",
       paymentNote: "You will be redirected to complete payment.",
       stockConflict:

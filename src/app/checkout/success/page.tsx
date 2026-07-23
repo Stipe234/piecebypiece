@@ -35,11 +35,9 @@ export default function CheckoutSuccessPage() {
         <h1 className="font-heading text-2xl md:text-3xl font-light tracking-wide mb-4">
           Thank you for your order
         </h1>
-        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-2">
-          Your order has been confirmed. We&apos;ve sent you a confirmation email.
-        </p>
-        <p className="text-sm text-[var(--color-text-tertiary)] leading-relaxed mb-8">
-          Delivered in 3–5 business days.
+        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-8">
+          Your order has been confirmed. We&apos;ve emailed your receipt, care notes, and
+          what happens next.
         </p>
 
         <Link

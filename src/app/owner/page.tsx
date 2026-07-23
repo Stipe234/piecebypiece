@@ -5,8 +5,10 @@ import OrdersPanel from "@/components/owner/OrdersPanel";
 import RevenueSparkline from "@/components/owner/RevenueSparkline";
 import WaitlistPanel from "@/components/owner/WaitlistPanel";
 import BroadcastPanel from "@/components/owner/BroadcastPanel";
+import EmailTemplatePanel from "@/components/owner/EmailTemplatePanel";
 import { getOwnerDashboardData } from "@/lib/inventory";
 import { getWaitlistSignups, getWaitlistStats } from "@/lib/waitlist";
+import { getOrderEmailCopy } from "@/lib/settings";
 import { requireOwnerAuth } from "@/lib/owner-auth";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +49,7 @@ export default async function OwnerDashboardPage() {
   const data = await getOwnerDashboardData();
   const waitlist = await getWaitlistSignups();
   const waitlistStats = await getWaitlistStats();
+  const orderEmailCopy = await getOrderEmailCopy();
   // "Running low" uses the same 10%-remaining rule as the per-variant bars below.
   const isVariantLow = (availableUnits: number, totalUnits: number) =>
     availableUnits > 0 && (totalUnits <= 0 || (availableUnits / totalUnits) * 100 <= 10);
@@ -262,6 +265,14 @@ export default async function OwnerDashboardPage() {
           <SectionHeading eyebrow="Orders" title="Recent sales & shipping" />
           <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
             <OrdersPanel orders={data.orders} />
+          </div>
+        </div>
+
+        {/* ── Order confirmation email ── */}
+        <div className="mt-14 border-t border-[var(--color-border)] pt-12">
+          <SectionHeading eyebrow="Emails" title="Order confirmation" />
+          <div className="dash-card mt-8 rounded-2xl p-6 md:p-8">
+            <EmailTemplatePanel copy={orderEmailCopy} />
           </div>
         </div>
 

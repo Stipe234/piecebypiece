@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useCallback, useLayoutEffect, useState } from "react";
 import Image from "next/image";
-import { notFound } from "next/navigation";
-import { useParams } from "next/navigation";
+import { notFound, useParams, useSearchParams } from "next/navigation";
 import {
   getProduct,
   getProductContent,
@@ -35,6 +34,32 @@ export default function ProductPage() {
   const [selectedMaterial, setSelectedMaterial] = useState(product.materials[0]);
   const [selectedStyle, setSelectedStyle] = useState(product.styles[0]);
 
+  // Mirror the chosen variant into the URL (?material=&style=) so the selection
+  // survives a refresh and can be linked to directly — e.g. from the collection
+  // cards, which is what seeds the initial choice via <VariantFromUrl> below.
+  const syncVariantToUrl = useCallback((material: string, style: string) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("material", material);
+    params.set("style", style);
+    window.history.replaceState(null, "", `?${params.toString()}`);
+  }, []);
+
+  const selectMaterial = (material: string) => {
+    setSelectedMaterial(material);
+    syncVariantToUrl(material, selectedStyle);
+  };
+
+  const selectStyle = (style: string) => {
+    setSelectedStyle(style);
+    syncVariantToUrl(selectedMaterial, style);
+  };
+
+  // Applied by <VariantFromUrl> when the shopper arrives from a variant card.
+  const applyVariantFromUrl = useCallback((material: string | null, style: string | null) => {
+    if (material) setSelectedMaterial(material);
+    if (style) setSelectedStyle(style);
+  }, []);
+
   // The gallery is driven by the selected variant: each material × style maps
   // to its own studio image, and picking a thumbnail updates the selectors.
   const selectedKey = variantKey(selectedMaterial, selectedStyle);
@@ -55,6 +80,7 @@ export default function ProductPage() {
     if (!variant) return;
     setSelectedMaterial(variant.material);
     setSelectedStyle(variant.style);
+    syncVariantToUrl(variant.material, variant.style);
   };
 
   const materialLabels: Record<string, string> = {
@@ -75,6 +101,14 @@ export default function ProductPage() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <VariantFromUrl
+          materials={product.materials}
+          styles={product.styles}
+          onResolve={applyVariantFromUrl}
+        />
+      </Suspense>
+
       <section className="py-4 md:py-16 px-4 md:px-12">
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-20">
           <ProductGallery
@@ -110,14 +144,14 @@ export default function ProductPage() {
                 label={t.product.material}
                 options={product.materials}
                 selected={selectedMaterial}
-                onSelect={setSelectedMaterial}
+                onSelect={selectMaterial}
                 displayLabels={materialLabels}
               />
               <VariantSelector
                 label={t.product.style}
                 options={product.styles}
                 selected={selectedStyle}
-                onSelect={setSelectedStyle}
+                onSelect={selectStyle}
                 displayLabels={styleLabels}
               />
             </div>
@@ -181,4 +215,35 @@ export default function ProductPage() {
       )}
     </>
   );
+}
+
+/**
+ * Reads `?material=&style=` from the URL — set when the shopper taps a specific
+ * variant card in the collection — and applies it to the selectors. Kept in its
+ * own Suspense boundary because Next.js requires `useSearchParams` to be wrapped
+ * on a statically prerendered route: the page still prerenders with its default
+ * variant, and this refines the choice on the client before paint (layout
+ * effect), so there's no flash of the wrong variant.
+ */
+function VariantFromUrl({
+  materials,
+  styles,
+  onResolve,
+}: {
+  materials: string[];
+  styles: string[];
+  onResolve: (material: string | null, style: string | null) => void;
+}) {
+  const searchParams = useSearchParams();
+  const material = searchParams.get("material");
+  const style = searchParams.get("style");
+
+  useLayoutEffect(() => {
+    onResolve(
+      material && materials.includes(material) ? material : null,
+      style && styles.includes(style) ? style : null,
+    );
+  }, [material, style, materials, styles, onResolve]);
+
+  return null;
 }
