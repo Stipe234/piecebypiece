@@ -26,6 +26,7 @@
 
 import { randomUUID } from "node:crypto";
 import { getSql } from "@/lib/db";
+import { VAT_RATE } from "@/lib/vat";
 
 const SOLO_INVOICE_ENDPOINT = "https://api.solo.com.hr/racun";
 const SOLO_STORNO_ENDPOINT = "https://api.solo.com.hr/storno";
@@ -76,7 +77,7 @@ function getSoloConfig(): SoloConfig {
   if (!tipUsluge) throw new Error("SOLO_TIP_USLUGE is not set");
   if (!tipKupca) throw new Error("SOLO_TIP_KUPCA is not set");
 
-  const pdvRate = Number(process.env.SOLO_PDV_RATE ?? "25");
+  const pdvRate = Number(process.env.SOLO_PDV_RATE ?? String(VAT_RATE));
   if (![0, 5, 13, 25].includes(pdvRate)) {
     throw new Error(`SOLO_PDV_RATE must be one of 0, 5, 13, 25 (got ${process.env.SOLO_PDV_RATE})`);
   }

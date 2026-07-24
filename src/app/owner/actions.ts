@@ -226,17 +226,17 @@ export async function saveShippingStatus(
 
   const orderId = String(formData.get("orderId") ?? "");
   const shippingStatus = String(formData.get("shippingStatus") ?? "") as ShippingStatus;
-  const carrier = String(formData.get("carrier") ?? "").trim() || null;
   const trackingUrl = String(formData.get("trackingUrl") ?? "").trim() || null;
+  // GLS is the only courier we ship with, so it's recorded automatically instead
+  // of being typed in on every order.
+  const carrier = "GLS";
 
   if (!orderId) {
     return { error: "Missing order." };
   }
 
-  // The shipped email promises a tracking link, so require both before shipping.
-  if (shippingStatus === "shipped" && (!carrier || !trackingUrl)) {
-    return { error: "Add the carrier and tracking link before marking it shipped." };
-  }
+  // A tracking link is optional — parcels are booked in the GLS app, and the
+  // shipped email reads correctly with or without one.
   if (trackingUrl && !/^https?:\/\//i.test(trackingUrl)) {
     return { error: "The tracking link must be a full URL starting with http:// or https://." };
   }

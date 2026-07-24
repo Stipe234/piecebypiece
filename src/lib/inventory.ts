@@ -191,6 +191,7 @@ export interface DashboardOrder {
     productSlug: string;
     productName: string;
     material: string;
+    style: string | null;
     length: string;
     quantity: number;
     unitPriceCents: number;
@@ -1097,6 +1098,7 @@ export async function getOwnerDashboardData(): Promise<OwnerDashboardData> {
       productSlug: item.product_slug,
       productName: item.product_name,
       material: item.material,
+      style: item.style,
       length: item.length,
       quantity: item.quantity,
       unitPriceCents: item.unit_price_cents,
@@ -1410,7 +1412,7 @@ export async function getAllOrdersForExport() {
   `;
 
   const itemRows = await sql<OrderItemRow[]>`
-    select id, order_id, product_id, product_slug, product_name, material, length,
+    select id, order_id, product_id, product_slug, product_name, material, style, length,
            quantity, unit_price_cents, line_total_cents
     from order_items
   `;

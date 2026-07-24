@@ -268,6 +268,7 @@ export const translations = {
       deliveryEstimate: "1–3 business days",
       eyebrow: "Secure checkout",
       securePayment: "Encrypted payment by Stripe",
+      vatIncluded: "VAT included",
       pickupOption: "Personal pickup",
       pickupFree: "Free · collect in person",
       pickupNote:

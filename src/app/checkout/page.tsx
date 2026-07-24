@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { getProductContent, getVariantPrice } from "@/data/products";
 import { formatEur } from "@/lib/format";
 import { GLS_DELIVERY_CENTS, type DeliveryMethod } from "@/lib/shipping";
+import { VAT_RATE, vatPortionCents } from "@/lib/vat";
 import { useI18n } from "@/i18n/context";
 import Button from "@/components/ui/Button";
 import ReservationBanner from "@/components/checkout/ReservationBanner";
@@ -27,6 +28,8 @@ export default function CheckoutPage() {
   const total = subtotal + deliveryFeeCents / 100;
   const deliveryFeeLabel =
     deliveryFeeCents === 0 ? t.checkout.shippingFree : formatEur(deliveryFeeCents / 100);
+  // The VAT already contained in the total — nothing is added on top of it.
+  const vatCents = vatPortionCents(Math.round(total * 100));
 
   // Stable signature of the cart so we only re-reserve when it actually changes.
   const itemsKey = items.map((i) => `${i.id}x${i.quantity}`).join(",");
@@ -93,13 +96,13 @@ export default function CheckoutPage() {
     <section className="py-8 md:py-20 px-4 md:px-12">
       <div className="max-w-[580px] mx-auto">
         <div className="mb-8 text-center md:mb-12">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-[var(--color-text-secondary)]">
             {t.checkout.eyebrow}
           </p>
-          <h1 className="mt-3 font-heading text-3xl font-light tracking-wide md:text-4xl">
+          <h1 className="mt-3 font-heading text-4xl font-light tracking-wide md:text-5xl">
             {t.checkout.title}
           </h1>
-          <span className="mx-auto mt-5 block h-px w-10 bg-[var(--color-gold)]" aria-hidden="true" />
+          <span className="mx-auto mt-5 block h-px w-12 bg-[var(--color-gold)]" aria-hidden="true" />
         </div>
 
         {reservation && !expired && (
@@ -112,33 +115,35 @@ export default function CheckoutPage() {
             handmade note read as a single document rather than three unrelated
             blocks with different edges. */}
         <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
-          <div className="px-5 py-5 md:px-8 md:py-6">
-            <h2 className="mb-4 text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-tertiary)] md:mb-5">
+          <div className="px-5 py-5 md:px-8 md:py-7">
+            <h2 className="mb-5 text-[11px] font-medium uppercase tracking-[0.25em] text-[var(--color-text-secondary)]">
               {t.checkout.orderSummary}
             </h2>
 
             <div className="flex flex-col divide-y divide-[var(--color-border)]">
               {items.map((item) => (
-                <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
-                  <div className="relative h-[70px] w-14 flex-shrink-0 bg-[var(--color-bg-primary)]">
+                <div key={item.id} className="flex gap-4 py-5 first:pt-0 last:pb-0">
+                  <div className="relative h-[88px] w-[70px] flex-shrink-0 bg-[var(--color-bg-primary)]">
                     <Image
                       src={item.product.images.studio}
                       alt={getProductContent(item.product, locale).name}
                       fill
                       className="object-cover"
-                      sizes="56px"
+                      sizes="70px"
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm">{getProductContent(item.product, locale).name}</p>
-                    <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
+                    <p className="truncate text-base font-medium text-[var(--color-text-primary)]">
+                      {getProductContent(item.product, locale).name}
+                    </p>
+                    <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
                       {item.selectedMaterial} · {item.selectedStyle}
                     </p>
-                    <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
+                    <p className="mt-1 text-sm text-[var(--color-text-tertiary)]">
                       {t.cart.quantity} {item.quantity}
                     </p>
                   </div>
-                  <p className="flex-shrink-0 text-sm tabular-nums">
+                  <p className="flex-shrink-0 text-base font-medium tabular-nums">
                     {formatEur(getVariantPrice(item.product, item.selectedStyle) * item.quantity)}
                   </p>
                 </div>
@@ -146,30 +151,44 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2.5 border-t border-[var(--color-border)] px-5 py-4 md:px-8 md:py-5">
-            <div className="flex justify-between gap-4 text-sm">
+          {/* Deeper sand fill: the money section is the one that should catch
+              the eye, so it sits a tone below the items above it. */}
+          <div className="flex flex-col gap-3 border-t border-[var(--color-border)] bg-[var(--color-surface-sand)] px-5 py-5 md:px-8 md:py-6">
+            <div className="flex justify-between gap-4 text-base">
               <span className="text-[var(--color-text-secondary)]">{t.cart.subtotal}</span>
               <span className="tabular-nums">{formatEur(subtotal)}</span>
             </div>
-            <div className="flex justify-between gap-4 text-sm">
+            <div className="flex justify-between gap-4 text-base">
               <span className="text-[var(--color-text-secondary)]">
                 {t.checkout.deliveryOption}
-                <span className="mt-0.5 block text-xs text-[var(--color-text-tertiary)]">
+                <span className="mt-0.5 block text-sm text-[var(--color-text-tertiary)]">
                   {t.checkout.deliveryEstimate}
                 </span>
               </span>
-              <span className="text-[var(--color-text-tertiary)]">{deliveryFeeLabel}</span>
+              <span className="font-medium text-[var(--color-text-secondary)]">{deliveryFeeLabel}</span>
             </div>
-            <div className="mt-1 flex items-baseline justify-between gap-4 border-t border-[var(--color-border)] pt-4">
-              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-secondary)]">
+
+            <span className="mt-2 block h-px w-full bg-[var(--color-gold)] opacity-50" aria-hidden="true" />
+
+            <div className="flex items-baseline justify-between gap-4">
+              <span className="text-[11px] font-medium uppercase tracking-[0.25em] text-[var(--color-text-primary)]">
                 {t.checkout.total}
               </span>
-              <span className="font-heading text-2xl font-light tabular-nums">{formatEur(total)}</span>
+              <span className="font-heading text-3xl font-light tabular-nums md:text-4xl">
+                {formatEur(total)}
+              </span>
             </div>
+            {/* The price shown is the price paid — this just names the VAT that
+                is already inside it, the way EU consumer pricing is displayed. */}
+            {vatCents > 0 && (
+              <p className="-mt-1 text-right text-sm text-[var(--color-text-tertiary)]">
+                {t.checkout.vatIncluded} · {formatEur(vatCents / 100)} ({VAT_RATE}%)
+              </p>
+            )}
           </div>
 
           {/* Closing reassurance — the quiet promises that come with the piece. */}
-          <div className="flex flex-col gap-2 border-t border-[var(--color-border)] px-5 py-4 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-secondary)] md:px-8">
+          <div className="flex flex-col gap-2.5 border-t border-[var(--color-border)] px-5 py-4 text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-text-secondary)] md:px-8 md:py-5">
             <span className="flex items-center gap-2">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-gold)]" aria-hidden="true" />
               {t.product.handmade}
@@ -216,7 +235,7 @@ export default function CheckoutPage() {
               {loading ? "Reserving..." : t.checkout.placeOrder}
             </Button>
           )}
-          <p className="text-xs text-[var(--color-text-tertiary)] text-center mt-3">
+          <p className="mt-4 text-center text-sm text-[var(--color-text-tertiary)]">
             {t.checkout.paymentNote}
           </p>
         </div>

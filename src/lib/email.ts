@@ -197,18 +197,25 @@ export async function sendOrderStatusEmail(opts: {
     paragraphs = [
       hi,
       "Your piece has been packed by hand with care, and we've arranged collection with our courier.",
-      "As soon as they pick it up, we'll email you a tracking link so you can follow it all the way to your door.",
+      "We'll email you again the moment it's on its way to you.",
     ];
   } else if (opts.status === "shipped") {
     subject = "Your order is on its way — Piece by Piece";
     eyebrow = "On its way";
     heading = "Your order has shipped.";
     const via = opts.carrier?.trim() ? ` with ${opts.carrier.trim()}` : "";
-    paragraphs = [hi, `Your order is on its way${via}. You can follow its journey using the link below.`];
+    const hasTracking = Boolean(opts.trackingUrl?.trim());
+    // Only promise a tracking link when there actually is one to follow.
+    paragraphs = [
+      hi,
+      hasTracking
+        ? `Your order is on its way${via}. You can follow its journey using the link below.`
+        : `Your order is on its way${via}, and should reach you within 1–3 business days.`,
+    ];
     if (opts.trackingUrl?.trim()) {
       button = { label: "Track your order", url: opts.trackingUrl.trim() };
     } else {
-      paragraphs.push("We'll keep you posted until it arrives.");
+      paragraphs.push("We'll let you know as soon as it's been delivered.");
     }
   } else {
     subject = "Your order has been delivered — Piece by Piece";
