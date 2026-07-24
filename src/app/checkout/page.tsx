@@ -92,9 +92,15 @@ export default function CheckoutPage() {
   return (
     <section className="py-8 md:py-20 px-4 md:px-12">
       <div className="max-w-[580px] mx-auto">
-        <h1 className="font-heading text-2xl md:text-3xl font-light tracking-wide mb-8 md:mb-12 text-center">
-          {t.checkout.title}
-        </h1>
+        <div className="mb-8 text-center md:mb-12">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-text-tertiary)]">
+            {t.checkout.eyebrow}
+          </p>
+          <h1 className="mt-3 font-heading text-3xl font-light tracking-wide md:text-4xl">
+            {t.checkout.title}
+          </h1>
+          <span className="mx-auto mt-5 block h-px w-10 bg-[var(--color-gold)]" aria-hidden="true" />
+        </div>
 
         {reservation && !expired && (
           <div className="mb-6">
@@ -106,19 +112,7 @@ export default function CheckoutPage() {
             handmade note read as a single document rather than three unrelated
             blocks with different edges. */}
         <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
-          <div className="flex items-start justify-between gap-4 px-5 py-4 md:px-8 md:py-5">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-tertiary)]">
-              {t.checkout.deliveryMethod}
-            </span>
-            <span className="text-right text-sm">
-              {t.checkout.deliveryOption}
-              <span className="mt-0.5 block text-xs text-[var(--color-text-tertiary)]">
-                {deliveryFeeLabel} · {t.checkout.deliveryEstimate}
-              </span>
-            </span>
-          </div>
-
-          <div className="border-t border-[var(--color-border)] px-5 py-5 md:px-8 md:py-6">
+          <div className="px-5 py-5 md:px-8 md:py-6">
             <h2 className="mb-4 text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-tertiary)] md:mb-5">
               {t.checkout.orderSummary}
             </h2>
@@ -158,20 +152,44 @@ export default function CheckoutPage() {
               <span className="tabular-nums">{formatEur(subtotal)}</span>
             </div>
             <div className="flex justify-between gap-4 text-sm">
-              <span className="text-[var(--color-text-secondary)]">{t.checkout.deliveryOption}</span>
+              <span className="text-[var(--color-text-secondary)]">
+                {t.checkout.deliveryOption}
+                <span className="mt-0.5 block text-xs text-[var(--color-text-tertiary)]">
+                  {t.checkout.deliveryEstimate}
+                </span>
+              </span>
               <span className="text-[var(--color-text-tertiary)]">{deliveryFeeLabel}</span>
             </div>
-            <div className="mt-1 flex items-baseline justify-between gap-4 border-t border-[var(--color-border)] pt-3">
-              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-tertiary)]">
+            <div className="mt-1 flex items-baseline justify-between gap-4 border-t border-[var(--color-border)] pt-4">
+              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-secondary)]">
                 {t.checkout.total}
               </span>
-              <span className="text-base tabular-nums">{formatEur(total)}</span>
+              <span className="font-heading text-2xl font-light tabular-nums">{formatEur(total)}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 border-t border-[var(--color-border)] px-5 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-secondary)] md:px-8">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-gold)]" aria-hidden="true" />
-            {t.product.handmade}
+          {/* Closing reassurance — the quiet promises that come with the piece. */}
+          <div className="flex flex-col gap-2 border-t border-[var(--color-border)] px-5 py-4 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-secondary)] md:px-8">
+            <span className="flex items-center gap-2">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-gold)]" aria-hidden="true" />
+              {t.product.handmade}
+            </span>
+            <span className="flex items-center gap-2">
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="ml-[-1px] text-[var(--color-text-tertiary)]"
+                aria-hidden="true"
+              >
+                <rect x="4" y="11" width="16" height="10" rx="1.5" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
+              {t.checkout.securePayment}
+            </span>
           </div>
         </div>
 

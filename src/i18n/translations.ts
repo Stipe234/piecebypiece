@@ -266,6 +266,8 @@ export const translations = {
       deliveryMethod: "Delivery method",
       deliveryOption: "GLS home delivery",
       deliveryEstimate: "1–3 business days",
+      eyebrow: "Secure checkout",
+      securePayment: "Encrypted payment by Stripe",
       pickupOption: "Personal pickup",
       pickupFree: "Free · collect in person",
       pickupNote:

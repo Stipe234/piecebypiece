@@ -64,6 +64,7 @@ interface SoloConfig {
   tipUsluge: string;
   tipKupca: string;
   pdvRate: number;
+  sendNetPrices: boolean;
 }
 
 function getSoloConfig(): SoloConfig {
@@ -80,7 +81,23 @@ function getSoloConfig(): SoloConfig {
     throw new Error(`SOLO_PDV_RATE must be one of 0, 5, 13, 25 (got ${process.env.SOLO_PDV_RATE})`);
   }
 
-  return { token, tipUsluge, tipKupca, pdvRate };
+  // Our catalog prices are what the customer actually pays — VAT included.
+  // Solo's `cijena_x` is a NET unit price and it adds `porez_stopa_x` on top, so
+  // we divide the VAT back out before sending. Set SOLO_SEND_NET_PRICES=false
+  // only if a test invoice proves the account expects VAT-inclusive prices.
+  const sendNetPrices = (process.env.SOLO_SEND_NET_PRICES ?? "true") !== "false";
+
+  return { token, tipUsluge, tipKupca, pdvRate, sendNetPrices };
+}
+
+/**
+ * Convert a VAT-inclusive (gross) amount to the net amount Solo expects.
+ * €60.00 at 25% -> €48.00 net + €12.00 VAT = €60.00 gross, so the fiscal
+ * invoice total matches what Stripe charged instead of adding 25% on top.
+ */
+function toNetCents(grossCents: number, pdvRate: number): number {
+  if (pdvRate <= 0) return grossCents;
+  return Math.round(grossCents / (1 + pdvRate / 100));
 }
 
 /** Format cents as Solo's amount string, e.g. 123450 -> "1.234,50". */
@@ -249,8 +266,14 @@ function buildInvoiceBody(order: OrderForFiscalization, config: SoloConfig): URL
   body.set("usluga", String(lines.length));
   lines.forEach((line, index) => {
     const i = index + 1;
+    // Our prices are VAT-inclusive; Solo adds VAT on top of `cijena_x`, so send
+    // the net unit price and let it rebuild the same gross total.
+    const unitPriceForSolo = config.sendNetPrices
+      ? toNetCents(line.unitPriceCents, config.pdvRate)
+      : line.unitPriceCents;
+
     body.set(`opis_usluge_${i}`, line.description.slice(0, 500));
-    body.set(`cijena_${i}`, formatSoloAmount(line.unitPriceCents));
+    body.set(`cijena_${i}`, formatSoloAmount(unitPriceForSolo));
     body.set(`kolicina_${i}`, String(line.quantity));
     body.set(`porez_stopa_${i}`, String(config.pdvRate));
   });
