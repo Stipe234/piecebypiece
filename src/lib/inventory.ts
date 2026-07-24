@@ -674,6 +674,33 @@ export interface CompletedOrderSummary {
 }
 
 /**
+ * Read the reserved line items back out of the `line_items_json` jsonb column.
+ *
+ * Depending on the driver/pooler in use, a jsonb column can arrive already
+ * decoded as an array or still as a raw JSON string — through a connection
+ * pooler it comes back as a string, which used to crash the webhook with
+ * "reduce is not a function" and meant no paid order was ever recorded.
+ * Accept both shapes.
+ */
+function parseReservationLineItems(value: unknown): ReservationLineItem[] {
+  if (Array.isArray(value)) return value as ReservationLineItem[];
+
+  if (typeof value === "string" && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed as ReservationLineItem[];
+    } catch {
+      // fall through to the throw below — an unreadable reservation must not
+      // silently become an order with no items.
+    }
+  }
+
+  throw new InventoryError(
+    `Reservation line items could not be read (got ${typeof value}).`,
+  );
+}
+
+/**
  * Finalise a paid checkout: move stock reserved -> sold and record the order.
  * Returns a summary of the newly-created order (for the confirmation email), or
  * `null` when there's nothing new to do — the reservation was already completed,
@@ -767,7 +794,7 @@ export async function completeReservationFromSession(
       return null;
     }
 
-    const lineItems = (reservations[0].line_items_json ?? []) as ReservationLineItem[];
+    const lineItems = parseReservationLineItems(reservations[0].line_items_json);
     const orderId = randomUUID();
     const shipping = session.customer_details?.address;
     const customerName = session.customer_details?.name ?? null;
