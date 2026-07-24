@@ -265,7 +265,7 @@ export const translations = {
       shippingFree: "Free",
       deliveryMethod: "Delivery method",
       deliveryOption: "GLS home delivery",
-      deliveryEstimate: "3–5 business days",
+      deliveryEstimate: "1–3 business days",
       pickupOption: "Personal pickup",
       pickupFree: "Free · collect in person",
       pickupNote:

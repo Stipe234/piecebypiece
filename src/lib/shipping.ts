@@ -12,7 +12,7 @@ export type DeliveryMethod = "delivery" | "pickup";
 
 export const GLS_DELIVERY_CENTS = 0;
 
-export const DELIVERY_ESTIMATE_DAYS = { min: 3, max: 5 } as const;
+export const DELIVERY_ESTIMATE_DAYS = { min: 1, max: 3 } as const;
 
 export function isDeliveryMethod(value: unknown): value is DeliveryMethod {
   return value === "delivery" || value === "pickup";

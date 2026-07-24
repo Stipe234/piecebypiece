@@ -19,9 +19,11 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [expired, setExpired] = useState(false);
   const [error, setError] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
+  // GLS home delivery is the only method we offer — there is nothing to choose,
+  // so it's fixed here and shown as an information box rather than a selector.
+  const deliveryMethod: DeliveryMethod = "delivery";
 
-  const deliveryFeeCents = deliveryMethod === "delivery" ? GLS_DELIVERY_CENTS : 0;
+  const deliveryFeeCents = GLS_DELIVERY_CENTS;
   const total = subtotal + deliveryFeeCents / 100;
   const deliveryFeeLabel =
     deliveryFeeCents === 0 ? t.checkout.shippingFree : formatEur(deliveryFeeCents / 100);
@@ -104,43 +106,12 @@ export default function CheckoutPage() {
           <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-3">
             {t.checkout.deliveryMethod}
           </p>
-          <div className="grid grid-cols-2 gap-2 md:gap-3">
-            <button
-              type="button"
-              onClick={() => setDeliveryMethod("delivery")}
-              aria-pressed={deliveryMethod === "delivery"}
-              className={`text-left border p-3 md:p-4 rounded-sm transition-colors ${
-                deliveryMethod === "delivery"
-                  ? "border-[var(--color-accent-dark)] bg-[var(--color-bg-primary)]"
-                  : "border-[var(--color-border)] hover:border-[var(--color-text-tertiary)]"
-              }`}
-            >
-              <span className="block text-sm">{t.checkout.deliveryOption}</span>
-              <span className="block text-xs text-[var(--color-text-tertiary)] mt-1">
-                {deliveryFeeLabel} · {t.checkout.deliveryEstimate}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setDeliveryMethod("pickup")}
-              aria-pressed={deliveryMethod === "pickup"}
-              className={`text-left border p-3 md:p-4 rounded-sm transition-colors ${
-                deliveryMethod === "pickup"
-                  ? "border-[var(--color-accent-dark)] bg-[var(--color-bg-primary)]"
-                  : "border-[var(--color-border)] hover:border-[var(--color-text-tertiary)]"
-              }`}
-            >
-              <span className="block text-sm">{t.checkout.pickupOption}</span>
-              <span className="block text-xs text-[var(--color-text-tertiary)] mt-1">
-                {t.checkout.pickupFree}
-              </span>
-            </button>
+          <div className="w-full border border-[var(--color-accent-dark)] bg-[var(--color-bg-primary)] p-3 md:p-4 rounded-sm">
+            <span className="block text-sm">{t.checkout.deliveryOption}</span>
+            <span className="block text-xs text-[var(--color-text-tertiary)] mt-1">
+              {deliveryFeeLabel} · {t.checkout.deliveryEstimate}
+            </span>
           </div>
-          {deliveryMethod === "pickup" && (
-            <p className="text-xs text-[var(--color-text-tertiary)] mt-3 leading-relaxed">
-              {t.checkout.pickupNote}
-            </p>
-          )}
         </div>
 
         <div className="bg-[var(--color-bg-secondary)] p-5 md:p-8">
@@ -180,9 +151,7 @@ export default function CheckoutPage() {
               <span>{formatEur(subtotal)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-[var(--color-text-secondary)]">
-                {deliveryMethod === "pickup" ? t.checkout.pickupOption : t.checkout.deliveryOption}
-              </span>
+              <span className="text-[var(--color-text-secondary)]">{t.checkout.deliveryOption}</span>
               <span className="text-[var(--color-text-tertiary)]">{deliveryFeeLabel}</span>
             </div>
             <div className="flex justify-between text-sm font-medium pt-2 border-t border-[var(--color-border)]">
