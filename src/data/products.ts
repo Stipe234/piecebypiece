@@ -86,7 +86,7 @@ export const products: Product[] = [
           care:
             "Avoid catching it on fabrics, zippers, or rough surfaces. Remove before sleeping or exercise. Avoid prolonged contact with water, perfume, and lotions. Store flat when not worn. Please be gentle with me and treat me with care. Avoid catching the chain on fabrics or other objects, as the hand chain is delicate and designed to be worn thoughtfully.",
           shipping:
-            "Complimentary shipping on all orders. Delivered in 3–5 business days.",
+            "Complimentary shipping on all orders. Delivered in 1–3 business days.",
         },
       },
     },

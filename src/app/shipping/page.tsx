@@ -5,7 +5,7 @@ import { useI18n } from "@/i18n/context";
 export default function ShippingPage() {
   const { t } = useI18n();
   const body =
-    "You can have your order delivered by GLS or collect it in person — the choice is yours at checkout. GLS delivery is complimentary and arrives within 3–5 business days, with tracking by email once your piece is on its way. If you'd rather pick it up, choose pickup at checkout and we'll email you to arrange collection.";
+    "Every order is delivered by GLS to your door. Delivery is complimentary and arrives within 1–3 business days, with tracking by email once your piece is on its way.";
 
   return (
     <section className="py-28 md:py-44 px-6">

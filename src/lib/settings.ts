@@ -67,9 +67,34 @@ async function ensureSettingsReady() {
   await schemaReady;
 }
 
+/**
+ * Decode a value read from a jsonb column.
+ *
+ * Depending on the driver/pooler in use, jsonb arrives either already decoded as
+ * an object or still as a raw JSON string — through a connection pooler it comes
+ * back as a string. Treating that string as an object made every saved field look
+ * empty, so edited copy silently fell back to the defaults. Accept both shapes.
+ */
+function decodeJsonbObject(value: unknown): Partial<OrderEmailCopy> | null {
+  if (!value) return null;
+  if (typeof value === "object") return value as Partial<OrderEmailCopy>;
+
+  if (typeof value === "string" && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === "object") return parsed as Partial<OrderEmailCopy>;
+    } catch {
+      // Unreadable stored copy — fall back to the defaults below.
+    }
+  }
+
+  return null;
+}
+
 /** Merge stored overrides onto the defaults, dropping unknown/empty fields so a
  *  partial or older saved value can never blank out the email. */
-function mergeOrderEmailCopy(stored: Partial<OrderEmailCopy> | null): OrderEmailCopy {
+function mergeOrderEmailCopy(raw: unknown): OrderEmailCopy {
+  const stored = decodeJsonbObject(raw);
   if (!stored) return DEFAULT_ORDER_EMAIL_COPY;
   const careItems = Array.isArray(stored.careItems)
     ? stored.careItems.map((s) => String(s)).filter((s) => s.trim())

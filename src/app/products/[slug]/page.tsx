@@ -179,7 +179,10 @@ export default function ProductPage() {
                   />
                 </>
               ) : (
-                <div className="flex flex-col gap-3">
+                // Capped width: stretched across the full half-page column the
+                // button dwarfed the variant selectors and left the page looking
+                // empty.
+                <div className="flex flex-col gap-3 max-w-[380px]">
                   <AddToCartButton
                     product={product}
                     selectedMaterial={selectedMaterial}

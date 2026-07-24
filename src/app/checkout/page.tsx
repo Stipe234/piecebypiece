@@ -106,12 +106,12 @@ export default function CheckoutPage() {
           <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-3">
             {t.checkout.deliveryMethod}
           </p>
-          <div className="w-full border border-[var(--color-accent-dark)] bg-[var(--color-bg-primary)] p-3 md:p-4 rounded-sm">
-            <span className="block text-sm">{t.checkout.deliveryOption}</span>
-            <span className="block text-xs text-[var(--color-text-tertiary)] mt-1">
-              {deliveryFeeLabel} · {t.checkout.deliveryEstimate}
+          <p className="text-sm">
+            {t.checkout.deliveryOption}
+            <span className="text-[var(--color-text-tertiary)]">
+              {" · "}{deliveryFeeLabel}{" · "}{t.checkout.deliveryEstimate}
             </span>
-          </div>
+          </p>
         </div>
 
         <div className="bg-[var(--color-bg-secondary)] p-5 md:p-8">

@@ -63,17 +63,26 @@ export default function CartSlideOut() {
                         sizes="80px"
                       />
                     </div>
-                    <div className="flex-1 flex flex-col justify-between">
-                      <div>
-                        <p className="text-sm font-medium">{content.name}</p>
-                        <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                          {item.selectedMaterial} / {item.selectedLength}
-                        </p>
+                    {/* Name and price share the first line, controls sit right
+                        beneath them — keeps the row tight instead of stretching
+                        to the full height of the thumbnail. */}
+                    <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{content.name}</p>
+                          <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
+                            {item.selectedMaterial} / {item.selectedLength}
+                          </p>
+                        </div>
+                        <span className="text-sm font-medium whitespace-nowrap">
+                          {formatEur(getVariantPrice(item.product, item.selectedStyle) * item.quantity)}
+                        </span>
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            aria-label="Decrease quantity"
                             className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
                           >
                             &minus;
@@ -81,20 +90,18 @@ export default function CartSlideOut() {
                           <span className="text-xs w-4 text-center">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            aria-label="Increase quantity"
                             className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
                           >
                             +
                           </button>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-medium">{formatEur(getVariantPrice(item.product, item.selectedStyle) * item.quantity)}</span>
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] underline"
-                          >
-                            {t.cart.remove}
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] underline"
+                        >
+                          {t.cart.remove}
+                        </button>
                       </div>
                     </div>
                 </div>
