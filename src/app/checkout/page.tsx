@@ -102,72 +102,81 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        <div className="mb-6">
-          <p className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-3">
-            {t.checkout.deliveryMethod}
-          </p>
-          <p className="text-sm">
-            {t.checkout.deliveryOption}
-            <span className="text-[var(--color-text-tertiary)]">
-              {" · "}{deliveryFeeLabel}{" · "}{t.checkout.deliveryEstimate}
+        {/* One panel, hairline-separated: delivery, items, totals and the
+            handmade note read as a single document rather than three unrelated
+            blocks with different edges. */}
+        <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
+          <div className="flex items-start justify-between gap-4 px-5 py-4 md:px-8 md:py-5">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-tertiary)]">
+              {t.checkout.deliveryMethod}
             </span>
-          </p>
-        </div>
-
-        <div className="bg-[var(--color-bg-secondary)] p-5 md:p-8">
-          <h2 className="text-[10px] md:text-xs tracking-[0.25em] uppercase text-[var(--color-text-tertiary)] mb-4 md:mb-6">
-            {t.checkout.orderSummary}
-          </h2>
-
-          <div className="flex flex-col gap-4 mb-4 md:mb-6">
-            {items.map((item) => (
-              <div key={item.id} className="flex gap-3 md:gap-4">
-                <div className="relative w-14 h-18 md:w-16 md:h-20 flex-shrink-0 bg-[var(--color-bg-primary)]">
-                  <Image
-                    src={item.product.images.studio}
-                    alt={getProductContent(item.product, locale).name}
-                    fill
-                    className="object-cover"
-                    sizes="64px"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{getProductContent(item.product, locale).name}</p>
-                  <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                    {item.selectedMaterial} / {item.selectedStyle}
-                  </p>
-                  <p className="text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                    {t.cart.quantity}: {item.quantity}
-                  </p>
-                </div>
-                <p className="text-sm font-medium flex-shrink-0">{formatEur(getVariantPrice(item.product, item.selectedStyle) * item.quantity)}</p>
-              </div>
-            ))}
+            <span className="text-right text-sm">
+              {t.checkout.deliveryOption}
+              <span className="mt-0.5 block text-xs text-[var(--color-text-tertiary)]">
+                {deliveryFeeLabel} · {t.checkout.deliveryEstimate}
+              </span>
+            </span>
           </div>
 
-          <div className="border-t border-[var(--color-border)] pt-3 md:pt-4 flex flex-col gap-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-[var(--color-text-secondary)]">{t.cart.subtotal}</span>
-              <span>{formatEur(subtotal)}</span>
+          <div className="border-t border-[var(--color-border)] px-5 py-5 md:px-8 md:py-6">
+            <h2 className="mb-4 text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-tertiary)] md:mb-5">
+              {t.checkout.orderSummary}
+            </h2>
+
+            <div className="flex flex-col divide-y divide-[var(--color-border)]">
+              {items.map((item) => (
+                <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                  <div className="relative h-[70px] w-14 flex-shrink-0 bg-[var(--color-bg-primary)]">
+                    <Image
+                      src={item.product.images.studio}
+                      alt={getProductContent(item.product, locale).name}
+                      fill
+                      className="object-cover"
+                      sizes="56px"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm">{getProductContent(item.product, locale).name}</p>
+                    <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
+                      {item.selectedMaterial} · {item.selectedStyle}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--color-text-tertiary)]">
+                      {t.cart.quantity} {item.quantity}
+                    </p>
+                  </div>
+                  <p className="flex-shrink-0 text-sm tabular-nums">
+                    {formatEur(getVariantPrice(item.product, item.selectedStyle) * item.quantity)}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div className="flex justify-between text-sm">
+          </div>
+
+          <div className="flex flex-col gap-2.5 border-t border-[var(--color-border)] px-5 py-4 md:px-8 md:py-5">
+            <div className="flex justify-between gap-4 text-sm">
+              <span className="text-[var(--color-text-secondary)]">{t.cart.subtotal}</span>
+              <span className="tabular-nums">{formatEur(subtotal)}</span>
+            </div>
+            <div className="flex justify-between gap-4 text-sm">
               <span className="text-[var(--color-text-secondary)]">{t.checkout.deliveryOption}</span>
               <span className="text-[var(--color-text-tertiary)]">{deliveryFeeLabel}</span>
             </div>
-            <div className="flex justify-between text-sm font-medium pt-2 border-t border-[var(--color-border)]">
-              <span>{t.checkout.total}</span>
-              <span>{formatEur(total)}</span>
+            <div className="mt-1 flex items-baseline justify-between gap-4 border-t border-[var(--color-border)] pt-3">
+              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--color-text-tertiary)]">
+                {t.checkout.total}
+              </span>
+              <span className="text-base tabular-nums">{formatEur(total)}</span>
             </div>
           </div>
 
-          <div className="mt-4 flex items-center gap-2 border-t border-[var(--color-border)] pt-4 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--color-text-secondary)]">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#c9a96e]" aria-hidden="true" />
+          <div className="flex items-center gap-2 border-t border-[var(--color-border)] px-5 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[var(--color-text-secondary)] md:px-8">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-gold)]" aria-hidden="true" />
             {t.product.handmade}
           </div>
         </div>
 
         <div className="mt-6 md:mt-8">
-          {error && <p className="text-sm text-red-600 text-center mb-4">{error}</p>}
+          {error && <p className="mb-4 text-center text-sm text-[var(--color-error)]">{error}</p>}
 
           {expired ? (
             <Button onClick={reserve} fullWidth>
