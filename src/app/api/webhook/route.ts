@@ -40,6 +40,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
+  try {
+    return await handleEvent(event);
+  } catch (err) {
+    // Anything thrown while recording the order used to surface as an opaque
+    // empty 500 in Stripe's delivery log. Log the real reason with enough
+    // context to act on, then still return 500 so Stripe retries — a paid order
+    // must never be silently dropped.
+    const message = err instanceof Error ? err.message : String(err);
+    const session = event.data.object as { id?: string; metadata?: Record<string, string> };
+    console.error("[webhook] handler failed", {
+      eventType: event.type,
+      eventId: event.id,
+      sessionId: session?.id,
+      reservationId: session?.metadata?.reservationId,
+      error: message,
+    });
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+async function handleEvent(event: Stripe.Event) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
